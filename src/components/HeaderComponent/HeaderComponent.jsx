@@ -1,7 +1,7 @@
 
 const HeaderComponent = () => {
   return (
-    <div>HeaderComponent</div>
+    <div>HeaderComponent tét merch</div>
   )
 }
 
