@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3001', // Địa chỉ backend
+        target: 'http://localhost:3002', // Địa chỉ backend
         changeOrigin: true,
         secure: true
       },
