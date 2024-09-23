@@ -8,6 +8,7 @@ const InputFormPassword = (props) => {
   return (
         <WapperInputPassword placeholder={placeholder} value = {props.value} {...rests} onChange={handleOnchageInput}>
         </WapperInputPassword>
+
   )
   }
 
