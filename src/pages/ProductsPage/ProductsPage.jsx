@@ -1,7 +1,13 @@
+import { WrapperTest } from "./style"
+import React from "react"
 
 const ProductsPage = () => {
   return (
-    <div>ProductsPage</div>
+    <div>ProductsPage
+      <WrapperTest>
+        test 
+      </WrapperTest>
+    </div>
   )
 }
 
