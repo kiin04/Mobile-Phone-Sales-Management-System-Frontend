@@ -7,6 +7,12 @@ background-color: #d70018;
 align-items:center;
 gap: 16px;
 flex-wrap:nowrap;
+    // fixid top (con loi)
+    // left: 50%;
+    // position: fixed;
+    // top: 0;
+    // transform: translateX(-50%);
+    // width: 100%;
 
 `
 

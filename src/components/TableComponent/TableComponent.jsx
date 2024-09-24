@@ -18,11 +18,11 @@ const TableComponent = (props) => {
       console.log(`selectedRowKeys: ${selectedRows}`);
     },
   };
- 
-  
+
   return (
     <Loading isPending={isLoading}>
-      <div style={{ padding: "10px" }}>
+      {/* XuatFile */}
+      {/* <div style={{ padding: "10px" }}>
         <Button type="primary">
           <CSVLink
             style={{ textDecoration: "none" }}
@@ -33,7 +33,7 @@ const TableComponent = (props) => {
             Xuất file
           </CSVLink>
         </Button>
-      </div>
+      </div> */}
       <Table
         rowSelection={{ type: selectionType, ...rowSelection }}
         columns={columns}

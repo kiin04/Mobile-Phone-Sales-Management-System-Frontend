@@ -2,20 +2,20 @@ import styled from "styled-components";
 
 export const WrapperTypeProduct = styled.div`
 
-display: inline-block;
-  align-items: center;
-  gap: 24px; 
+  display: inline-block;
+    align-item: center;
+    gap: 32px;
   justify-content: flex-start;
   height: 48px;
   padding: 10px 32px;
   font-size: 14px;
- font-weight: lighter; 
+  font-weight: lighter; 
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   transition: background-color 0.3s ease, transform 0.3s ease;
- // background-color: #f44336;
- background-color:rgb(251, 237, 224, 1);
+  // background-color: #f44336;
+  background-color:rgb(251, 237, 224, 1);
     &:hover {
     transform: translateY(-2px); 
   }

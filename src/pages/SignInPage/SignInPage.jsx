@@ -13,33 +13,45 @@ import {
   WapperContentLogin,
   WapperContentRegister,
 } from "./style";
-import * as UserService from '../../services/UserServices';
+import * as UserService from "../../services/UserServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as message from "../../components/Messages/Message";
 import { useLocation, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import {useDispatch} from "react-redux"
+import { useDispatch } from "react-redux";
 import InputFormPassword from "../../components/InputForm/InputFormPassword";
 import { updateUser } from "../../redux/slices/userSlide";
 
 const SignInPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation()
+  const location = useLocation();
 
   const [position, setPosition] = useState("login");
-  const [emailLogin, setEmailLogin] = useState('');
-  const [passwordLogin, setPasswordLogin] = useState('');
-  const [emailRegister, setEmailRegister] = useState('');
-  const [passwordRegister, setPasswordRegister] = useState('');
-  const [confirmPasswordRegister, setConfirmPasswordRegister] = useState('');
+  const [emailLogin, setEmailLogin] = useState("");
+  const [passwordLogin, setPasswordLogin] = useState("");
+  const [emailRegister, setEmailRegister] = useState("");
+  const [passwordRegister, setPasswordRegister] = useState("");
+  const [confirmPasswordRegister, setConfirmPasswordRegister] = useState("");
 
-  const mutationLogin = useMutationHooks(data => UserService.loginUser(data));
-  const mutationRegister = useMutationHooks(data => UserService.registerUser(data));
+  const mutationLogin = useMutationHooks((data) => UserService.loginUser(data));
+  const mutationRegister = useMutationHooks((data) =>
+    UserService.registerUser(data)
+  );
 
-  const { data: loginData, isPending: isLoginPending, isSuccess: isLoginSuccess, isError: isLoginError } = mutationLogin
-  const { data: registerData, isPending: isRegisterPending, isSuccess: isRegisterSuccess, isError: isRegisterError } = mutationRegister
+  const {
+    data: loginData,
+    isPending: isLoginPending,
+    isSuccess: isLoginSuccess,
+    isError: isLoginError,
+  } = mutationLogin;
+  const {
+    data: registerData,
+    isPending: isRegisterPending,
+    isSuccess: isRegisterSuccess,
+    isError: isRegisterError,
+  } = mutationRegister;
 
   const handleOnchangeEmailLogin = (value) => {
     setEmailLogin(value);
@@ -58,31 +70,35 @@ const SignInPage = () => {
     setConfirmPasswordRegister(value);
   };
   useEffect(() => {
-    if(loginData?.status === 'ERR'){
-      message.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.");
-      return
-    }
-    else if (isLoginSuccess) {
-      message.success("Đăng nhập thành công!")
-       if(location?.state){
-        navigate(location?.state)
-      }else {
-        navigate('/')
+    if (loginData?.status === "ERR") {
+      message.error(
+        "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập."
+      );
+      return;
+    } else if (isLoginSuccess) {
+      message.success("Đăng nhập thành công!");
+      if (location?.state) {
+        navigate(location?.state);
+      } else {
+        navigate("/");
       }
-      localStorage.setItem('access_token',JSON.stringify(loginData?.access_token))
-      if(loginData?.access_token){
-        const decoded = jwtDecode(loginData?.access_token)
-        if(decoded?.id) {
-          handleGetDetailsUser(decoded?.id, loginData?.access_token)
+      localStorage.setItem(
+        "access_token",
+        JSON.stringify(loginData?.access_token)
+      );
+      if (loginData?.access_token) {
+        const decoded = jwtDecode(loginData?.access_token);
+        if (decoded?.id) {
+          handleGetDetailsUser(decoded?.id, loginData?.access_token);
         }
       }
     }
-  }, [isLoginSuccess, isLoginError])
+  }, [isLoginSuccess, isLoginError]);
 
   const handleGetDetailsUser = async (id, token) => {
-    const res = await UserService.getDetailsUser(id,token)
-    dispatch(updateUser({...res?.data,access_token: token}))
-  }
+    const res = await UserService.getDetailsUser(id, token);
+    dispatch(updateUser({ ...res?.data, access_token: token }));
+  };
 
   useEffect(() => {
     if (isRegisterSuccess) {
@@ -97,14 +113,14 @@ const SignInPage = () => {
     mutationRegister.mutate({
       email: emailRegister,
       password: passwordRegister,
-      confirmPassword: confirmPasswordRegister
+      confirmPassword: confirmPasswordRegister,
     });
   };
 
   const handleSignIn = () => {
     mutationLogin.mutate({
       email: emailLogin,
-      password: passwordLogin
+      password: passwordLogin,
     });
   };
 
@@ -112,8 +128,17 @@ const SignInPage = () => {
     <Container>
       <Content>
         <RadioGroupContainer>
-          <Space style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <Radio.Group value={position} onChange={(e) => setPosition(e.target.value)}>
+          <Space
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Radio.Group
+              value={position}
+              onChange={(e) => setPosition(e.target.value)}
+            >
               <RadioButton value="login">Đăng Nhập</RadioButton>
               <RadioButton value="register">Đăng Ký</RadioButton>
             </Radio.Group>
@@ -125,13 +150,23 @@ const SignInPage = () => {
               <div>
                 <InputWrapper>
                   <p>Nhập Email</p>
-                  <InputForm placeholder='Email' value={emailLogin} onChange={handleOnchangeEmailLogin} />
+                  <InputForm
+                    placeholder="Email"
+                    value={emailLogin}
+                    onChange={handleOnchangeEmailLogin}
+                  />
                 </InputWrapper>
                 <InputWrapper>
-                  <p>Mật khẩu</p>
-                  <InputFormPassword placeholder='Nhập mật khẩu' value={passwordLogin} onChange={handleOnchangePasswordLogin} />
+                  <p>Nhập Mật khẩu</p>
+                  <InputFormPassword
+                    placeholder="Nhập mật khẩu"
+                    value={passwordLogin}
+                    onChange={handleOnchangePasswordLogin}
+                  />
                 </InputWrapper>
-                {loginData?.status === 'ERR' && <span style={{ color: 'red' }}>{loginData?.message}</span>}
+                {loginData?.status === "ERR" && (
+                  <span style={{ color: "red" }}>{loginData?.message}</span>
+                )}
                 <ButtonWrapper>
                   <Loading isPending={isLoginPending}>
                     <ButtonComponent
@@ -158,21 +193,39 @@ const SignInPage = () => {
               <div>
                 <InputWrapper>
                   <p>Nhập Email</p>
-                  <InputForm placeholder='Nhập Email' value={emailRegister} onChange={handleOnchangeEmailRegister} />
+                  <InputForm
+                    placeholder="Nhập Email"
+                    value={emailRegister}
+                    onChange={handleOnchangeEmailRegister}
+                  />
                 </InputWrapper>
                 <InputWrapper>
                   <p>Mật khẩu</p>
-                  <InputFormPassword placeholder='Nhập mật khẩu' value={passwordRegister} onChange={handleOnchangePasswordRegister} />
+                  <InputFormPassword
+                    placeholder="Nhập mật khẩu"
+                    value={passwordRegister}
+                    onChange={handleOnchangePasswordRegister}
+                  />
                 </InputWrapper>
                 <InputWrapper>
                   <p>Nhập lại mật khẩu</p>
-                  <InputFormPassword placeholder='Nhập lại mật khẩu' value={confirmPasswordRegister} onChange={handleOnchangeConfirmPasswordRegister} />
+                  <InputFormPassword
+                    placeholder="Nhập lại mật khẩu"
+                    value={confirmPasswordRegister}
+                    onChange={handleOnchangeConfirmPasswordRegister}
+                  />
                 </InputWrapper>
-                {registerData?.status === 'ERR' && <span style={{ color: 'red' }}>{registerData?.message}</span>}
+                {registerData?.status === "ERR" && (
+                  <span style={{ color: "red" }}>{registerData?.message}</span>
+                )}
                 <ButtonWrapper>
                   <Loading isPending={isRegisterPending}>
                     <ButtonComponent
-                      disabled={!emailRegister.length || !passwordRegister.length || !confirmPasswordRegister.length}
+                      disabled={
+                        !emailRegister.length ||
+                        !passwordRegister.length ||
+                        !confirmPasswordRegister.length
+                      }
                       onClick={handleSignUp}
                       textButton="Đăng ký"
                       type="primary"

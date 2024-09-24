@@ -91,13 +91,13 @@ import {
           icon: <BookOutlined />,
         });
       }
-      if (user?.role === "Phuc") {
-        baseItems.unshift({
-          key: "order",
-          label: "Đơn hàng",
-          icon: <ShoppingCartOutlined />,
-        });
-      }
+      // if (user?.role === "Phuc") {
+      //   baseItems.unshift({
+      //     key: "order",
+      //     label: "Đơn hàng",
+      //     icon: <ShoppingCartOutlined />,
+      //   });
+      // }
   
       return baseItems;
     }, [user]);
@@ -123,13 +123,14 @@ import {
           mode="inline"
           items={items}
         />
-        <Switch
+        {/* doi mau */}
+        {/* <Switch
           checked={theme === "dark"}
           onChange={changeTheme}
           checkedChildren="Dark"
           unCheckedChildren="Light"
           style={{ position: "absolute", right: "20px", top: "20px" }}
-        />
+        /> */}
         <div style={{ flex: 1, padding: "15px 0 15px 15px" }}>
           {renderPage(key)}
         </div>

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Radio } from "antd";
+import { Radio, Space } from "antd";
 
 export const Container = styled.div`
   display: flex;

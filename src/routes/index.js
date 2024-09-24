@@ -4,6 +4,7 @@ import HomePage from "../pages/HomePage/HomePage";
 import OrderPage from "../pages/OrderPage/OrderPage";
 import ProductsPage from "../pages/ProductsPage/ProductsPage";
 import SignInPage from "../pages/SignInPage/SignInPage"
+import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
 
 export const routes = [
     {
@@ -41,9 +42,9 @@ export const routes = [
     //     page: ProfilePage,
     //     isShowHeader: true
     // },
-    // {
-    //     path: '/product/:type',
-    //     page: TypeProductPage,
-    //     isShowHeader: true
-    // },
+    {
+        path: '/product/:type',
+        page: TypeProductPage,
+        isShowHeader: true
+    },
 ]
