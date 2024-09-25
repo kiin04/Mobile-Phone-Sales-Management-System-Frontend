@@ -20,6 +20,7 @@ export const RadioGroupContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 24px;
+
 `;
 
 export const FormContainer = styled.div`

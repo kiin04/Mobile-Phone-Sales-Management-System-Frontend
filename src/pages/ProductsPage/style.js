@@ -3,8 +3,10 @@ import { Card } from 'antd';
 
 // Main Container
 export const MainContainer = styled.div`
-  padding: 20px;
-  background-color: #f5f5f5;
+    padding: 10px 70px;
+    background-color: #f5f5f5;
+    height: 1200px;
+    width: 1500px;
 `;
 
 // Header styles
@@ -137,3 +139,10 @@ export const WrapperDiscountText = styled.span`
   color: #52c41a;
   text-align: center;
 `;
+
+export const WapperProduct = styled.div`
+    margin-top: 30px;
+    display: flex;
+    gap: 17px;
+    flex-wrap: wrap
+`

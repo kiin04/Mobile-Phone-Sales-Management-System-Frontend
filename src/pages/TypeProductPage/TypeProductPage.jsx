@@ -6,6 +6,7 @@ import { WapperNavBar, WapperProduct } from "./style";
 import * as ProductService from "../../services/ProductServices";
 import { useLocation } from "react-router-dom";
 import Loading from "../../components/LoadingComponent/Loading";
+import CardComponent from "../../components/CardComponent/CardComponent";
 
 const TypeProductPage = () => {
   const { state } = useLocation();
@@ -53,9 +54,7 @@ const TypeProductPage = () => {
           height: "600px",
         }}
       >
-        <WapperNavBar>
-          {/* <NavBarComponent /> */}
-        </WapperNavBar>
+        <WapperNavBar>{/* <NavBarComponent /> */}</WapperNavBar>
         <Col
           span={20}
           style={{
@@ -65,7 +64,7 @@ const TypeProductPage = () => {
           }}
         >
           <WapperProduct>
-            {/* {products?.map((product) => {
+            {products?.map((product) => {
               return (
                 <CardComponent
                   key={product._id}
@@ -81,14 +80,15 @@ const TypeProductPage = () => {
                   id={product._id}
                 />
               );
-            })} */}
-            
+            })}
           </WapperProduct>
-          <Pagination defaultCurrent={1} total={50} style={{textAlign: 'center', marginTop: '10px'}} />
+          <Pagination
+            defaultCurrent={1}
+            total={50}
+            style={{ textAlign: "center", marginTop: "10px" }}
+          />
         </Col>
-
       </Row>
-      
     </Loading>
   );
 };
