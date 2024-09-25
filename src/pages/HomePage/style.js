@@ -3,7 +3,8 @@ import styled from "styled-components";
 export const WrapperTypeProduct = styled.div`
 
   display: inline-block;
-    align-item: center;
+    //align-item: center;
+    width:83.5%;
     gap: 32px;
   justify-content: flex-start;
   height: 48px;
