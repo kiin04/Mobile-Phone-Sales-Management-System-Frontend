@@ -24,4 +24,13 @@ export const getAllOrder = async (access_token) => {
     });
     return res.data
 }
+//updateStatus
+export const updateStatusOrder = async (id, access_token, data) => { 
+    const res = await axiosJWT.put(`${import.meta.env.VITE_SERVER_HOST}/order/update/${id}`, data,{
+        headers: {
+            token: `Bearer ${access_token}`,
+        },
+    });
+    return res.data
+}
 

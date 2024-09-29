@@ -40,6 +40,25 @@ export const convertPrice = (price) => {
         return null
     }
 }
+
+export const convertStatusOrder = (status) => {
+    try {
+        switch (status) {
+            case 'Shipped':
+                return 'Đang giao hàng';
+            case 'Delivered':
+                return 'Đã giao hàng';
+            case 'Cancelled':
+                return 'Đã hủy';
+            case 'Processing':
+                return 'Đang xử lý';
+            default:
+                return 'Trạng thái không xác định';
+        }
+    } catch (error) {
+        return null;
+    }
+};
 export const convertDataChart = (data, type) => {
     try{
         const object = {}

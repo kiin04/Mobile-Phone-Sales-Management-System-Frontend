@@ -3,7 +3,6 @@ import TypeProduct from "../../components/TypeProduct/TypeProduct";
 import { ProductTypeItem, WrapperTypeProduct } from "./style";
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import slider1 from "../../assets/images/slider1.webp";
-import slider2 from "../../assets/images/slider2.webp";
 import slider3 from "../../assets/images/slider3.webp";
 import * as ProductService from "../../services/ProductServices";
 
@@ -68,7 +67,7 @@ const HomePage = () => {
           id="container"
           style={{ backgroundColor: "#efefef", padding: "0 120px" }}
         ></div>
-        <SliderComponent arrImages={[slider1, slider2, slider3]} />
+        <SliderComponent arrImages={[slider1, slider3]} />
         <div
           style={{
             marginTop: "20px",

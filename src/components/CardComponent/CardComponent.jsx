@@ -19,7 +19,6 @@ const CardComponent = (props) => {
     price,
     rating,
     type,
-    discount,
     selled,
     id,
   } = props;
@@ -40,7 +39,7 @@ const CardComponent = (props) => {
       <div style={{ display: "flex", alignItems: "center" }}>
         <WapperPriceText>
           <span style={{ marginRight: "8px" }}>{convertPrice(price)}</span>
-          <WapperDiscountText> - {discount || 5}%</WapperDiscountText>
+          <WapperDiscountText> - { 5}%</WapperDiscountText>
         </WapperPriceText>
       </div>
       <WapperReportText>
@@ -51,7 +50,7 @@ const CardComponent = (props) => {
           />
         </span>
         <span>
-          <span style={{ marginLeft: "2px" }}> | Đã bán {selled || 1000}+</span>
+          <span style={{ marginLeft: "2px" }}> | Đã bán {selled || 0}+</span>
         </span>
       </WapperReportText>
     </Card>

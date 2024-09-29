@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WapperUploadFile, WrapperHeader } from "./style";
 import { Button, Form, Space } from "antd";
-import { DeleteOutlined, EditOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
@@ -12,128 +17,131 @@ import { useMutationHooks } from "../../hooks/useMutationHook";
 import { useQuery } from "@tanstack/react-query";
 import * as message from "../../components/Messages/Message";
 import { getBase64 } from "../../utils";
-import * as UserService from '../../services/UserServices';
+import * as UserService from "../../services/UserServices";
 import { themeConstant } from "../../pages/AdminPage/AdminPage";
 
-
-
 const AdminUser = ({ theme, setTheme }) => {
-
-  const [searchText, setSearchText] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [rowSelected, setRowSelected] = useState('')
+  const [rowSelected, setRowSelected] = useState("");
 
-  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
 
-  const [isOpenDrawer,setIsOpenDrawer] = useState(false)
+  const [isOpenDrawer, setIsOpenDrawer] = useState(false);
 
-  const [isModalOpenDelete, setIsModalOpenDelete] =useState(false)
+  const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
 
-
-
-  const user = useSelector((state) => state?.user)
+  const user = useSelector((state) => state?.user);
 
   const [stateUserDetails, setStateUserDetails] = useState({
-    name: '',
-    email: '',
-    phone: '',
+    name: "",
+    email: "",
+    phone: "",
     isAdmin: false,
-    createdAt: '',
-    avatar: '',
-    address: '',
-    role: ''
+    createdAt: "",
+    avatar: "",
+    address: "",
+    role: "",
   });
 
   const [form] = Form.useForm();
 
-  const mutationUpdate = useMutationHooks(
-    (data) => {
-        const { id, token,...rests } = data;
-        const res =  UserService.updateUser(id,{...rests}, token)
-        return res;
-  },
-);
+  const mutationUpdate = useMutationHooks((data) => {
+    const { id, token, ...rests } = data;
+    const res = UserService.updateUser(id, { ...rests }, token);
+    return res;
+  });
 
-const mutationDelete = useMutationHooks(
-  (data) => {
-      const { id, token} = data;
-      const res =  UserService.deleteUser(id, token)
-      return res;
-},
-);
+  const mutationDelete = useMutationHooks((data) => {
+    const { id, token } = data;
+    const res = UserService.deleteUser(id, token);
+    return res;
+  });
 
-const getAllUser = async () => {
-  const token = user?.access_token;
-  const res = await UserService.getAllUser(token);
-  return res;
-}
+  const getAllUser = async () => {
+    const token = user?.access_token;
+    const res = await UserService.getAllUser(token);
+    return res;
+  };
 
-  const { data:dataUpdated, isPending: isLoadingUpdated, isSuccess:isSuccessUpdated, isError:isErrorUpdated } = mutationUpdate
-  const { data:dataDeleted, isPending: isLoadingDeleted, isSuccess:isSuccessDeleted, isError:isErrorDeleted } = mutationDelete
+  const {
+    data: dataUpdated,
+    isPending: isLoadingUpdated,
+    isSuccess: isSuccessUpdated,
+    isError: isErrorUpdated,
+  } = mutationUpdate;
+  const {
+    data: dataDeleted,
+    isPending: isLoadingDeleted,
+    isSuccess: isSuccessDeleted,
+    isError: isErrorDeleted,
+  } = mutationDelete;
 
-  const queryUser= useQuery({queryKey:['user'],queryFn: getAllUser})
-  const {isPending: isLoadingUsers, data: users} =queryUser
+  const queryUser = useQuery({ queryKey: ["user"], queryFn: getAllUser });
+  const { isPending: isLoadingUsers, data: users } = queryUser;
 
+  const dataTable = users?.data?.length
+    ? users.data.map((user) => ({
+        ...user,
+        key: user._id,
+        isAdmin: user.isAdmin ? "TRUE" : "FALSE",
+      }))
+    : [];
 
-  const dataTable = users?.data?.length ? users.data.map(user => ({
-    ...user, 
-    key: user._id,
-    isAdmin: user.isAdmin ? 'TRUE': 'FALSE',
-  })) : [];
-
-
-  useEffect(() => { 
-    if (isSuccessDeleted && dataDeleted?.status === 'OK'){
-      message.success("Xóa sản phẩm thành công!!")
-      handleCancelDelete()
-    }else if(isErrorDeleted) {
-      message.error("Xóa sản phẩm thất bại!!")
+  useEffect(() => {
+    if (isSuccessDeleted && dataDeleted?.status === "OK") {
+      message.success("Xóa người dùng thành công!!");
+      handleCancelDelete();
+    } else if (isErrorDeleted) {
+      message.error("Xóa người dùng thất bại!!");
     }
-  },[isSuccessDeleted])
+  }, [isSuccessDeleted]);
 
-  useEffect(() => { 
-    if (isSuccessUpdated && dataUpdated?.status === 'OK'){
-      message.success("Cập nhật sản phẩm thành công!!")
-      handleCancelDrawer()
-    }else if(isErrorUpdated) {
-      message.error("Cập nhật sản phẩm thất bại!!")
+  useEffect(() => {
+    if (isSuccessUpdated && dataUpdated?.status === "OK") {
+      message.success("Cập nhật người dùng thành công!!");
+      handleCancelDrawer();
+    } else if (isErrorUpdated) {
+      message.error("Cập nhật người dùng thất bại!!");
     }
-  },[isSuccessUpdated])
+  }, [isSuccessUpdated]);
 
   const handleCancelDelete = () => {
-    setIsModalOpenDelete(false)
-  }
+    setIsModalOpenDelete(false);
+  };
   const handleDeleteUser = () => {
-    mutationDelete.mutate({id: rowSelected,token: user?.access_token},{
-      onSettled: () => {
-        queryUser.refetch()
+    mutationDelete.mutate(
+      { id: rowSelected, token: user?.access_token },
+      {
+        onSettled: () => {
+          queryUser.refetch();
+        },
       }
-    })
-  }
-
+    );
+  };
 
   const handleCancelDrawer = () => {
-    setIsOpenDrawer(false)
-      setStateUserDetails({
-        name: '',
-        email: '',
-        phone: '',
-        isAdmin: false,
-        createdAt: '',
-        avatar: '',
-        address: '',
-        role: '',
-      })
-    form.resetFields()
+    setIsOpenDrawer(false);
+    setStateUserDetails({
+      name: "",
+      email: "",
+      phone: "",
+      isAdmin: false,
+      createdAt: "",
+      avatar: "",
+      address: "",
+      role: "",
+    });
+    form.resetFields();
   };
 
   const handleOnchangeDetails = (e) => {
     setStateUserDetails({
-     ...stateUserDetails,
+      ...stateUserDetails,
       [e.target.name]: e.target.value,
     });
   };
@@ -141,11 +149,11 @@ const getAllUser = async () => {
   const handleOnchangeAvatarDetails = async ({ fileList }) => {
     const file = fileList[0];
     try {
-      if (!file.url &&!file.preview) {
+      if (!file.url && !file.preview) {
         file.preview = await getBase64(file.originFileObj);
       }
       setStateUserDetails({
-       ...stateUserDetails,
+        ...stateUserDetails,
         avatar: file.preview,
       });
     } catch (error) {
@@ -153,11 +161,10 @@ const getAllUser = async () => {
     }
   };
 
-
   const fetchDetailsUSer = async (rowSelected) => {
     if (rowSelected) {
       const token = user?.access_token;
-      const res = await UserService.getDetailsUser(rowSelected,token);
+      const res = await UserService.getDetailsUser(rowSelected, token);
       if (res?.data) {
         setStateUserDetails({
           name: res?.data?.name,
@@ -166,44 +173,48 @@ const getAllUser = async () => {
           address: res?.data?.address,
           phone: res?.data?.phone,
           avatar: res?.data?.avatar,
-          city:res?.data?.city,
-          role: res.data?.role
+          city: res?.data?.city,
+          role: res.data?.role,
         });
       }
       setIsLoadingUpdate(false);
     }
-  }
-
-  
-  useEffect(()=>{
-    form.setFieldsValue(stateUserDetails)
-  },[form, stateUserDetails])
+  };
 
   useEffect(() => {
-    if(rowSelected) {
-      setIsLoadingUpdate(true)
-      fetchDetailsUSer(rowSelected)
-    }
-  },[rowSelected]) 
+    form.setFieldsValue(stateUserDetails);
+  }, [form, stateUserDetails]);
 
+  useEffect(() => {
+    if (rowSelected) {
+      setIsLoadingUpdate(true);
+      fetchDetailsUSer(rowSelected);
+    }
+  }, [rowSelected]);
 
   const handleDetailsUser = () => {
-    setIsOpenDrawer(true)
-  }
+    setIsOpenDrawer(true);
+  };
   const headers = [
     { label: "Tên Người dùng", key: "name" },
     { label: "Email", key: "email" },
     { label: "Phone", key: "phone" },
   ];
 
-  const renderAction = () => { 
+  const renderAction = () => {
     return (
       <div>
-        <DeleteOutlined style={{color: 'red', fontSize: '25px', cursor:'pointer'}} onClick={() => setIsModalOpenDelete(true)} />
-        <EditOutlined style={{color: '#4588B5', fontSize: '25px', cursor:'pointer'}} onClick={handleDetailsUser} />
+        <DeleteOutlined
+          style={{ color: "red", fontSize: "25px", cursor: "pointer" }}
+          onClick={() => setIsModalOpenDelete(true)}
+        />
+        <EditOutlined
+          style={{ color: "#4588B5", fontSize: "25px", cursor: "pointer" }}
+          onClick={handleDetailsUser}
+        />
       </div>
-    )
-  }
+    );
+  };
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -212,10 +223,16 @@ const getAllUser = async () => {
   };
   const handleReset = (clearFilters) => {
     clearFilters();
-    setSearchText('');
+    setSearchText("");
   };
   const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
       <div
         style={{
           padding: 8,
@@ -226,11 +243,13 @@ const getAllUser = async () => {
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
-            display: 'block',
+            display: "block",
           }}
         />
         <Space>
@@ -282,7 +301,7 @@ const getAllUser = async () => {
     filterIcon: (filtered) => (
       <SearchOutlined
         style={{
-          color: filtered ? '#1677ff' : undefined,
+          color: filtered ? "#1677ff" : undefined,
         }}
       />
     ),
@@ -309,70 +328,67 @@ const getAllUser = async () => {
     //   ),
   });
 
-
-  
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      sorter: (a,b) => a.name.length - b.name.length,
-      ...getColumnSearchProps('name')
+      title: "Name",
+      dataIndex: "name",
+      sorter: (a, b) => a.name.length - b.name.length,
+      ...getColumnSearchProps("name"),
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      sorter: (a,b) => a.email.length - b.email.length,
-      ...getColumnSearchProps('email')
+      title: "Email",
+      dataIndex: "email",
+      sorter: (a, b) => a.email.length - b.email.length,
+      ...getColumnSearchProps("email"),
     },
     {
-      title: 'Admin',
-      dataIndex: 'isAdmin',
-      ...getColumnSearchProps('isAdmin')
+      title: "Admin",
+      dataIndex: "isAdmin",
+      ...getColumnSearchProps("isAdmin"),
     },
     {
-      title: 'Phone',
-      dataIndex: 'phone',
-      sorter: (a,b) => a.phone - b.phone,
-      ...getColumnSearchProps('phone')
+      title: "Phone",
+      dataIndex: "phone",
+      sorter: (a, b) => a.phone - b.phone,
+      ...getColumnSearchProps("phone"),
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      sorter: (a,b) => a.address - b.address,
-      ...getColumnSearchProps('address')
+      title: "Address",
+      dataIndex: "address",
+      sorter: (a, b) => a.address - b.address,
+      ...getColumnSearchProps("address"),
     },
     {
-      title: 'Role',
-      dataIndex: 'role',
-      sorter: (a,b) => a.role.length - b.role.length,
-    },
-    { 
-      title: 'Ngày tạo',
-      dataIndex: 'createdAt',
-      sorter: (a,b) => a.createdAt - b.createdAt,
-      ...getColumnSearchProps('createdAt')
+      title: "Role",
+      dataIndex: "role",
+      sorter: (a, b) => a.role.length - b.role.length,
     },
     {
-      title: 'Action',
-      dataIndex: 'action',
-      render: renderAction
-
+      title: "Action",
+      dataIndex: "action",
+      render: renderAction,
     },
   ];
   const onUpdateUser = () => {
-      mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateUserDetails}, {
+    mutationUpdate.mutate(
+      { id: rowSelected, token: user?.access_token, ...stateUserDetails },
+      {
         onSettled: () => {
-          queryUser.refetch()
-        }
-      })
-  }
-  // background: themeConstant[theme].background, 
+          queryUser.refetch();
+        },
+      }
+    );
+  };
+  // background: themeConstant[theme].background,
   return (
     <div>
-      <WrapperHeader style={{color: themeConstant[theme].color }}> Quản lý người dùng </WrapperHeader>
+      <WrapperHeader style={{ color: themeConstant[theme].color }}>
+        {" "}
+        Quản lý người dùng{" "}
+      </WrapperHeader>
       <div style={{ marginTop: "30px" }}>
         <TableComponent
-          borderColor={'red'}
+          borderColor={"red"}
           filename={"User"}
           headers={headers}
           columns={columns}

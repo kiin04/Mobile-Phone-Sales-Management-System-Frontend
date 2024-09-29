@@ -72,6 +72,7 @@ gap:10px;
 margin-left: 20px;
 cursor: pointer;
 padding: 10px 3px;
+justify-content: center;
 
 &:hover {
   background-color:#ff5733;;
@@ -98,8 +99,12 @@ margin-left: 30px;
   color:#fff;
   border-radius:10px;
 }
-
-
 `
+export const WrapperContentPopup = styled.p`
+cursor: pointer;
+&:hover {
+      color: #4588b5;
+}
+`;
 
 

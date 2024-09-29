@@ -92,7 +92,6 @@ const ProductDetailsComponent = ({ idProduct }) => {
           orderItem: {
             name: productDetails?.name,
             amount: NumProduct,
-            discount: productDetails?.discount,
             image: productDetails?.image,
             price: productDetails?.price,
             product: productDetails?._id,

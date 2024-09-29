@@ -76,7 +76,6 @@ const TypeProductPage = () => {
                   rating={product.rating}
                   type={product.type}
                   selled={product.selled}
-                  discount={product.discount}
                   id={product._id}
                 />
               );

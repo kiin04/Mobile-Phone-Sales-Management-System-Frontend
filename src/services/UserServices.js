@@ -51,8 +51,8 @@ export const updateUser = async (id,data,access_token) => {
     })
     return res.data
 }
-export const deleteUser = async (id,data,access_token) => { 
-    const res = await axiosJWT.delete(`${import.meta.env.VITE_SERVER_HOST}/user/delete-user/${id}`,data,{
+export const deleteUser = async (id,access_token) => { 
+    const res = await axiosJWT.delete(`${import.meta.env.VITE_SERVER_HOST}/user/delete-user/${id}`,{
         headers: {
             token: `Bearer ${access_token}`,
         },

@@ -101,11 +101,11 @@ const SignInPage = () => {
   };
 
   useEffect(() => {
-    if (isRegisterSuccess) {
-      message.success("Đăng ký thành công!");
+    if (registerData?.status == "ERR") {
+      message.error("Vui lòng nhập đúng định dạng email");
+    } else if (registerData?.status == "OK") {
+      message.success("Đăng ký thành công");
       setPosition("login");
-    } else if (isRegisterError) {
-      message.error("Đăng ký thất bại!");
     }
   }, [isRegisterSuccess, isRegisterError]);
 
