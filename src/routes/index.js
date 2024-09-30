@@ -60,9 +60,12 @@ export const routes = [
         page: TypeProductPage,
         isShowHeader: true
     },
-    {
-        path: '/product-details/:id',
-        page: ProductDetails,
-        isShowHeader: true
-    },
+
+{
+    path: '/product-details/:id',
+    page: ProductDetails,
+    isShowHeader: true
+},
+
+ 
 ]
