@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   BarChart,
   Bar,
@@ -9,19 +9,33 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { convertPriceDataChart } from "../../utils";
 
 const BarChartComponent = ({ data }) => {
-  console.log("data", data);
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart barSize={20} data={data}>
+    <ResponsiveContainer width={900} height={300}>
+      <BarChart
+        data={data}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 50,
+          bottom: 5,
+        }}
+        barSize={14}
+      >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" padding={{ left: 10, right: 10 }} />
-        <YAxis />
-        <Tooltip />
+        <XAxis dataKey="name" scale="point" padding={{ left: 10, right: 10 }} />
+        <YAxis tickFormatter={convertPriceDataChart} />
+        <Tooltip formatter={(value) => convertPriceDataChart(value)} />
         <Legend />
         <CartesianGrid strokeDasharray="3 3" />
-        <Bar dataKey="doanhthu" fill="#8884d8" background={{ fill: "#eee" }} />
+        <Bar
+          dataKey="doanhthu"
+          name={"Doanh Thu"}
+          fill="#00a7ff"
+          background={{ fill: "#eee" }}
+        />
       </BarChart>
     </ResponsiveContainer>
   );

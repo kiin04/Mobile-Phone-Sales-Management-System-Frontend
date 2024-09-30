@@ -3,7 +3,11 @@ import { WrapperHeader } from "./style";
 import TableComponent from "../TableComponent/TableComponent";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import { convertPrice, convertStatusOrder, renderOption } from "../../utils";
+import {
+  convertPrice,
+  convertStatusOrder,
+  convertPaidOrder,
+} from "../../utils";
 import * as OrderService from "../../services/OrderServices";
 import { orderContant } from "../../contant";
 import PieChartComponent from "./PieChart";
@@ -33,36 +37,37 @@ const AdminOrder = () => {
     { label: "Đơn giá", key: "price" },
     { label: "Tổng tiền", key: "totalPrice" },
     { label: "Tình trạng", key: "orderStatus" },
+    { label: "Thanh toán", key: "isPaid" },
   ];
 
   const columns = [
     {
-      title: "User Name",
+      title: "Tên người mua",
       dataIndex: "userName",
       sorter: (a, b) => a.userName.length - b.userName.length,
     },
     {
-      title: "Phone",
+      title: "Số điện thoại",
       dataIndex: "phone",
       sorter: (a, b) => a.phone.length - b.phone.length,
     },
     {
-      title: "Address",
+      title: "Địa chỉ",
       dataIndex: "address",
       sorter: (a, b) => a.address - b.address,
     },
     {
-      title: "City",
+      title: "Thành phố",
       dataIndex: "city",
       sorter: (a, b) => a.city - b.city,
     },
     {
-      title: "Shipping Price",
+      title: "Tiền giao hàng",
       dataIndex: "shippingPrice",
       sorter: (a, b) => a.shippingPrice - b.shippingPrice,
     },
     {
-      title: "Payment method",
+      title: "Phương thức thanh toán",
       dataIndex: "paymentMethod",
       sorter: (a, b) => a.paymentMethod - b.paymentMethod,
     },
@@ -103,12 +108,39 @@ const AdminOrder = () => {
       },
     },
     {
-      title: "Tình trạng đơn hàng",
-      dataIndex: "orderStatus",
-      sorter: (a, b) => a.totalPrice - b.totalPrice,
+      title: "Thanh toán",
+      dataIndex: "isPaid",
+      sorter: (a, b) => a.isPaid - b.isPaid,
+      render: (text, record) => {
+        const paidText = record.isPaid ? "Đã thanh toán" : "Chưa thanh toán";
+
+        const menuItems = [
+          { label: "Đã thanh toán", key: "true" },
+          { label: "Chưa thanh toán", key: "false" },
+        ];
+
+        const menu = (
+          <Menu onClick={(e) => handlePaidChange(record._id, e.key)}>
+            {menuItems.map((item) => (
+              <Menu.Item key={item.key}>{item.label}</Menu.Item>
+            ))}
+          </Menu>
+        );
+
+        return (
+          <Dropdown overlay={menu} trigger={["click"]}>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <a onClick={(e) => e.preventDefault()}>
+                {paidText}
+              </a>
+            </div>
+          </Dropdown>
+        );
+      },
     },
   ];
   useEffect(() => {
+    console.log("Orders data: ", orders);
     if (orders?.data) {
       const updatedDataTable = orders.data.map((order) => ({
         ...order,
@@ -121,6 +153,7 @@ const AdminOrder = () => {
         totalPrice: convertPrice(order?.totalPrice),
         shippingPrice: convertPrice(order?.shippingPrice),
         orderStatus: convertStatusOrder(order?.orderStatus),
+        isPaid: order?.isPaid,
       }));
       setDataTable(updatedDataTable); // Cập nhật trạng thái dataTable
     }
@@ -129,7 +162,7 @@ const AdminOrder = () => {
   //updateStatusOrder
   const mutationUpdate = useMutationHooks((data) => {
     const { id, token, ...rests } = data;
-    return OrderService.updateStatusOrder(id, token, { ...rests });
+    return OrderService.updateOrder(id, token, { ...rests });
   });
 
   const handleStatusChange = (orderId, status) => {
@@ -154,6 +187,27 @@ const AdminOrder = () => {
     );
   };
 
+  const handlePaidChange = (orderId, paid) => {
+    const isPaidValue = paid === "true"; // Convert string to boolean
+    mutationUpdate.mutate(
+      {
+        id: orderId,
+        token: user?.access_token,
+        isPaid: isPaidValue,
+      },
+      {
+        onSuccess: () => {
+          setDataTable((prevData) =>
+            prevData.map((order) =>
+              order.key === orderId
+                ? { ...order, isPaid: isPaidValue } // Update isPaid value
+                : order
+            )
+          );
+        },
+      }
+    );
+  };
   return (
     <div>
       <WrapperHeader> Quản lý đơn hàng </WrapperHeader>

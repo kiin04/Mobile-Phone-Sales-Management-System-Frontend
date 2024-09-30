@@ -6,8 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 import * as OrderService from "../../services/OrderServices";
 import { orderContant } from "../../contant";
 import { useMutationHooks } from "../../hooks/useMutationHook";
-import { Dropdown, Menu } from "antd";
+import { Dropdown, Flex, Menu } from "antd";
 import BarChartComponent from "./BarChartComponent";
+import { convertPrice, convertPriceDataChart } from "../../utils";
 
 const AdminOrder = () => {
   const [rowSelected, setRowSelected] = useState("");
@@ -28,7 +29,6 @@ const AdminOrder = () => {
   //doanh thu theo thang
   const monthlyRevenue = async () => {
     const res = await OrderService.monthlyRevenue(user?.access_token, 2024);
-    console.log("res", res);
     return res;
   };
   const queryMonthlyRevenue = useQuery({
@@ -48,14 +48,22 @@ const AdminOrder = () => {
         }))
       : [];
 
-
   return (
     <div>
       <WrapperHeader> Quản lý doanh thu </WrapperHeader>
-      <div style={{ height: 180, width: 200 }}>
-        tổng doanh thu: {dataTotal?.totalRevenue}
+      <div style={{ height: 100, width: 1000 }}>
+        <div style={{ fontSize: "25px", fontWeight: 500 }}>
+          TỔNG DOANH THU:
+          <span style={{ color: "red" }}>
+            {" "}
+            {convertPrice(dataTotal?.totalRevenue)}
+          </span>
+        </div>
       </div>
-      <div style={{ marginTop: "30px" }}>
+      <div style={{ marginTop: "10px", display: "flex" }}>
+        <span style={{ fontSize: "25px", fontWeight: 500 }}>
+          Doanh thu theo tháng: 
+        </span>
         <BarChartComponent data={chartData} />
       </div>
     </div>

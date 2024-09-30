@@ -2,6 +2,7 @@ import {
   BookOutlined,
   ShoppingCartOutlined,
   UserOutlined,
+  BarChartOutlined,
 } from "@ant-design/icons";
 import { Menu, Switch } from "antd";
 import React, { useState, useMemo } from "react";
@@ -27,7 +28,6 @@ const AdminPage = () => {
 
   const [theme, setTheme] = useState("light");
   const [key, setKey] = useState("");
-
 
   const handleOnClick = (e) => {
     setKey(e.key);
@@ -102,7 +102,7 @@ const AdminPage = () => {
       baseItems.unshift({
         key: "revenue",
         label: "Doanh thu",
-        icon: <ShoppingCartOutlined />,
+        icon: <BarChartOutlined />,
       });
     }
 
