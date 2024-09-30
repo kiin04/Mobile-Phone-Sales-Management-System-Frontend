@@ -127,31 +127,59 @@ const HeaderComponent = () => {
             placement="bottom"
             content={user?.access_token ? content : null}
           >
-            <WrapperAccountHeader onClick={handleNavigateLogin}>
-              {userAvatar ? (
-                <img
-                  src={userAvatar}
-                  alt="avatar"
-                  style={{
-                    height: "30px",
-                    width: "30px",
-                    borderRadius: "50%",
-                    objectFit: "contain",
-                  }}
-                />
-              ) : (
-                <UserOutlined style={{ fontSize: "20px" }} />
-              )}
+            {user?.access_token ? (
+              <WrapperAccountHeader onClick={handleNavigateProfile}>
+                {userAvatar ? (
+                  <img
+                    src={userAvatar}
+                    alt="avatar"
+                    style={{
+                      height: "30px",
+                      width: "30px",
+                      borderRadius: "50%",
+                      objectFit: "contain",
+                    }}
+                  />
+                ) : (
+                  <UserOutlined style={{ fontSize: "20px" }} />
+                )}
 
-              {user?.access_token ? (
-                <div style={{ cursor: "pointer", padding: "5px" }}>
-                  {userName?.length ? userName : user?.email}
-                  <CaretDownOutlined style={{ marginLeft: "10px" }} />
-                </div>
-              ) : (
-                "Đăng Nhập"
-              )}
-            </WrapperAccountHeader>
+                {user?.access_token ? (
+                  <div style={{ cursor: "pointer", padding: "5px" }}>
+                    {userName?.length ? userName : user?.email}
+                    <CaretDownOutlined style={{ marginLeft: "10px" }} />
+                  </div>
+                ) : (
+                  "Đăng Nhập"
+                )}
+              </WrapperAccountHeader>
+            ) : (
+              <WrapperAccountHeader onClick={handleNavigateLogin}>
+                {userAvatar ? (
+                  <img
+                    src={userAvatar}
+                    alt="avatar"
+                    style={{
+                      height: "30px",
+                      width: "30px",
+                      borderRadius: "50%",
+                      objectFit: "contain",
+                    }}
+                  />
+                ) : (
+                  <UserOutlined style={{ fontSize: "20px" }} />
+                )}
+
+                {user?.access_token ? (
+                  <div style={{ cursor: "pointer", padding: "5px" }}>
+                    {userName?.length ? userName : user?.email}
+                    <CaretDownOutlined style={{ marginLeft: "10px" }} />
+                  </div>
+                ) : (
+                  "Đăng Nhập"
+                )}
+              </WrapperAccountHeader>
+            )}
           </Popover>
         </Col>
 

@@ -8,6 +8,7 @@ import React, { useState, useMemo } from "react";
 import AdminUser from "../../components/AdminUser/AdminUser";
 import AdminProduct from "../../components/AdminProduct/AdminProduct";
 import AdminOrder from "../../components/AdminOrder/AdminOrder";
+import AdminRevenue from "../../components/AdminRevenue/AdminRevenue";
 import { useSelector } from "react-redux";
 
 export const themeConstant = {
@@ -27,9 +28,6 @@ const AdminPage = () => {
   const [theme, setTheme] = useState("light");
   const [key, setKey] = useState("");
 
-  const changeTheme = (value) => {
-    setTheme(value ? "dark" : "light");
-  };
 
   const handleOnClick = (e) => {
     setKey(e.key);
@@ -49,6 +47,8 @@ const AdminPage = () => {
         return <AdminProduct />;
       case "order":
         return <AdminOrder />;
+      case "revenue":
+        return <AdminRevenue />;
       default:
         return <></>;
     }
@@ -95,6 +95,13 @@ const AdminPage = () => {
       baseItems.unshift({
         key: "order",
         label: "Đơn hàng",
+        icon: <ShoppingCartOutlined />,
+      });
+    }
+    if (user?.role === "Phuc") {
+      baseItems.unshift({
+        key: "revenue",
+        label: "Doanh thu",
         icon: <ShoppingCartOutlined />,
       });
     }

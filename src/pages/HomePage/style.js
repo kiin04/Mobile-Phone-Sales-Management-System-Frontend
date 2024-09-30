@@ -37,7 +37,7 @@ display: inline-block;
   text-align: center;
   border: 1px solid #f44336;
   color: #fff;    
-  line-height:37px;
+  line-height:32px;
   margin: 2px;
   flex-grow:1;
   
