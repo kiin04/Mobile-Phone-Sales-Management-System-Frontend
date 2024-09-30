@@ -319,7 +319,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 width: "250px",
                 height: "60px",
                 marginTop: "20px",
-                background: "#d70018",
+                background: "#0066CC",
               }}
               onClick={handleAddOrderProduct}
             />
@@ -328,8 +328,9 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 <ShoppingCartOutlined
                   style={{
                     fontSize: "30px",
-                    color: "#d70018",
+                    color: "#0066cc",
                     marginRight: "5px",
+                    
                   }}
                 />
               }
