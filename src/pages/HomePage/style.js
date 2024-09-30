@@ -4,7 +4,7 @@ export const WrapperTypeProduct = styled.div`
 
   display: inline-block;
     //align-item: center;
-    width:83.5%;
+     width: 95.75%;
     gap: 32px;
   justify-content: flex-start;
   height: 48px;

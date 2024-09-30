@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col } from "antd"; // Import Ant Design components
+import { Row, Col, Select } from "antd"; // Import Ant Design components
 import {
   Header,
   MainContainer,
@@ -13,7 +13,7 @@ import {
   FilterByCriteriaStyle,
   BannerStyle,
   WapperProduct,
-} from "./style"; // Import styled components
+} from "./style";
 import { StarFilled } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -113,11 +113,14 @@ const ProductsPage = () => {
   const [limit, setLimit] = useState(20);
   const searchDebounce = useDebounce(searchProduct, 1000);
   const [typeProducts, setTypeProducts] = useState([]);
+  const [sortOrder, setSortOrder] = useState("none"); // State cho sắp xếp
 
   const fetchProductAll = async (context) => {
     const limit = context?.queryKey && context?.queryKey[1];
     const search = context?.queryKey && context?.queryKey[2];
-    const res = await ProductService.getAllProduct(search, limit);
+    const sort = sortOrder === "none" ? null : sortOrder; // Chuyển đổi giá trị sắp xếp
+
+    const res = await ProductService.getAllProduct(search, limit, sort);
     return res;
   };
   const {
@@ -125,12 +128,16 @@ const ProductsPage = () => {
     data: products,
     isPlaceholderData,
   } = useQuery({
-    queryKey: ["products", limit, searchDebounce],
+    queryKey: ["products", limit, searchDebounce, sortOrder],
     queryFn: fetchProductAll,
     retry: 3,
     retryDelay: 1000,
     keepPreviousData: true,
   });
+
+  const handleChange = (value) => {
+    setSortOrder(value); // Cập nhật giá trị sortOrder
+  };
 
   return (
     <MainContainer>
@@ -174,6 +181,33 @@ const ProductsPage = () => {
           </Col>
         ))}
       </Row> */}
+      <div style={{ width: "240px"}}>
+        <div style={{ padding: "10px" }}>
+          <span>Lọc sản phẩm theo giá: </span>
+        </div>
+        <Select
+          defaultValue="none"
+          style={{
+            width: 240,
+          }}
+          onChange={handleChange}
+          options={[
+            {
+              value: "none",
+              label: "Không",
+            },
+            {
+              value: "desc",
+              label: "Cao đến Thấp",
+            },
+            {
+              value: "asc",
+              label: "Thấp đến cao",
+            },
+          ]}
+        />
+      </div>
+
       <Loading isPending={isLoading || loading}>
         <WapperProduct>
           {products?.data?.map((product) => {
@@ -188,7 +222,6 @@ const ProductsPage = () => {
                 rating={product.rating}
                 type={product.type}
                 selled={product.selled}
-                discount={product.discount}
                 id={product._id}
               />
             );
