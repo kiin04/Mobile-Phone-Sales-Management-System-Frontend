@@ -111,9 +111,11 @@ cursor: pointer;
 align-items: center;
 gap: 100px;
 justify-content: center;
-margin-bottom:10px;
+border-radius: 4px 4px 0 0;
+ transition: background-color 0.3s ease, color 0.3s ease;
 &:hover{
-  color: #FF7F50;
+
+    background-color: #00a7ff;
 }
    `
 

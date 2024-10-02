@@ -1,24 +1,24 @@
 import styled from "styled-components";
 
 export const OutstandingTitle = styled.h2`
-  font-size: 24px;
+  font-size: 30px;
   color: black;
   text-align: left; 
-  padding: 10px 20px;
-  margin: 20px 0;
+  font-family: "Arial", "Helvetica", "Roboto", sans-serif;
+
 `;
 
-
-
 export const WapperProduct = styled.div`
-    margin-top: 30px;
+  
     display: flex;
     gap: 17px;
     flex-wrap: wrap
 `;
 export const MainContainer = styled.div`
-    padding: 10px 70px;
-    background-color: #f5f5f5;
+  margin-top:50px;
+    padding-left:20px;
+    background-color: #fff;
+    border-radius:10px;
     height: 100%;
     width: 100%;
 `;

@@ -42,13 +42,14 @@ const HomePage = () => {
           padding: " 0 120px",
           backgroundColor: "#f2f4f7",
           height: "2000px",
+         paddingTop:"20px"
         }}
       >
         {/* <WrapperTypeProduct>
           {arr.map((item, index) => (
             <ProductTypeItem key={index}>{item}</ProductTypeItem>
           ))}
-        </WrapperTypeProduct> */}
+        </WrapperTypeProduct>*/}
 
         <div
           id="container"
@@ -61,6 +62,7 @@ const HomePage = () => {
             display: "flex",
             alignItems: "center",
             gap: "20px",
+          
           }}
         ></div>
         <OutstandingPhonePage />
