@@ -40,12 +40,15 @@ const AdminProduct = () => {
 
   const inittial = () => ({
     name: "",
-    price: "",
-    description: "",
-    rating: "",
     image: "",
     type: "",
+    price: "",
     countInStock: "",
+    rating: "",
+    description: "",
+    colors: [],
+    ram: "",
+    storage: "",
     newType: "",
   });
 
@@ -58,20 +61,32 @@ const AdminProduct = () => {
   const [form] = Form.useForm();
 
   const mutation = useMutationHooks((data) => {
-    const { name, price, description, rating, image, type, countInStock } =
-      data;
-    const res = ProductService.createProduct({
+    const {
       name,
-      price,
-      description,
-      rating,
       image,
       type,
+      price,
       countInStock,
+      rating,
+      description,
+      colors,
+      ram,
+      storage,
+    } = data;
+    const res = ProductService.createProduct({
+      name,
+      image,
+      type,
+      price,
+      countInStock,
+      rating,
+      description,
+      colors,
+      ram,
+      storage,
     });
     return res;
   });
-
   const mutationUpdate = useMutationHooks((data) => {
     const { id, token, ...rests } = data;
     const res = ProductService.updateProduct(id, token, { ...rests });
@@ -159,15 +174,19 @@ const AdminProduct = () => {
   const onFinish = () => {
     const params = {
       name: stateProduct?.name,
-      price: stateProduct?.price,
-      description: stateProduct?.description,
-      rating: stateProduct?.rating,
       image: stateProduct?.image,
+      type: stateProduct?.type,
+      price: stateProduct?.price,
+      countInStock: stateProduct?.countInStock,
       type:
         stateProduct?.type === "add_type"
           ? stateProduct.newType
           : stateProduct.type,
-      countInStock: stateProduct?.countInStock,
+      rating: stateProduct?.rating,
+      description: stateProduct?.description,
+      colors: stateProduct?.colors,
+      ram: stateProduct?.ram,
+      storage: stateProduct?.storage,
     };
     mutation.mutate(params, {
       onSettled: () => {
@@ -193,12 +212,16 @@ const AdminProduct = () => {
     setIsModalOpen(false);
     setStateProduct({
       name: "",
-      price: "",
-      description: "",
-      rating: "",
       image: "",
       type: "",
+      price: "",
       countInStock: "",
+      rating: "",
+      description: "",
+      colors: "",
+      ram: "",
+      storage: "",
+      newType: "",
     });
     form.resetFields();
   };
@@ -206,12 +229,16 @@ const AdminProduct = () => {
     setIsOpenDrawer(false);
     setStateProductDetails({
       name: "",
-      price: "",
-      description: "",
-      rating: "",
       image: "",
       type: "",
+      price: "",
       countInStock: "",
+      rating: "",
+      description: "",
+      colors: "",
+      ram: "",
+      storage: "",
+      newType: "",
     });
     form.resetFields();
   };
@@ -264,13 +291,17 @@ const AdminProduct = () => {
       const res = await ProductService.getDetailsProduct(rowSelected);
       if (res?.data) {
         setStateProductDetails({
-          name: res?.data?.name,
-          price: res?.data?.price,
-          description: res?.data?.description,
-          rating: res?.data?.rating,
-          image: res?.data?.image,
+          name: stateProduct?.name,
+          image: stateProduct?.image,
+          type: stateProduct?.type,
+          price: stateProduct?.price,
+          countInStock: stateProduct?.countInStock,
           type: res?.data?.type,
-          countInStock: res?.data?.countInStock,
+          rating: stateProduct?.rating,
+          description: stateProduct?.description,
+          colors: stateProduct?.colors,
+          ram: stateProduct?.ram,
+          storage: stateProduct?.storage,
         });
       }
       setIsLoadingUpdate(false);
@@ -648,6 +679,38 @@ const AdminProduct = () => {
                 value={stateProduct.rating}
                 onChange={handleOnchange}
                 name="rating"
+              />
+            </Form.Item>
+            <Form.Item
+              label="Ram"
+              name="ram"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input ram!",
+                },
+              ]}
+            >
+              <InputComponent
+                value={stateProduct.ram}
+                onChange={handleOnchange}
+                name="ram"
+              />
+            </Form.Item>
+            <Form.Item
+              label="Storage"
+              name="storage"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input storage!",
+                },
+              ]}
+            >
+              <InputComponent
+                value={stateProduct.storage}
+                onChange={handleOnchange}
+                name="storage"
               />
             </Form.Item>
 
