@@ -14,7 +14,11 @@ const ButtonInputSearch = (props) => {
         {...props}
       />
       <ButtonComponent
-        style={{ background: "#a30012", color: "#fff", border: "none" }}
+        style={{
+          background: "rgb(36 112 164)",
+          color: "#fff",
+          border: "none",
+        }}
         size={size}
         icon={<SearchOutlined />}
         type="primary"

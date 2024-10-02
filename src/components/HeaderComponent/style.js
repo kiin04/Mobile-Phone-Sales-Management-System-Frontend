@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 export const WrapperHeader = styled(Row)`
 padding: 20px 120px;
-background-color: #d70018;
+background-color: #008bd4;
 align-items:center;
 gap: 16px;
 flex-wrap:nowrap;
@@ -55,7 +55,7 @@ cursor: pointer;
 padding:10px 15px;
 
 &:hover {
-  background-color:#ff5733;;
+  background-color:#369cd1;;
   color:#fff;
   border-radius:10px;
 }
@@ -75,7 +75,7 @@ padding: 10px 3px;
 justify-content: center;
 
 &:hover {
-  background-color:#ff5733;;
+  background-color:#369cd1;;
   color:#fff;
   border-radius:10px;
 }
@@ -95,7 +95,7 @@ padding:10px 15px;
 margin-left: 30px;
 
 &:hover {
-  background-color:#ff5733;;
+  background-color:#369cd1;;
   color:#fff;
   border-radius:10px;
 }

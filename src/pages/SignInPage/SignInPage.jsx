@@ -101,9 +101,7 @@ const SignInPage = () => {
   };
 
   useEffect(() => {
-    if (registerData?.status == "ERR") {
-      message.error("Vui lòng nhập đúng định dạng email");
-    } else if (registerData?.status == "OK") {
+    if (registerData?.status == "OK") {
       message.success("Đăng ký thành công");
       setPosition("login");
     }

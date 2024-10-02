@@ -7,11 +7,11 @@ export const WapperInputStyle = styled(Input)`
         border-left: none;
         outline: none;
                 &:hover {
-                        border-color: #ff0000;
+                        border-color: #0077B6;
                         background-color: #ffffff;
                 }
                         &:focus{
-                            border-color: #ff0000;
+                            border-color: #0077B6;
                             box-shadow: none;   
                         }
                         
@@ -22,16 +22,16 @@ export const WapperInputPassword = styled(Input.Password)`
         border-left: none;      
         outline: none;
         &:hover {
-                        border-color: #ff0000;
+                        border-color: #0077B6;
                         background-color: #ffffff;
                 }
                         // &:focus{
-                        //     border-color: #ff0000; !important
+                        //     border-color: #0077B6; !important
                         //     box-shadow: none;    !important
                         // }
 
                             &:focus-within{
-                            border-color: #ff0000 ; !important
+                            border-color: #0077B6 ; !important
                             box-shadow: none  ;  !important
                         }
                             

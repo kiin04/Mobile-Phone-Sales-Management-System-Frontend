@@ -95,7 +95,7 @@ const ProfilePage = () => {
         <WrapperContentProfile>
           <WrapperInput>
             <div style={{ width: "50px", height: "fit-content" }}>
-              <WappperLabel htmlFor="name">Name: </WappperLabel>
+              <WappperLabel htmlFor="name">Tên: </WappperLabel>
             </div>
             <InputForm
               style={{ width: "300px" }}
@@ -119,7 +119,7 @@ const ProfilePage = () => {
           </WrapperInput>
           <WrapperInput>
             <div style={{ width: "50px", height: "fit-content" }}>
-              <WappperLabel htmlFor="phone">Phone: </WappperLabel>
+              <WappperLabel htmlFor="phone">Điện thoại: </WappperLabel>
             </div>
             <InputForm
               style={{ width: "300px" }}
@@ -131,7 +131,7 @@ const ProfilePage = () => {
           </WrapperInput>
           <WrapperInput>
             <div style={{ width: "50px", height: "fit-content" }}>
-              <WappperLabel htmlFor="address">Address: </WappperLabel>
+              <WappperLabel htmlFor="address">Địa chỉ: </WappperLabel>
             </div>
             <InputForm
               style={{ width: "300px" }}
@@ -143,7 +143,7 @@ const ProfilePage = () => {
           </WrapperInput>
           <WrapperInput>
             <div style={{ width: "50px", height: "fit-content" }}>
-              <WappperLabel htmlFor="avatar">Avatar: </WappperLabel>
+              <WappperLabel htmlFor="avatar">Ảnh đại diện: </WappperLabel>
             </div>
             <WapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
               <Button icon={<UploadOutlined />}>Select File</Button>

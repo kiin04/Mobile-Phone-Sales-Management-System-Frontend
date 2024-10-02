@@ -40,6 +40,19 @@ export const convertPrice = (price) => {
         return null
     }
 }
+export const convertPriceDataChart = (price) => {
+    try {
+        // Kiểm tra nếu giá trị không phải là số, trả về chuỗi rỗng
+        if (typeof price !== "number") return ""; 
+        // Định dạng số với dấu phẩy
+        const result = price.toLocaleString(); 
+        return `${result}đ`; // Thêm đơn vị tiền tệ
+    } catch (error) {
+        return null; // Trả về null nếu có lỗi
+    }
+};
+
+
 
 export const convertStatusOrder = (status) => {
     try {
@@ -59,6 +72,23 @@ export const convertStatusOrder = (status) => {
         return null;
     }
 };
+
+
+export const convertPaidOrder = (paid) => {
+    try {
+        switch (paid) {
+            case 'true':
+                return 'Đã thanh toán';
+            case 'false':
+                return 'Chưa thanh toán';
+            default:
+                return 'Chưa thanh toán';
+        }
+    } catch (error) {
+        return null;
+    }
+};
+
 export const convertDataChart = (data, type) => {
     try{
         const object = {}
