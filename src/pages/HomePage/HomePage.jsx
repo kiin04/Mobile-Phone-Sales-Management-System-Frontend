@@ -1,8 +1,9 @@
-import React, { } from "react";
+import React, { useEffect, useState } from "react";
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import slider1 from "../../assets/images/slider1.webp";
 import slider3 from "../../assets/images/slider3.webp";
 import * as ProductService from "../../services/ProductServices";
+import OutstandingPhonePage from "../OutstandingPhonePage/OutstandingPhonePage";
 
 //import CardComponent from "../../components/";
 
@@ -49,18 +50,6 @@ const HomePage = () => {
           ))}
         </WrapperTypeProduct> */}
 
-        <div style={{ width: "1270px", margin: "0 auto" }}>
-          <WrapperTypeProduct>
-            {typeProducts.map((item) => {
-              return (
-                <ProductTypeItem>
-                  <TypeProduct name={item} key={item} />
-                </ProductTypeItem>
-              );
-            })}
-          </WrapperTypeProduct>
-        </div>
-
         <div
           id="container"
           style={{ backgroundColor: "#efefef", padding: "0 120px" }}
@@ -72,7 +61,6 @@ const HomePage = () => {
             display: "flex",
             alignItems: "center",
             gap: "20px",
-            
           }}
         ></div>
         <OutstandingPhonePage />
