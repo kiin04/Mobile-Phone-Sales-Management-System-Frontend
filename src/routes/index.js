@@ -9,6 +9,8 @@ import ProductDetails from "../pages/ProductDetailsPage/ProductDetailsPage"
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import OrderSuccess from "../pages/OrderSuccess/OrderSucces";
 import ProfilePage from "../pages/Profile/ProfilePage";
+import OutstandingPhonePage from "../pages/OutstandingPhonePage/OutstandingPhonePage";
+
 export const routes = [
     {
         path: '/',
@@ -65,4 +67,10 @@ export const routes = [
         page: ProductDetails,
         isShowHeader: true
     },
+    {
+        path: '/outstandingphone',
+        page: OutstandingPhonePage,
+        isShowHeader: true
+    },
+    
 ]
