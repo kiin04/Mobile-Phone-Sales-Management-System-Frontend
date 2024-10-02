@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Select } from "antd"; // Import Ant Design components
 import {
-  Header,
   MainContainer,
-  WrapperCardStyle,
-  StyleNameProduct,
-  WrapperReportText,
-  WrapperPriceText,
-  WrapperDiscountText,
-  BrandMenuStyle,
-  FilterByNeedStyle,
   FilterByCriteriaStyle,
-  BannerStyle,
   WapperProduct,
 } from "./style";
-import { StarFilled } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useSelector } from "react-redux";
@@ -141,46 +131,7 @@ const ProductsPage = () => {
 
   return (
     <MainContainer>
-      {/* Header */}
-      {/* <Header>
-        <h1>Danh Sách Điện Thoại</h1>
-      </Header> */}
-
-      {/* Banner quảng cáo */}
-      {/* <Banner /> */}
-
-      {/* Menu các thương hiệu */}
-      {/* <BrandMenu /> */}
-
-      {/* Chọn theo nhu cầu */}
-      {/* <FilterByNeed /> */}
-
-      {/* Chọn theo tiêu chí */}
       <FilterByCriteria />
-
-      {/* Danh sách sản phẩm */}
-      {/* <Row gutter={16} justify="center">
-        {products.map((product, index) => (
-          <Col key={index}>
-            <WrapperCardStyle
-              hoverable
-              cover={<img alt={product.name} src={product.image} />}
-            >
-              <StyleNameProduct>{product.name}</StyleNameProduct>
-              <WrapperReportText>
-                <span>
-                  <span>{product.rating}</span> <StarFilled style={{ fontSize: '12px', color: 'yellow' }} />
-                </span>
-                <span> | Đã bán {product.sold}+</span>
-              </WrapperReportText>
-              <WrapperPriceText>
-                {product.price}đ
-                <WrapperDiscountText>-{product.discount}%</WrapperDiscountText>
-              </WrapperPriceText>
-            </WrapperCardStyle>
-          </Col>
-        ))}
-      </Row> */}
       <div style={{ width: "240px"}}>
         <div style={{ padding: "10px" }}>
           <span>Lọc sản phẩm theo giá: </span>

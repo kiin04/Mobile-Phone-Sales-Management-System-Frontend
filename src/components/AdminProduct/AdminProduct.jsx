@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Form, Select, Space} from "antd";
+import { Button, Form, Select, Space } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
-import { getBase64, renderOption } from "../../utils";
+import { convertPrice, getBase64, renderOption } from "../../utils";
 import { WapperUploadFile } from "./style";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import * as ProductService from "../../services/ProductServices";
@@ -37,7 +37,7 @@ const AdminProduct = () => {
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
 
   const [typeSelect, setTypeSelect] = useState("");
-  
+
   const inittial = () => ({
     name: "",
     price: "",
@@ -47,7 +47,7 @@ const AdminProduct = () => {
     type: "",
     countInStock: "",
     newType: "",
-  })
+  });
 
   const [stateProduct, setStateProduct] = useState(inittial());
 
@@ -85,7 +85,8 @@ const AdminProduct = () => {
   });
 
   const getAllProduct = async () => {
-    const res = await ProductService.getAllProduct('', 100);
+    const res = await ProductService.getAllProduct("", 1000);
+    console.log("res", res);
     return res;
   };
 
@@ -123,6 +124,7 @@ const AdminProduct = () => {
     ? products.data.map((product) => ({
         ...product,
         key: product._id,
+        price: convertPrice(product.price),
       }))
     : [];
 
@@ -155,15 +157,18 @@ const AdminProduct = () => {
   }, [isSuccessUpdated]);
 
   const onFinish = () => {
-    const params ={
-     name: stateProduct?.name,
-    price: stateProduct?.price,
-    description: stateProduct?.description,
-    rating: stateProduct?.rating,
-    image: stateProduct?.image,
-    type: stateProduct?.type === 'add_type'? stateProduct.newType : stateProduct.type,
-    countInStock: stateProduct?.countInStock,
-  }
+    const params = {
+      name: stateProduct?.name,
+      price: stateProduct?.price,
+      description: stateProduct?.description,
+      rating: stateProduct?.rating,
+      image: stateProduct?.image,
+      type:
+        stateProduct?.type === "add_type"
+          ? stateProduct.newType
+          : stateProduct.type,
+      countInStock: stateProduct?.countInStock,
+    };
     mutation.mutate(params, {
       onSettled: () => {
         queryProduct.refetch();
@@ -273,12 +278,12 @@ const AdminProduct = () => {
   };
 
   useEffect(() => {
-    if(!isModalOpen){
+    if (!isModalOpen) {
       form.setFieldsValue(stateProductDetails);
-    }else{
+    } else {
       form.setFieldsValue(inittial());
     }
-  }, [form, stateProductDetails,isModalOpen]);
+  }, [form, stateProductDetails, isModalOpen]);
 
   useEffect(() => {
     if (rowSelected) {
@@ -426,28 +431,28 @@ const AdminProduct = () => {
 
   const columns = [
     {
-      title: "Name",
+      title: "Tên sản phẩm",
       dataIndex: "name",
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
     },
     {
-      title: "Price",
+      title: "Giá",
       dataIndex: "price",
-      sorter: (a, b) => a.price - b.price,
+      sorter: (a, b) => parseFloat(a.price) - parseFloat(b.price),
     },
     {
-      title: "Rating",
+      title: "Đánh giá",
       dataIndex: "rating",
       sorter: (a, b) => a.rating - b.rating,
     },
     {
-      title: "Type",
+      title: "Thể loại",
       dataIndex: "type",
       ...getColumnSearchProps("type"),
     },
     {
-      title: "Action",
+      title: "Hành động",
       dataIndex: "action",
       render: renderAction,
     },
@@ -464,10 +469,10 @@ const AdminProduct = () => {
   };
 
   const handleChangeSelect = (value) => {
-      setStateProduct({
-        ...stateProduct,
-        type: value,
-      });
+    setStateProduct({
+      ...stateProduct,
+      type: value,
+    });
   };
 
   console.log("typeVlue", stateProduct);
@@ -571,13 +576,13 @@ const AdminProduct = () => {
                   },
                 ]}
               >
-                  <div style={{ padding: "10px" }}>
-                    <InputComponent
-                      value={stateProduct.newType}
-                      onChange={handleOnchange}
-                      name= 'newType'
-                    />
-                  </div>
+                <div style={{ padding: "10px" }}>
+                  <InputComponent
+                    value={stateProduct.newType}
+                    onChange={handleOnchange}
+                    name="newType"
+                  />
+                </div>
               </Form.Item>
             )}
 

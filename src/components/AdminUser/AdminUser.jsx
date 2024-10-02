@@ -330,7 +330,7 @@ const AdminUser = ({ theme, setTheme }) => {
 
   const columns = [
     {
-      title: "Name",
+      title: "Tên người dùng",
       dataIndex: "name",
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps("name"),
@@ -347,24 +347,24 @@ const AdminUser = ({ theme, setTheme }) => {
       ...getColumnSearchProps("isAdmin"),
     },
     {
-      title: "Phone",
+      title: "Số điện thoại",
       dataIndex: "phone",
       sorter: (a, b) => a.phone - b.phone,
       ...getColumnSearchProps("phone"),
     },
     {
-      title: "Address",
+      title: "Địa chỉ",
       dataIndex: "address",
       sorter: (a, b) => a.address - b.address,
       ...getColumnSearchProps("address"),
     },
     {
-      title: "Role",
+      title: "Vai trò",
       dataIndex: "role",
       sorter: (a, b) => a.role.length - b.role.length,
     },
     {
-      title: "Action",
+      title: "Hành động",
       dataIndex: "action",
       render: renderAction,
     },
