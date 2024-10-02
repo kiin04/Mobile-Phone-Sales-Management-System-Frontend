@@ -1,4 +1,4 @@
-import { Badge, Col, Flex, Popover } from "antd";
+import { Badge, Col, Popover } from "antd";
 import React, { useEffect, useState } from "react";
 import {
   WrapperHeader,
@@ -6,6 +6,7 @@ import {
   WrapperShoppingHeader,
   WrapperAccountHeader,
   WrapperShipperHeader,
+  ProductTypeItem,
   WrapperContentPopup,
 } from "./style";
 import {
@@ -21,9 +22,12 @@ import Loading from "../LoadingComponent/Loading";
 import * as UserService from "../../services/UserServices";
 import { searchProduct } from "../../redux/slices/productSlide";
 import { resetUser } from "../../redux/slices/userSlide";
+import TypeProduct from "../TypeProduct/TypeProduct";
+import * as ProductService from "../../services/ProductServices";
 
 const HeaderComponent = () => {
   const user = useSelector((state) => state.user);
+  const [typeProducts, setTypeProducts] = useState([]);
   const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
   const [loading, setloading] = useState(false);
@@ -32,6 +36,13 @@ const HeaderComponent = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const fetchAllTypeProduct = async () => {
+    const res = await ProductService.getAllTypeProduct();
+    if (res?.status === "OK") {
+      setTypeProducts(res?.data);
+    }
+  };
 
   const handleLogout = async () => {
     setloading(true);
@@ -48,12 +59,18 @@ const HeaderComponent = () => {
     setloading(false);
   }, [user?.name, user?.avatar]);
 
+  useEffect(() => {
+    fetchAllTypeProduct();
+  }, []);
+
   const handleNavigateLogin = () => {
     navigate("/sign-in");
   };
+
   const handleNavigateLogo = () => {
     navigate("/");
   };
+
   const goToProduct = () => {
     navigate("/products");
   };
@@ -61,6 +78,7 @@ const HeaderComponent = () => {
   const handleNavigateAdmin = () => {
     navigate("/system/admin");
   };
+
   const handleNavigateProfile = () => {
     navigate("/profile-user");
   };
@@ -72,13 +90,9 @@ const HeaderComponent = () => {
           Quản lý hệ thống
         </WrapperContentPopup>
       )}
-
       <WrapperContentPopup onClick={handleNavigateProfile}>
         Thông tin người dùng
       </WrapperContentPopup>
-      {/* <WrapperContentPopup onClick={() => navigate('/my-order')}>
-        Đơn hàng của tôi
-      </WrapperContentPopup> */}
       <WrapperContentPopup onClick={handleLogout}>
         Đăng xuất
       </WrapperContentPopup>
@@ -89,6 +103,7 @@ const HeaderComponent = () => {
     setSearch(e.target.value);
     dispatch(searchProduct(e.target.value));
   };
+
   return (
     <div>
       <WrapperHeader>
@@ -123,10 +138,7 @@ const HeaderComponent = () => {
           </WrapperShoppingHeader>
         </Col>
         <Col span={3}>
-          <Popover
-            placement="bottom"
-            content={user?.access_token ? content : null}
-          >
+          <Popover placement="bottom" content={user?.access_token ? content : null}>
             {user?.access_token ? (
               <WrapperAccountHeader onClick={handleNavigateProfile}>
                 {userAvatar ? (
@@ -143,41 +155,15 @@ const HeaderComponent = () => {
                 ) : (
                   <UserOutlined style={{ fontSize: "20px" }} />
                 )}
-
-                {user?.access_token ? (
-                  <div style={{ cursor: "pointer", padding: "5px" }}>
-                    {userName?.length ? userName : user?.email}
-                    <CaretDownOutlined style={{ marginLeft: "10px" }} />
-                  </div>
-                ) : (
-                  "Đăng Nhập"
-                )}
+                <div style={{ cursor: "pointer", padding: "5px" }}>
+                  {userName?.length ? userName : user?.email}
+                  <CaretDownOutlined style={{ marginLeft: "10px" }} />
+                </div>
               </WrapperAccountHeader>
             ) : (
               <WrapperAccountHeader onClick={handleNavigateLogin}>
-                {userAvatar ? (
-                  <img
-                    src={userAvatar}
-                    alt="avatar"
-                    style={{
-                      height: "30px",
-                      width: "30px",
-                      borderRadius: "50%",
-                      objectFit: "contain",
-                    }}
-                  />
-                ) : (
-                  <UserOutlined style={{ fontSize: "20px" }} />
-                )}
-
-                {user?.access_token ? (
-                  <div style={{ cursor: "pointer", padding: "5px" }}>
-                    {userName?.length ? userName : user?.email}
-                    <CaretDownOutlined style={{ marginLeft: "10px" }} />
-                  </div>
-                ) : (
-                  "Đăng Nhập"
-                )}
+                <UserOutlined style={{ fontSize: "20px" }} />
+                Đăng Nhập
               </WrapperAccountHeader>
             )}
           </Popover>
@@ -185,28 +171,24 @@ const HeaderComponent = () => {
 
         <Col span={4}>
           <WrapperShipperHeader>
-            <div>
-              <CarOutlined style={{ fontSize: "23px" }} />
-            </div>
-            <div>
-              <span>Tra cứu đơn hàng </span>
-            </div>
+            <CarOutlined style={{ fontSize: "23px" }} />
+            <span>Tra cứu đơn hàng</span>
           </WrapperShipperHeader>
         </Col>
+
+
       </WrapperHeader>
+
+      
+      <div style={{ width: "100%", position: "relative", margin:" 0 auto", background:"#008bd4", paddingLeft:"120px", marginBottom:"30px"}}>
+        {typeProducts.map((item) => (
+          <ProductTypeItem key={item}>
+            <TypeProduct name={item} />
+          </ProductTypeItem>
+        ))}
+      </div>
     </div>
   );
 };
-export default HeaderComponent;
 
-/*Danh mục
-/*<Col span={4}>
-        <WrapperTextListHeader>
-       <div><UnorderedListOutlined style={{fontSize:'23px'}} /></div>
-       <div>   
-       <span>Danh mục</span>
-       </div>
-            
-        </WrapperTextListHeader>
-        
-      </Col>*/
+export default HeaderComponent;

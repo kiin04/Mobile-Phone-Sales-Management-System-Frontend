@@ -36,24 +36,36 @@ import { convertPrice } from "../../utils";
 const ProductDetailsComponent = ({ idProduct }) => {
   const [color, setColor] = useState("pink");
   const [value, setValue] = useState("128GB");
+
+  const priceOptions = {
+    pink: {
+      "128GB": 25690000,
+      "256GB": 27690000,
+      "512GB": 29690000,
+    },
+    black: {
+      "128GB": 22790000,
+      "256GB": 24790000,
+      "512GB": 26790000,
+    },
+    blue: {
+      "128GB": 22790000,
+      "256GB": 24790000,
+      "512GB": 26790000,
+    },
+  };
+
   const onValueChange = (e) => {
     setValue(e.target.value);
-    
   };
   const onColorChange = (e) => {
     setColor(e.target.value);
-  }
-  
+  };
+
   const navigate = useNavigate();
-
-  
-
   const [NumProduct, setNumProduct] = useState(1);
-
   const location = useLocation();
-
   const dispatch = useDispatch();
-
   const user = useSelector((state) => state.user);
 
   const fetchGetDetailsProduct = async (context) => {
@@ -86,25 +98,11 @@ const ProductDetailsComponent = ({ idProduct }) => {
     queryFn: fetchGetDetailsProduct,
     enabled: !!idProduct,
   });
- 
-
-
 
   const handleAddOrderProduct = () => {
     if (!user?.id) {
       navigate("/sign-in", { state: location?.pathname });
     } else {
-      //   {
-      //     name: {type: String, required: true},
-      //     amount: { type: Number, required: true},
-      //     image: {type: String, required: true},
-      //     price: {type: Number, required: true},
-      //     product: {
-      //         type: mongoose.Schema.Types.ObjectId,
-      //         ref: 'Product',
-      //         required: true,
-      //     },
-      // },
       dispatch(
         addOrderProduct({
           orderItem: {
@@ -119,6 +117,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
     }
   };
 
+  const currentPrice  = priceOptions[color][value];
   return (
     <Loading isPending={isPending}>
       <Row style={{ padding: "25px" }}>
@@ -174,118 +173,89 @@ const ProductDetailsComponent = ({ idProduct }) => {
           </Row>
         </Col>
         <Col span={14}>
-          <WapperStyleNameProduct>
-            {productDetails?.name}
-          </WapperStyleNameProduct>
+        <WapperStyleNameProduct>{productDetails?.name}</WapperStyleNameProduct>
 
 
 
 
-          <Radio.Group onChange={onValueChange} value={value}>
-      <Row>
-        <Col>
-          <StyledRadioButton value="128GB">
-            <div>128GB</div>
-         
-          </StyledRadioButton>
-        </Col>
-        <Col>
-          <StyledRadioButton value="256GB">
-            <div>256GB</div>
-          
-          </StyledRadioButton>
-        </Col>
-        <Col>
-          <StyledRadioButton value="512GB">
-            <div>512GB</div>
-          
-          </StyledRadioButton>
-        </Col>
-      </Row>
-    </Radio.Group>
+        <Radio.Group onChange={onValueChange} value={value}>
+            <Row>
+              <Col>
+                <StyledRadioButton value="128GB">
+                  <div>128GB</div>
+                </StyledRadioButton>
+              </Col>
+              <Col>
+                <StyledRadioButton value="256GB">
+                  <div>256GB</div>
+                </StyledRadioButton>
+              </Col>
+              <Col>
+                <StyledRadioButton value="512GB">
+                  <div>512GB</div>
+                </StyledRadioButton>
+              </Col>
+            </Row>
+          </Radio.Group>
 
 
 
-    <h3>Chọn màu cho sản phẩm</h3>
-    <Radio.Group onChange={onColorChange} value={color}>
-      <Row gutter={[16, 16]}>
-        <Col>
-          <StyledColorButton value="black">
-          <div
-                style={{
-                  backgroundColor: "black",
-                  width: "20px",
-                  height: "20px",
-                  borderRadius: "5px",
-                  marginBottom: "10px",
-                  position:'absolute',
-                }}
-              />
-            <div>Đen  </div>
-            <div>22.790.000 đ</div>
-          </StyledColorButton>
-        </Col>
-        <Col>
-          <StyledColorButton value="pink">
-          <div
-                style={{
-                  backgroundColor: "pink",
-                  width: "20px",
-                  height: "20px",
-                  borderRadius: "5px",
-                  marginBottom: "10px",
-                  position:'absolute',
-                }}
-              />
-            <div>Hồng</div>
-            <div>25.690.000 đ</div>
-          </StyledColorButton>
-        </Col>
-        <Col>
-          <StyledColorButton value="blue">
-          <div
-      style={{
-        backgroundColor: "lightblue",
-        width: "20px",
-        height: "20px",
-        borderRadius: "5px",
-        marginBottom: "5px",
-        position:'absolute',
-      }}
-    />
-            <div>Xanh</div>
-            <div>22.790.000 đ</div>
-          </StyledColorButton>
-        </Col>
-      </Row>
-    </Radio.Group>
-      
-      
-    
-
-          
-
-
-
-          
-
-
-          <div>
-            {renderStars(productDetails?.rating)}
-            {/* <Rate allowHalf defaultValue={productDetails?.rating} value={productDetails?.rating}/> */}
-            <WapperStyleAssess style={{ marginLeft: "2px" }}>
-              {" "}
-              (10 đánh giá)
-            </WapperStyleAssess>
-          </div>
-
-
-
+          <h3>Chọn màu cho sản phẩm</h3>
+          <Radio.Group onChange={onColorChange} value={color}>
+            <Row gutter={[16, 16]}>
+              <Col>
+                <StyledColorButton value="black">
+                  <div
+                    style={{
+                      backgroundColor: "black",
+                      width: "15px",
+                      height: "15px",
+                      borderRadius: "5px",
+                      marginTop:"8px",
+                      position:'absolute',
+                    }}
+                  />
+                  <div>Đen</div>
+                  <div style={{fontSize:'10px'}}>{convertPrice(priceOptions.black[value])}</div>
+                </StyledColorButton>
+              </Col>
+              <Col>
+                <StyledColorButton value="pink">
+                  <div
+                    style={{
+                      backgroundColor: "pink",
+                      width: "15px",
+                      height: "15px",
+                      borderRadius: "5px",
+                      marginTop:"8px",
+                      position:'absolute',
+                    }}
+                  />
+                  <div>Hồng</div>
+                  <div style={{fontSize:'10px'}}>{convertPrice(priceOptions.pink[value])}</div>
+                </StyledColorButton>
+              </Col>
+              <Col>
+                <StyledColorButton value="blue">
+                  <div
+                    style={{
+                      backgroundColor: "lightblue",
+                      width: "15px",
+                      height: "15px",
+                      borderRadius: "5px",
+                      marginTop:"8px",
+                      position:'absolute',
+                    }}
+                  />
+                  <div>Xanh</div>
+                  <div style={{fontSize:'10px'}}>{convertPrice(priceOptions.blue[value])}</div>
+                </StyledColorButton>
+              </Col>
+            </Row>
+          </Radio.Group>
 
           <WapperPriceBlock>
-            <WapperTextPrice>
-              {convertPrice(productDetails?.price)}
-            </WapperTextPrice>
+            <WapperTextPrice>{convertPrice(currentPrice)}</WapperTextPrice>
           </WapperPriceBlock>
           <div>
             <WapperQualityProduct>
