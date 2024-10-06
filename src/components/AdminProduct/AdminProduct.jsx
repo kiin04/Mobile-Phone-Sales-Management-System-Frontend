@@ -46,9 +46,6 @@ const AdminProduct = () => {
     countInStock: "",
     rating: "",
     description: "",
-    colors: [],
-    ram: "",
-    storage: "",
     newType: "",
   });
 
@@ -61,18 +58,8 @@ const AdminProduct = () => {
   const [form] = Form.useForm();
 
   const mutation = useMutationHooks((data) => {
-    const {
-      name,
-      image,
-      type,
-      price,
-      countInStock,
-      rating,
-      description,
-      colors,
-      ram,
-      storage,
-    } = data;
+    const { name, image, type, price, countInStock, rating, description } =
+      data;
     const res = ProductService.createProduct({
       name,
       image,
@@ -81,9 +68,6 @@ const AdminProduct = () => {
       countInStock,
       rating,
       description,
-      colors,
-      ram,
-      storage,
     });
     return res;
   });
@@ -175,18 +159,13 @@ const AdminProduct = () => {
     const params = {
       name: stateProduct?.name,
       image: stateProduct?.image,
-      type: stateProduct?.type,
       price: stateProduct?.price,
       countInStock: stateProduct?.countInStock,
-      type:
-        stateProduct?.type === "add_type"
+      type:stateProduct?.type === "add_type"
           ? stateProduct.newType
           : stateProduct.type,
       rating: stateProduct?.rating,
       description: stateProduct?.description,
-      colors: stateProduct?.colors,
-      ram: stateProduct?.ram,
-      storage: stateProduct?.storage,
     };
     mutation.mutate(params, {
       onSettled: () => {
@@ -218,9 +197,6 @@ const AdminProduct = () => {
       countInStock: "",
       rating: "",
       description: "",
-      colors: "",
-      ram: "",
-      storage: "",
       newType: "",
     });
     form.resetFields();
@@ -235,9 +211,6 @@ const AdminProduct = () => {
       countInStock: "",
       rating: "",
       description: "",
-      colors: "",
-      ram: "",
-      storage: "",
       newType: "",
     });
     form.resetFields();
@@ -296,12 +269,8 @@ const AdminProduct = () => {
           type: stateProduct?.type,
           price: stateProduct?.price,
           countInStock: stateProduct?.countInStock,
-          type: res?.data?.type,
           rating: stateProduct?.rating,
           description: stateProduct?.description,
-          colors: stateProduct?.colors,
-          ram: stateProduct?.ram,
-          storage: stateProduct?.storage,
         });
       }
       setIsLoadingUpdate(false);
@@ -679,38 +648,6 @@ const AdminProduct = () => {
                 value={stateProduct.rating}
                 onChange={handleOnchange}
                 name="rating"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Ram"
-              name="ram"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input ram!",
-                },
-              ]}
-            >
-              <InputComponent
-                value={stateProduct.ram}
-                onChange={handleOnchange}
-                name="ram"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Storage"
-              name="storage"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input storage!",
-                },
-              ]}
-            >
-              <InputComponent
-                value={stateProduct.storage}
-                onChange={handleOnchange}
-                name="storage"
               />
             </Form.Item>
 
