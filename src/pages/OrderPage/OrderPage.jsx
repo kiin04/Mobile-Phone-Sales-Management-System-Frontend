@@ -1,5 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Checkbox, Form, InputNumber, message } from "antd";
+import { Checkbox, Form, InputNumber, message, Modal, Button } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import ButtonComponent from "../../components/ButtonComopnent/ButtonComponent";
 import {
@@ -28,6 +28,9 @@ import * as UserService from "../../services/UserServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useNavigate } from "react-router-dom";
+import {
+ TagOutlined,
+} from "@ant-design/icons";
 
 const OderPage = () => {
   const navigate = useNavigate();
@@ -37,6 +40,18 @@ const OderPage = () => {
     address: "",
     city: "",
   });
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
 
@@ -185,6 +200,7 @@ const OderPage = () => {
       city: "",
     });
   };
+
 
   const handleUpdateInfoUser = () => {
     const { name, address, city, phone } = stateUserDetails;
@@ -469,8 +485,92 @@ const OderPage = () => {
                 fontSize: "15px",
                 fontWeight: "200",
               }}
+              
             ></ButtonComponent>
+         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <TagOutlined style={{ marginRight: '5px' }} />
+          <span>Mã ưu đãi</span>
+        </div>
+        <a href="#"onClick={showModal} >Nhập mã giảm giá</a>
+        </div>
+        <Modal
+        title="Chọn Mã ưu đãi"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>Trở lại</Button>,
+          <Button key="submit" type="primary" onClick={handleOk}>OK</Button>,
+        ]}
+      >
+        
+        <div>
+          <div style={{ marginBottom: '10px', }}>
+            <input placeholder="Mã giảm giá" style={{ width: '95.5%', padding: '10px',borderRadius:'10px' }} />
+            <Button type="primary" style={{ marginTop: '10px', width: '100%' }}>ÁP DỤNG</Button>
+          </div>
+
+          <div>
+          <h3>Mã ưu đãi khi mua sản phẩm</h3>
+
+{/* Container có thanh cuộn dọc */}
+<div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid #ddd', padding: '10px' }}>
+  {/* Example vouchers */}
+  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALEVNPAY</span> để giảm ₫5tr khi thanh toán qua VNPAY.</p>
+    <div>Điều kiện: Khi Mua Sản Phẩm Iphone 16 Series</div>
+    <div>HSD: 30.12.2024</div>
+  </div>
+
+  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALEMOMO</span> để giảm ₫2tr khi thanh toán qua MOMO.</p>
+    <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫10tr</div>
+    <div>HSD: 30.12.2024</div>
+  </div>
+
+
+  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALE500</span> để giảm ₫500k khi thanh toán.</p>
+    <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫5tr</div>
+    <div>HSD: 31.12.2024</div>
+  </div>
+
+  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALE100</span> để giảm ₫100k cho đơn hàng.</p>
+    <div>Điều kiện: Không áp dụng cho sản phẩm giảm giá</div>
+    <div>HSD: 01.01.2025</div>
+  </div>
+
+
+  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALESPECIAL</span> để giảm ₫300k khi mua sắm trên ứng dụng.</p>
+    <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫3tr</div>
+    <div>HSD: 15.11.2024</div>
+  </div>
+
+  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALEBIG</span> để giảm ₫8tr cho đơn hàng lớn.</p>
+    <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫10tr</div>
+    <div>HSD: 30.12.2024</div>
+  </div>
+
+ 
+</div>
+</div>
+</div>
+</Modal>
+    
+      
+          
+          
+            
+            
+            
           </WrapperRight>
+          
+
+         
         </div>
       </div>
       <ModalComponent
