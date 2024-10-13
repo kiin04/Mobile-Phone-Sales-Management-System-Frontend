@@ -22,6 +22,9 @@ import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import InputFormPassword from "../../components/InputForm/InputFormPassword";
 import { updateUser } from "../../redux/slices/userSlide";
+import { GoogleLogin } from '@react-oauth/google';
+
+
 
 
 const SignInPage = () => {
@@ -40,6 +43,8 @@ const SignInPage = () => {
   const mutationRegister = useMutationHooks((data) =>
     UserService.registerUser(data)
   );
+ 
+  
 
   const {
     data: loginData,
@@ -70,6 +75,7 @@ const SignInPage = () => {
   const handleOnchangeConfirmPasswordRegister = (value) => {
     setConfirmPasswordRegister(value);
   };
+  
   useEffect(() => {
     if (loginData?.status === "ERR") {
       message.error(
@@ -87,14 +93,15 @@ const SignInPage = () => {
         "access_token",
         JSON.stringify(loginData?.access_token)
       );
-      if (loginData?.access_token) {
-        const decoded = jwtDecode(loginData?.access_token);
-        if (decoded?.id) {
-          handleGetDetailsUser(decoded?.id, loginData?.access_token);
+        if (loginData?.access_token) {
+          const decoded = jwtDecode(loginData?.access_token);
+          if (decoded?.id) {
+            handleGetDetailsUser(decoded?.id, loginData?.access_token);
+          }
         }
+        
       }
-    }
-  }, [isLoginSuccess, isLoginError]);
+    }, [isLoginSuccess, isLoginError]);
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
@@ -182,6 +189,21 @@ const SignInPage = () => {
                     />
                   </Loading>
                 </ButtonWrapper>
+                <GoogleLogin
+   onSuccess={credentialResponse => {
+    const credentialResponseDecoded = jwtDecode(credentialResponse.credential);
+    console.log(credentialResponseDecoded);
+    localStorage.setItem('access_token', credentialResponse.credential);
+    if (credentialResponseDecoded?.sub) {
+      handleGetDetailsUser(credentialResponseDecoded?.sub, credentialResponse.credential);
+    }
+  }}
+  onError={() => {
+    console.log('Login Failed');
+  }}
+/>
+
+                
                 <p>Quên mật khẩu?</p>
               </div>
             </WapperContentLogin>

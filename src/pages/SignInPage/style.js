@@ -59,4 +59,6 @@ export const WapperContentLogin = styled.div`
 export const WapperContentRegister = styled.div`
   width: 100%;
 `;
-
+export const GoogleLogin = styled.div`
+justify-content:center;
+`
