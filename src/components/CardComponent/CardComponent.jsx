@@ -22,24 +22,30 @@ const CardComponent = (props) => {
     selled,
     id,
   } = props;
-  const navigate = useNavigate()
+  console.log("props", props);
+  const navigate = useNavigate();
   const handleDetailsProduct = (id) => {
-    navigate(`/product-details/${id}`)
-  }
+    navigate(`/product-details/${id}`);
+  };
   return (
-    //chua lam an san pham khi khong con san pham trong ton kho
     <Card
       hoverable
-      style={{ width: 240, padding: 10,height:350}}
+      style={{
+        width: 240,
+        padding: 10,
+        height: 350,
+        opacity: countInStock === 0 ? 0.5 : 1, // Giảm độ mờ nếu hết hàng
+        pointerEvents: countInStock === 0 ? "none" : "auto", // Tắt sự kiện click nếu hết hàng
+      }}
       bodyStyle={{ padding: 10 }}
       cover={<img alt="example" src={image} />}
-      onClick={() =>  handleDetailsProduct(id)}
+      onClick={() => handleDetailsProduct(id)} // Thêm sự kiện click vào Card
     >
       <StyleNameProduct>{name}</StyleNameProduct>
       <div style={{ display: "flex", alignItems: "center" }}>
         <WapperPriceText>
           <span style={{ marginRight: "8px" }}>{convertPrice(price)}</span>
-          <WapperDiscountText> - { 5}%</WapperDiscountText>
+          <WapperDiscountText> - {5}%</WapperDiscountText>
         </WapperPriceText>
       </div>
       <WapperReportText>
@@ -50,9 +56,22 @@ const CardComponent = (props) => {
           />
         </span>
         <span>
-          <span style={{ marginLeft: "2px" }}> | Đã bán {selled || 0}+</span>
+          <span style={{ marginLeft: "2px" }}> | Đã bán {selled || 0}</span>
         </span>
       </WapperReportText>
+      {countInStock === 0 && (
+        <div
+          style={{
+            color: "red",
+            textAlign: "center",
+            marginBottom: 5,
+            fontSize: 20,
+            fontWeight: 500,
+          }}
+        >
+          Hết hàng
+        </div>
+      )}
     </Card>
   );
 };
