@@ -28,9 +28,7 @@ import * as UserService from "../../services/UserServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useNavigate } from "react-router-dom";
-import {
- TagOutlined,
-} from "@ant-design/icons";
+import { TagOutlined } from "@ant-design/icons";
 
 const OderPage = () => {
   const navigate = useNavigate();
@@ -183,7 +181,7 @@ const OderPage = () => {
     console.log("user", user);
     if (!order?.orderItemSelected?.length) {
       message.warning("Bạn chưa chọn sản phẩm");
-    } else if (!user?.phone || !user?.address || !user?.name) {
+    } else if (!user?.phone || !user?.address || !user?.name || !user?.city) {
       setIsOpenModalUpdateInfo(true);
       message.warning("Vui lòng cập nhật thông tin giao hàng");
     } else {
@@ -201,7 +199,26 @@ const OderPage = () => {
     });
   };
 
-
+  // const handleUpdateInfoUser = () => {
+  //   const { name, address, city, phone } = stateUserDetails;
+  //   if (name && address && city && phone) {
+  //     mutationUpdate.mutate(
+  //       { id: user?.id, token: user?.access_token, ...stateUserDetails },
+  //       {
+  //         onSuccess: () => {
+  //           // Refresh user details from Redux store
+  //           setStateUserDetails({
+  //             city: user?.city,
+  //             name: user?.name,
+  //             address: user?.address,
+  //             phone: user?.phone,
+  //           });
+  //           setIsOpenModalUpdateInfo(false);
+  //         },
+  //       }
+  //     );
+  //   }
+  // };
   const handleUpdateInfoUser = () => {
     const { name, address, city, phone } = stateUserDetails;
     if (name && address && city && phone) {
@@ -209,19 +226,27 @@ const OderPage = () => {
         { id: user?.id, token: user?.access_token, ...stateUserDetails },
         {
           onSuccess: () => {
-            // Refresh user details from Redux store
-            setStateUserDetails({
-              city: user?.city,
+            // Cập nhật lại thông tin người dùng từ Redux hoặc thông tin phản hồi
+            setStateUserDetails((prevState) => ({
+              ...prevState,
+              city: user?.city,  // Hoặc từ response của API nếu có
               name: user?.name,
               address: user?.address,
               phone: user?.phone,
-            });
-            setIsOpenModalUpdateInfo(false);
+            }));
+            setIsOpenModalUpdateInfo(false); // Đóng modal
+            message.success("Cập nhật thông tin thành công!"); // Thông báo thành công
           },
+          onError: (error) => {
+            message.error("Cập nhật thất bại. Vui lòng thử lại!"); // Thông báo lỗi
+          }
         }
       );
+    } else {
+      message.warning("Vui lòng điền đầy đủ thông tin!"); // Cảnh báo nếu thiếu thông tin
     }
   };
+  
 
   useEffect(() => {
     setAddress(user?.address);
@@ -354,7 +379,9 @@ const OderPage = () => {
               <WrapperInfo>
                 <div>
                   <span>Địa chỉ: </span>
-                  <span style={{ fontWeight: "bold" }}>{address}, {city}</span>
+                  <span style={{ fontWeight: "bold" }}>
+                    {address}, {city}
+                  </span>
                   <span
                     onClick={handleChangeAddress}
                     style={{
@@ -485,92 +512,215 @@ const OderPage = () => {
                 fontSize: "15px",
                 fontWeight: "200",
               }}
-              
             ></ButtonComponent>
-         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <TagOutlined style={{ marginRight: '5px' }} />
-          <span>Mã ưu đãi</span>
-        </div>
-        <a href="#"onClick={showModal} >Nhập mã giảm giá</a>
-        </div>
-        <Modal
-        title="Chọn Mã ưu đãi"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button key="back" onClick={handleCancel}>Trở lại</Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>OK</Button>,
-        ]}
-      >
-        
-        <div>
-          <div style={{ marginBottom: '10px', }}>
-            <input placeholder="Mã giảm giá" style={{ width: '95.5%', padding: '10px',borderRadius:'10px' }} />
-            <Button type="primary" style={{ marginTop: '10px', width: '100%' }}>ÁP DỤNG</Button>
-          </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <TagOutlined style={{ marginRight: "5px" }} />
+                <span>Mã ưu đãi</span>
+              </div>
+              <a href="#" onClick={showModal}>
+                Nhập mã giảm giá
+              </a>
+            </div>
+            <Modal
+              title="Chọn Mã ưu đãi"
+              visible={isModalVisible}
+              onOk={handleOk}
+              onCancel={handleCancel}
+              footer={[
+                <Button key="back" onClick={handleCancel}>
+                  Trở lại
+                </Button>,
+                <Button key="submit" type="primary" onClick={handleOk}>
+                  OK
+                </Button>,
+              ]}
+            >
+              <div>
+                <div style={{ marginBottom: "10px" }}>
+                  <input
+                    placeholder="Mã giảm giá"
+                    style={{
+                      width: "95.5%",
+                      padding: "10px",
+                      borderRadius: "10px",
+                    }}
+                  />
+                  <Button
+                    type="primary"
+                    style={{ marginTop: "10px", width: "100%" }}
+                  >
+                    ÁP DỤNG
+                  </Button>
+                </div>
 
-          <div>
-          <h3>Mã ưu đãi khi mua sản phẩm</h3>
+                <div>
+                  <h3>Mã ưu đãi khi mua sản phẩm</h3>
 
-{/* Container có thanh cuộn dọc */}
-<div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid #ddd', padding: '10px' }}>
-  {/* Example vouchers */}
-  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
-    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALEVNPAY</span> để giảm ₫5tr khi thanh toán qua VNPAY.</p>
-    <div>Điều kiện: Khi Mua Sản Phẩm Iphone 16 Series</div>
-    <div>HSD: 30.12.2024</div>
-  </div>
+                  {/* Container có thanh cuộn dọc */}
+                  <div
+                    style={{
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      border: "1px solid #ddd",
+                      padding: "10px",
+                    }}
+                  >
+                    {/* Example vouchers */}
+                    <div
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <p style={{ fontSize: "15px" }}>
+                        Nhập mã{" "}
+                        <span
+                          style={{
+                            fontWeight: "bold",
+                            color: "red",
+                            fontSize: "18px",
+                          }}
+                        >
+                          SALEVNPAY
+                        </span>{" "}
+                        để giảm ₫5tr khi thanh toán qua VNPAY.
+                      </p>
+                      <div>Điều kiện: Khi Mua Sản Phẩm Iphone 16 Series</div>
+                      <div>HSD: 30.12.2024</div>
+                    </div>
 
-  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
-    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALEMOMO</span> để giảm ₫2tr khi thanh toán qua MOMO.</p>
-    <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫10tr</div>
-    <div>HSD: 30.12.2024</div>
-  </div>
+                    <div
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <p style={{ fontSize: "15px" }}>
+                        Nhập mã{" "}
+                        <span
+                          style={{
+                            fontWeight: "bold",
+                            color: "red",
+                            fontSize: "18px",
+                          }}
+                        >
+                          SALEMOMO
+                        </span>{" "}
+                        để giảm ₫2tr khi thanh toán qua MOMO.
+                      </p>
+                      <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫10tr</div>
+                      <div>HSD: 30.12.2024</div>
+                    </div>
 
+                    <div
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <p style={{ fontSize: "15px" }}>
+                        Nhập mã{" "}
+                        <span
+                          style={{
+                            fontWeight: "bold",
+                            color: "red",
+                            fontSize: "18px",
+                          }}
+                        >
+                          SALE500
+                        </span>{" "}
+                        để giảm ₫500k khi thanh toán.
+                      </p>
+                      <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫5tr</div>
+                      <div>HSD: 31.12.2024</div>
+                    </div>
 
-  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
-    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALE500</span> để giảm ₫500k khi thanh toán.</p>
-    <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫5tr</div>
-    <div>HSD: 31.12.2024</div>
-  </div>
+                    <div
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <p style={{ fontSize: "15px" }}>
+                        Nhập mã{" "}
+                        <span
+                          style={{
+                            fontWeight: "bold",
+                            color: "red",
+                            fontSize: "18px",
+                          }}
+                        >
+                          SALE100
+                        </span>{" "}
+                        để giảm ₫100k cho đơn hàng.
+                      </p>
+                      <div>Điều kiện: Không áp dụng cho sản phẩm giảm giá</div>
+                      <div>HSD: 01.01.2025</div>
+                    </div>
 
-  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
-    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALE100</span> để giảm ₫100k cho đơn hàng.</p>
-    <div>Điều kiện: Không áp dụng cho sản phẩm giảm giá</div>
-    <div>HSD: 01.01.2025</div>
-  </div>
+                    <div
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <p style={{ fontSize: "15px" }}>
+                        Nhập mã{" "}
+                        <span
+                          style={{
+                            fontWeight: "bold",
+                            color: "red",
+                            fontSize: "18px",
+                          }}
+                        >
+                          SALESPECIAL
+                        </span>{" "}
+                        để giảm ₫300k khi mua sắm trên ứng dụng.
+                      </p>
+                      <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫3tr</div>
+                      <div>HSD: 15.11.2024</div>
+                    </div>
 
-
-  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
-    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALESPECIAL</span> để giảm ₫300k khi mua sắm trên ứng dụng.</p>
-    <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫3tr</div>
-    <div>HSD: 15.11.2024</div>
-  </div>
-
-  <div style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
-    <p style={{ fontSize: '15px' }}>Nhập mã <span style={{ fontWeight: 'bold', color: 'red', fontSize: '18px' }}>SALEBIG</span> để giảm ₫8tr cho đơn hàng lớn.</p>
-    <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫10tr</div>
-    <div>HSD: 30.12.2024</div>
-  </div>
-
- 
-</div>
-</div>
-</div>
-</Modal>
-    
-      
-          
-          
-            
-            
-            
+                    <div
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <p style={{ fontSize: "15px" }}>
+                        Nhập mã{" "}
+                        <span
+                          style={{
+                            fontWeight: "bold",
+                            color: "red",
+                            fontSize: "18px",
+                          }}
+                        >
+                          SALEBIG
+                        </span>{" "}
+                        để giảm ₫8tr cho đơn hàng lớn.
+                      </p>
+                      <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫10tr</div>
+                      <div>HSD: 30.12.2024</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Modal>
           </WrapperRight>
-          
-
-         
         </div>
       </div>
       <ModalComponent
@@ -579,6 +729,7 @@ const OderPage = () => {
         open={isOpenModalUpdateInfo}
         onCancel={handleCancelUpdate}
         onOk={handleUpdateInfoUser}
+        width={600}
       >
         <Loading isPending={false}>
           <Form
@@ -597,7 +748,7 @@ const OderPage = () => {
             form={form}
           >
             <Form.Item
-              label="Name"
+              label="Tên"
               name="name"
               rules={[
                 {
@@ -613,7 +764,7 @@ const OderPage = () => {
               />
             </Form.Item>
             <Form.Item
-              label="City"
+              label="Thành Phố"
               name="city"
               rules={[
                 {
@@ -630,7 +781,7 @@ const OderPage = () => {
             </Form.Item>
 
             <Form.Item
-              label="Phone"
+              label="Số điện thoại"
               name="phone"
               rules={[
                 {
@@ -646,7 +797,7 @@ const OderPage = () => {
             </Form.Item>
 
             <Form.Item
-              label="Address"
+              label="Địa chỉ"
               name="address"
               rules={[
                 {

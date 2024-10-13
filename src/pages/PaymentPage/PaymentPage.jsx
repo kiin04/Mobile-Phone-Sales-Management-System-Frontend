@@ -124,6 +124,15 @@ const PaymentPage = () => {
         totalPrice: totalPriceMemo,
         user: user?.id,
       });
+    } else {
+      console.log("user?.access_token", user?.access_token);
+      console.log("order?.orderItemSelected", order?.orderItemSelected);
+      console.log("user?.name", user?.name);
+      console.log("user?.address", user?.address);
+      console.log("user?.phone", user?.phone);
+      console.log("user?.city", user?.city)
+      console.log("user?.id", user?.id);
+      console.log("priceMemo", priceMemo);
     }
   };
 

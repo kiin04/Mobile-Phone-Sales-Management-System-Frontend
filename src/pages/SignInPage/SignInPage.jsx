@@ -22,10 +22,7 @@ import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import InputFormPassword from "../../components/InputForm/InputFormPassword";
 import { updateUser } from "../../redux/slices/userSlide";
-import { GoogleLogin } from '@react-oauth/google';
-
-
-
+import { GoogleLogin } from "@react-oauth/google";
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -43,8 +40,6 @@ const SignInPage = () => {
   const mutationRegister = useMutationHooks((data) =>
     UserService.registerUser(data)
   );
- 
-  
 
   const {
     data: loginData,
@@ -75,7 +70,7 @@ const SignInPage = () => {
   const handleOnchangeConfirmPasswordRegister = (value) => {
     setConfirmPasswordRegister(value);
   };
-  
+
   useEffect(() => {
     if (loginData?.status === "ERR") {
       message.error(
@@ -93,15 +88,14 @@ const SignInPage = () => {
         "access_token",
         JSON.stringify(loginData?.access_token)
       );
-        if (loginData?.access_token) {
-          const decoded = jwtDecode(loginData?.access_token);
-          if (decoded?.id) {
-            handleGetDetailsUser(decoded?.id, loginData?.access_token);
-          }
+      if (loginData?.access_token) {
+        const decoded = jwtDecode(loginData?.access_token);
+        if (decoded?.id) {
+          handleGetDetailsUser(decoded?.id, loginData?.access_token);
         }
-        
       }
-    }, [isLoginSuccess, isLoginError]);
+    }
+  }, [isLoginSuccess, isLoginError]);
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
@@ -190,20 +184,41 @@ const SignInPage = () => {
                   </Loading>
                 </ButtonWrapper>
                 <GoogleLogin
-   onSuccess={credentialResponse => {
-    const credentialResponseDecoded = jwtDecode(credentialResponse.credential);
-    console.log(credentialResponseDecoded);
-    localStorage.setItem('access_token', credentialResponse.credential);
-    if (credentialResponseDecoded?.sub) {
-      handleGetDetailsUser(credentialResponseDecoded?.sub, credentialResponse.credential);
-    }
-  }}
-  onError={() => {
-    console.log('Login Failed');
-  }}
-/>
+                  onSuccess={async (credentialResponse) => {
+                    const googleIdToken = credentialResponse.credential; // Lấy GOOGLE_ID_TOKEN
+                    // console.log("GOOGLE_ID_TOKEN", googleIdToken);
 
-                
+                    // Gọi API để đăng nhập bằng Google
+                    try {
+                      const response = await UserService.loginUserWithGoogle({
+                        idToken: googleIdToken,
+                      }); // Thay đổi hàm này để gọi API đúng cách
+                      // console.log("API Response:", response); // Xử lý phản hồi từ server
+
+                      if (response?.status === "OK") {
+                        message.success("Đăng nhập thành công!");
+
+                        // Lưu access_token vào localStorage
+                        const accessToken = response.data.access_token; // Lấy access_token từ phản hồi
+                        localStorage.setItem(
+                          "access_token",
+                          JSON.stringify(accessToken) // Lưu access_token vào localStorage
+                        );
+                        const decoded = jwtDecode(accessToken); // Giải mã access_token
+                        if (decoded?.id) {
+                          handleGetDetailsUser(decoded.id, accessToken); // Gọi để lấy chi tiết người dùng
+                        }
+                      }
+                    } catch (error) {
+                      console.error("Error logging in with Google: ", error);
+                      message.error("Đăng nhập thất bại với Google.");
+                    }
+                  }}
+                  onError={() => {
+                    console.log("Login Failed");
+                  }}
+                />
+
                 <p>Quên mật khẩu?</p>
               </div>
             </WapperContentLogin>
