@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Space, Radio } from "antd";
+import { Space, Radio, Flex } from "antd";
 import ButtonComponent from "../../components/ButtonComopnent/ButtonComponent";
 import InputForm from "../../components/InputForm/InputForm";
 import {
@@ -12,6 +12,7 @@ import {
   RadioButton,
   WapperContentLogin,
   WapperContentRegister,
+  GoogleLoginButton,
 } from "./style";
 import * as UserService from "../../services/UserServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
@@ -183,6 +184,8 @@ const SignInPage = () => {
                     />
                   </Loading>
                 </ButtonWrapper>
+                <p style={{textAlign:"center"}}>hoặc</p>
+                <GoogleLoginButton>
                 <GoogleLogin
                   onSuccess={async (credentialResponse) => {
                     const googleIdToken = credentialResponse.credential; // Lấy GOOGLE_ID_TOKEN
@@ -217,9 +220,12 @@ const SignInPage = () => {
                   onError={() => {
                     console.log("Login Failed");
                   }}
+         
+                
                 />
+               </GoogleLoginButton>
 
-                <p>Quên mật khẩu?</p>
+              
               </div>
             </WapperContentLogin>
           )}
