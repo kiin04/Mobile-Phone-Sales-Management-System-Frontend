@@ -7,6 +7,7 @@ import {
   convertPrice,
   convertStatusOrder,
   convertPaidOrder,
+  convertPercent,
 } from "../../utils";
 import * as OrderService from "../../services/OrderServices";
 import { orderContant } from "../../contant";
@@ -38,6 +39,8 @@ const AdminOrder = () => {
     { label: "Tổng tiền", key: "totalPrice" },
     { label: "Tình trạng", key: "orderStatus" },
     { label: "Thanh toán", key: "isPaid" },
+    { label: "Mã giảm giá áp dụng", key: "discountCode" },
+    { label: "Phần trăm giảm giá", key: "discountPercentage" },
   ];
 
   const columns = [
@@ -50,31 +53,6 @@ const AdminOrder = () => {
       title: "Số điện thoại",
       dataIndex: "phone",
       sorter: (a, b) => a.phone.length - b.phone.length,
-    },
-    {
-      title: "Địa chỉ",
-      dataIndex: "address",
-      sorter: (a, b) => a.address - b.address,
-    },
-    {
-      title: "Thành phố",
-      dataIndex: "city",
-      sorter: (a, b) => a.city - b.city,
-    },
-    {
-      title: "Tiền giao hàng",
-      dataIndex: "shippingPrice",
-      sorter: (a, b) => a.shippingPrice - b.shippingPrice,
-    },
-    {
-      title: "Phương thức thanh toán",
-      dataIndex: "paymentMethod",
-      sorter: (a, b) => a.paymentMethod - b.paymentMethod,
-    },
-    {
-      title: "Tổng tiền đơn hàng ",
-      dataIndex: "totalPrice",
-      sorter: (a, b) => a.totalPrice - b.totalPrice,
     },
     {
       title: "Tình trạng đơn hàng",
@@ -107,6 +85,7 @@ const AdminOrder = () => {
         );
       },
     },
+    
     {
       title: "Thanh toán",
       dataIndex: "isPaid",
@@ -130,13 +109,52 @@ const AdminOrder = () => {
         return (
           <Dropdown overlay={menu} trigger={["click"]}>
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <a onClick={(e) => e.preventDefault()}>
-                {paidText}
-              </a>
+              <a onClick={(e) => e.preventDefault()}>{paidText}</a>
             </div>
           </Dropdown>
         );
       },
+    },
+    {
+      title: "Tổng tiền đơn hàng ",
+      dataIndex: "totalPrice",
+      color: "red",
+      sorter: (a, b) => a.totalPrice - b.totalPrice,
+    },
+    {
+      title: "Tiền giao hàng",
+      dataIndex: "shippingPrice",
+      sorter: (a, b) => a.shippingPrice - b.shippingPrice,
+    },
+    {
+      title: "Tỷ lệ giảm giá",
+      dataIndex: "discountPercentage",
+      width: 10,
+      sorter: (a, b) => a.discountPercentage - b.discountPercentage,
+    },
+    {
+      title: "Mã giảm giá",
+      dataIndex: "discountCode",
+      width: 50,
+      sorter: (a, b) => a.discountCode - b.discountCode,
+    },
+    {
+      title: "Phương thức thanh toán",
+      dataIndex: "paymentMethod",
+      width: 50,
+      sorter: (a, b) => a.paymentMethod - b.paymentMethod,
+    },
+    
+
+    {
+      title: "Địa chỉ",
+      dataIndex: "address",
+      sorter: (a, b) => a.address - b.address,
+    },
+    {
+      title: "Thành phố",
+      dataIndex: "city",
+      sorter: (a, b) => a.city - b.city,
     },
   ];
   useEffect(() => {
@@ -154,6 +172,7 @@ const AdminOrder = () => {
         shippingPrice: convertPrice(order?.shippingPrice),
         orderStatus: convertStatusOrder(order?.orderStatus),
         isPaid: order?.isPaid,
+        discountPercentage: convertPercent(order?.discountPercentage),
       }));
       setDataTable(updatedDataTable); // Cập nhật trạng thái dataTable
     }

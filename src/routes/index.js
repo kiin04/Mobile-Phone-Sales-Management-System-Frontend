@@ -67,7 +67,7 @@ export const routes = [
         page: ProductDetails,
         isShowHeader: true
     },
-    {
+    {//cần tối ưu
         path: '/outstandingphone',
         page: OutstandingPhonePage,
         isShowHeader: true

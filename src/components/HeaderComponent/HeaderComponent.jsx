@@ -175,10 +175,7 @@ const HeaderComponent = () => {
             <span>Tra cứu đơn hàng</span>
           </WrapperShipperHeader>
         </Col>
-
-
       </WrapperHeader>
-
       
       <div style={{ width: "92.15%",textAlign:"center", position: "relative", margin:" 0 auto", background:"#008bd4", paddingLeft:"120px"}}>
         {typeProducts.map((item) => (

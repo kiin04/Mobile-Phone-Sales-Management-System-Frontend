@@ -564,7 +564,7 @@ const AdminUser = ({ theme, setTheme }) => {
               </div>
 
               <Button type="primary" htmlType="submit">
-                Apply
+                Xác nhận
               </Button>
             </Form.Item>
           </Form>

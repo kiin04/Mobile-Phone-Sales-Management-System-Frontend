@@ -40,7 +40,6 @@ export const refreshToken = async () => {
     const res = await axios.post(`${import.meta.env.VITE_SERVER_HOST}/user/refresh-token`, {
         withCredentials: true
     })
-    console.log("res.data",res.data)
     return res.data
 }
 

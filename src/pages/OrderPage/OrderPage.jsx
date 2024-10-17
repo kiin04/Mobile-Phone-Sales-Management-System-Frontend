@@ -20,6 +20,8 @@ import {
   removeAllOrderProduct,
   removeOrderProduct,
   selectedOrder,
+  setDiscount,
+  setDiscountPercentage,
 } from "../../redux/slices/orderSlide";
 import { convertPrice } from "../../utils";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
@@ -29,9 +31,15 @@ import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useNavigate } from "react-router-dom";
 import { TagOutlined } from "@ant-design/icons";
+import * as DiscountService from "../../services/DiscountServices";
+import { useQuery } from "@tanstack/react-query";
 
 const OderPage = () => {
+  const [checkDiscountCode, setCheckDiscountCode] = useState("");
+  const [DiscountAffterApply, setDiscountAffterApply] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [stateUserDetails, setStateUserDetails] = useState({
     name: "",
     phone: "",
@@ -70,6 +78,39 @@ const OderPage = () => {
 
   const [listChecked, setListChecked] = useState([]);
 
+  const fetchDiscountAll = async () => {
+    const res = await DiscountService.getAllDiscount();
+    const discountFinal = res?.data?.map((discount) => {
+      const remainingDiscount = discount.maxUses - discount.usedCount;
+      return {
+        ...discount,
+        remainingDiscount: remainingDiscount,
+      };
+    });
+    return discountFinal;
+  };
+  const { isLoading: isLoadingDiscount, data: dataDiscount } = useQuery({
+    queryKey: ["discounts"],
+    queryFn: fetchDiscountAll,
+  });
+
+  const handleCheckDiscount = async () => {
+    try {
+      const CheckDiscount = await DiscountService.getDetailDiscount(
+        checkDiscountCode
+      );
+      if (CheckDiscount.status === "OK") {
+        setDiscountAffterApply(CheckDiscount.data.discountPercentage);
+        dispatch(setDiscount(CheckDiscount.data.code)); // Cập nhật discount
+        dispatch(setDiscountPercentage(CheckDiscount.data.discountPercentage)); // Cập nhật discountPercentage
+        message.success("Lấy mã giảm giá thành công");
+      } else {
+        message.error("Mã giảm giá không hợp lệ!");
+      }
+    } catch (error) {
+      message.error("Đã xảy ra lỗi khi áp dụng mã giảm giá! Lỗi: ", error);
+    }
+  };
   const priceMemo = useMemo(() => {
     const result = order?.orderItemSelected?.reduce((total, cur) => {
       return total + cur.price * cur.amount;
@@ -95,25 +136,38 @@ const OderPage = () => {
   }, [priceMemo]);
 
   const totalPriceMemo = useMemo(() => {
+    const discount = DiscountAffterApply;
     const result =
       order?.orderItemSelected?.reduce((total, cur) => {
         const price = cur.price || 0; // Đảm bảo giá là số
         const amount = cur.amount || 0; // Đảm bảo số lượng là số
         return total + price * amount;
       }, 0) || 0; // Đảm bảo không bị NaN
+    if (discount) {
+      const PriceDiscount = (result / 100) * discount;
+      return result - PriceDiscount + diliveryPriceMemo;
+    } else {
+      return result + diliveryPriceMemo || 0; // Tính tổng giá thành
+    }
+  }, [order?.orderItemSelected, diliveryPriceMemo, DiscountAffterApply]); // Thêm order vào mảng phụ thuộc
 
-    return result + diliveryPriceMemo || 0; // Tính tổng giá thành
-  }, [order?.orderItemSelected, diliveryPriceMemo]); // Thêm order vào mảng phụ thuộc
-
-  // const priceDiscountBeforeMemo = useMemo(() => {
-  //   const result = order?.orderItemSelected?.reduce((total, cur) => {
-  //     return (priceMemo + diliveryPriceMemo) / cur.discount;
-  //   }, 0);
-  //   return result || 0; // Đảm bảo trả về 0 nếu không có kết quả
-  // }, [priceMemo, diliveryPriceMemo]);
+  const PriceDiscounted = useMemo(() => {
+    const discount = DiscountAffterApply;
+    const result =
+      order?.orderItemSelected?.reduce((total, cur) => {
+        const price = cur.price || 0; // Đảm bảo giá là số
+        const amount = cur.amount || 0; // Đảm bảo số lượng là số
+        return total + price * amount;
+      }, 0) || 0; // Đảm bảo không bị NaN
+    if (discount) {
+      const PriceDiscount = (result / 100) * 10;
+      return PriceDiscount;
+    } else {
+      return 0;
+    }
+  }, [priceMemo, diliveryPriceMemo, DiscountAffterApply]);
 
   const onChange = (e) => {
-    console.log(`checked = ${e.target.value}`);
     if (listChecked.includes(e.target.value)) {
       const newListChecked = listChecked.filter(
         (item) => item !== e.target.value
@@ -154,8 +208,6 @@ const OderPage = () => {
       });
     }
   }, [isOpenModalUpdateInfo]);
-
-  const dispatch = useDispatch();
 
   const handleChangeAddress = () => {
     setIsOpenModalUpdateInfo(true);
@@ -226,27 +278,25 @@ const OderPage = () => {
         { id: user?.id, token: user?.access_token, ...stateUserDetails },
         {
           onSuccess: () => {
-            // Cập nhật lại thông tin người dùng từ Redux hoặc thông tin phản hồi
             setStateUserDetails((prevState) => ({
               ...prevState,
-              city: user?.city,  // Hoặc từ response của API nếu có
+              city: user?.city,
               name: user?.name,
               address: user?.address,
               phone: user?.phone,
             }));
-            setIsOpenModalUpdateInfo(false); // Đóng modal
-            message.success("Cập nhật thông tin thành công!"); // Thông báo thành công
+            setIsOpenModalUpdateInfo(false);
+            message.success("Cập nhật thông tin thành công!");
           },
           onError: (error) => {
-            message.error("Cập nhật thất bại. Vui lòng thử lại!"); // Thông báo lỗi
-          }
+            message.error("Cập nhật thất bại. Vui lòng thử lại!");
+          },
         }
       );
     } else {
-      message.warning("Vui lòng điền đầy đủ thông tin!"); // Cảnh báo nếu thiếu thông tin
+      message.warning("Vui lòng điền đầy đủ thông tin!");
     }
   };
-  
 
   useEffect(() => {
     setAddress(user?.address);
@@ -341,9 +391,6 @@ const OderPage = () => {
                         </span>
                       </span>
                       <WrapperCountOrder>
-                        {/* <WrapperPriceDiscount>
-                              {order?.amount}
-                            </WrapperPriceDiscount> */}
                         <InputNumber
                           defaultValue={1}
                           min={1}
@@ -424,13 +471,13 @@ const OderPage = () => {
                   <span>Giảm giá</span>
                   <span
                     style={{
-                      color: "#000",
+                      color: "red",
                       fontSize: "14px",
                       justifyContent: "space-between",
                       fontWeight: "600",
                     }}
                   >
-                    {/* {`${priceDiscountMemo} %`} */}
+                    {DiscountAffterApply} %
                   </span>
                 </div>
                 <div
@@ -472,7 +519,7 @@ const OderPage = () => {
                       fontWeight: "600",
                     }}
                   >
-                    {/* {convertPrice(priceDiscountBeforeMemo)} */}
+                    {convertPrice(PriceDiscounted)}
                   </span>
                 </div>
               </WrapperInfo>
@@ -524,9 +571,7 @@ const OderPage = () => {
                 <TagOutlined style={{ marginRight: "5px" }} />
                 <span>Mã ưu đãi</span>
               </div>
-              <a href="#" onClick={showModal}>
-                Nhập mã giảm giá
-              </a>
+              <a onClick={showModal}>Nhập mã giảm giá</a>
             </div>
             <Modal
               title="Chọn Mã ưu đãi"
@@ -536,9 +581,6 @@ const OderPage = () => {
               footer={[
                 <Button key="back" onClick={handleCancel}>
                   Trở lại
-                </Button>,
-                <Button key="submit" type="primary" onClick={handleOk}>
-                  OK
                 </Button>,
               ]}
             >
@@ -551,8 +593,11 @@ const OderPage = () => {
                       padding: "10px",
                       borderRadius: "10px",
                     }}
+                    value={checkDiscountCode}
+                    onChange={(e) => setCheckDiscountCode(e.target.value)}
                   />
                   <Button
+                    onClick={handleCheckDiscount}
                     type="primary"
                     style={{ marginTop: "10px", width: "100%" }}
                   >
@@ -572,150 +617,40 @@ const OderPage = () => {
                       padding: "10px",
                     }}
                   >
-                    {/* Example vouchers */}
-                    <div
-                      style={{
-                        border: "1px solid #ccc",
-                        padding: "10px",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <p style={{ fontSize: "15px" }}>
-                        Nhập mã{" "}
-                        <span
-                          style={{
-                            fontWeight: "bold",
-                            color: "red",
-                            fontSize: "18px",
-                          }}
-                        >
-                          SALEVNPAY
-                        </span>{" "}
-                        để giảm ₫5tr khi thanh toán qua VNPAY.
-                      </p>
-                      <div>Điều kiện: Khi Mua Sản Phẩm Iphone 16 Series</div>
-                      <div>HSD: 30.12.2024</div>
-                    </div>
-
-                    <div
-                      style={{
-                        border: "1px solid #ccc",
-                        padding: "10px",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <p style={{ fontSize: "15px" }}>
-                        Nhập mã{" "}
-                        <span
-                          style={{
-                            fontWeight: "bold",
-                            color: "red",
-                            fontSize: "18px",
-                          }}
-                        >
-                          SALEMOMO
-                        </span>{" "}
-                        để giảm ₫2tr khi thanh toán qua MOMO.
-                      </p>
-                      <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫10tr</div>
-                      <div>HSD: 30.12.2024</div>
-                    </div>
-
-                    <div
-                      style={{
-                        border: "1px solid #ccc",
-                        padding: "10px",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <p style={{ fontSize: "15px" }}>
-                        Nhập mã{" "}
-                        <span
-                          style={{
-                            fontWeight: "bold",
-                            color: "red",
-                            fontSize: "18px",
-                          }}
-                        >
-                          SALE500
-                        </span>{" "}
-                        để giảm ₫500k khi thanh toán.
-                      </p>
-                      <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫5tr</div>
-                      <div>HSD: 31.12.2024</div>
-                    </div>
-
-                    <div
-                      style={{
-                        border: "1px solid #ccc",
-                        padding: "10px",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <p style={{ fontSize: "15px" }}>
-                        Nhập mã{" "}
-                        <span
-                          style={{
-                            fontWeight: "bold",
-                            color: "red",
-                            fontSize: "18px",
-                          }}
-                        >
-                          SALE100
-                        </span>{" "}
-                        để giảm ₫100k cho đơn hàng.
-                      </p>
-                      <div>Điều kiện: Không áp dụng cho sản phẩm giảm giá</div>
-                      <div>HSD: 01.01.2025</div>
-                    </div>
-
-                    <div
-                      style={{
-                        border: "1px solid #ccc",
-                        padding: "10px",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <p style={{ fontSize: "15px" }}>
-                        Nhập mã{" "}
-                        <span
-                          style={{
-                            fontWeight: "bold",
-                            color: "red",
-                            fontSize: "18px",
-                          }}
-                        >
-                          SALESPECIAL
-                        </span>{" "}
-                        để giảm ₫300k khi mua sắm trên ứng dụng.
-                      </p>
-                      <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫3tr</div>
-                      <div>HSD: 15.11.2024</div>
-                    </div>
-
-                    <div
-                      style={{
-                        border: "1px solid #ccc",
-                        padding: "10px",
-                        marginBottom: "10px",
-                      }}
-                    >
-                      <p style={{ fontSize: "15px" }}>
-                        Nhập mã{" "}
-                        <span
-                          style={{
-                            fontWeight: "bold",
-                            color: "red",
-                            fontSize: "18px",
-                          }}
-                        >
-                          SALEBIG
-                        </span>{" "}
-                        để giảm ₫8tr cho đơn hàng lớn.
-                      </p>
-                      <div>Điều kiện: Khi Mua Sản Phẩm Trên ₫10tr</div>
-                      <div>HSD: 30.12.2024</div>
-                    </div>
+                    {Array.isArray(dataDiscount) &&
+                      dataDiscount?.map((discount) => {
+                        return (
+                          <div
+                            style={{
+                              border: "1px solid #ccc",
+                              padding: "10px",
+                              marginBottom: "10px",
+                            }}
+                            key={discount._id}
+                          >
+                            <p style={{ fontSize: "15px" }}>
+                              Nhập mã
+                              <span
+                                style={{
+                                  fontWeight: "bold",
+                                  color: "red",
+                                  fontSize: "18px",
+                                }}
+                              >
+                                {" "}
+                                {discount.code}
+                              </span>{" "}
+                              để giảm {discount.discountPercentage}% khi thanh
+                              toán.
+                            </p>
+                            <div>
+                              Số lượng giảm giá còn lại:{" "}
+                              {discount.remainingDiscount}
+                            </div>
+                            {/* <div>HSD: 30.12.2024</div> */}
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
               </div>

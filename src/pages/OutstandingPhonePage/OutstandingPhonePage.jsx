@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Row, Col, Tag, Button, Card} from "antd";
+import { Row, Col, Tag, Button, Card } from "antd";
 import { MainContainer, OutstandingTitle, WapperProduct } from "./style";
 import { useQuery } from "@tanstack/react-query";
 import * as ProductService from "../../services/ProductServices";
@@ -7,8 +7,8 @@ import { useSelector } from "react-redux";
 import { useDebounce } from "../../hooks/useDebounce";
 import Loading from "../../components/LoadingComponent/Loading";
 import CardComponent from "../../components/CardComponent/CardComponent";
-import {DownOutlined} from '@ant-design/icons'; 
-import { useNavigate } from 'react-router-dom';
+import { DownOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const OutstandingPhonePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -40,19 +40,20 @@ const OutstandingPhonePage = () => {
     keepPreviousData: true,
   });
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const goToProduct = () => {
     navigate("/products");
-  }
+  };
 
   return (
     <div>
       <MainContainer>
         <WapperProduct>
-        <OutstandingTitle>Điện thoại nổi bật</OutstandingTitle>
+          <OutstandingTitle>Điện thoại nổi bật</OutstandingTitle>
           <Loading isPending={isLoading || loading}>
-            <WapperProduct style={{marginBottom:'10px'}}>
+            <WapperProduct style={{ marginBottom: "10px" }}>
               {products?.data?.map((product) => {
+
                 return (
                   <CardComponent
                     key={product._id}
@@ -71,10 +72,28 @@ const OutstandingPhonePage = () => {
             </WapperProduct>
           </Loading>
         </WapperProduct>
-        <div onClick={goToProduct} style={{textAlign:'center', fontWeight:'bold',color:'#008bd4', paddingBottom:'30px', marginTop:'20px',fontSize:'18px', cursor:'pointer'}}>
+        <div
+          onClick={goToProduct}
+          style={{
+            textAlign: "center",
+            fontWeight: "bold",
+            color: "#008bd4",
+            paddingBottom: "30px",
+            marginTop: "20px",
+            fontSize: "18px",
+            cursor: "pointer",
+          }}
+        >
           <span>Xem thêm sản phẩm</span>
-          <DownOutlined style={{color:'#008bd4', fontSize:'15px', marginLeft:'5px',paddingTop:'6px'}} />
-           </div>
+          <DownOutlined
+            style={{
+              color: "#008bd4",
+              fontSize: "15px",
+              marginLeft: "5px",
+              paddingTop: "6px",
+            }}
+          />
+        </div>
       </MainContainer>
     </div>
   );

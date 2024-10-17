@@ -184,48 +184,45 @@ const SignInPage = () => {
                     />
                   </Loading>
                 </ButtonWrapper>
-                <p style={{textAlign:"center"}}>hoặc</p>
+                <p style={{ textAlign: "center" }}>hoặc</p>
                 <GoogleLoginButton>
-                <GoogleLogin
-                  onSuccess={async (credentialResponse) => {
-                    const googleIdToken = credentialResponse.credential; // Lấy GOOGLE_ID_TOKEN
-                    // console.log("GOOGLE_ID_TOKEN", googleIdToken);
+                  <GoogleLogin
+                    onSuccess={async (credentialResponse) => {
+                      const googleIdToken = credentialResponse.credential; // Lấy GOOGLE_ID_TOKEN
+                      // console.log("GOOGLE_ID_TOKEN", googleIdToken);
 
-                    // Gọi API để đăng nhập bằng Google
-                    try {
-                      const response = await UserService.loginUserWithGoogle({
-                        idToken: googleIdToken,
-                      }); // Thay đổi hàm này để gọi API đúng cách
-                      // console.log("API Response:", response); // Xử lý phản hồi từ server
+                      // Gọi API để đăng nhập bằng Google
+                      try {
+                        const response = await UserService.loginUserWithGoogle({
+                          idToken: googleIdToken,
+                        }); // Thay đổi hàm này để gọi API đúng cách
+                        // console.log("API Response:", response); // Xử lý phản hồi từ server
 
-                      if (response?.status === "OK") {
-                        message.success("Đăng nhập thành công!");
+                        if (response?.status === "OK") {
+                          message.success("Đăng nhập thành công!");
 
-                        // Lưu access_token vào localStorage
-                        const accessToken = response.data.access_token; // Lấy access_token từ phản hồi
-                        localStorage.setItem(
-                          "access_token",
-                          JSON.stringify(accessToken) // Lưu access_token vào localStorage
-                        );
-                        const decoded = jwtDecode(accessToken); // Giải mã access_token
-                        if (decoded?.id) {
-                          handleGetDetailsUser(decoded.id, accessToken); // Gọi để lấy chi tiết người dùng
+                          // Lưu access_token vào localStorage
+                          const accessToken = response.data.access_token; // Lấy access_token từ phản hồi
+                          localStorage.setItem(
+                            "access_token",
+                            JSON.stringify(accessToken) // Lưu access_token vào localStorage
+                          );
+                          const decoded = jwtDecode(accessToken); // Giải mã access_token
+                          if (decoded?.id) {
+                            handleGetDetailsUser(decoded.id, accessToken); // Gọi để lấy chi tiết người dùng
+                            navigate("/");
+                          }
                         }
+                      } catch (error) {
+                        console.error("Error logging in with Google: ", error);
+                        message.error("Đăng nhập thất bại với Google.");
                       }
-                    } catch (error) {
-                      console.error("Error logging in with Google: ", error);
-                      message.error("Đăng nhập thất bại với Google.");
-                    }
-                  }}
-                  onError={() => {
-                    console.log("Login Failed");
-                  }}
-         
-                
-                />
-               </GoogleLoginButton>
-
-              
+                    }}
+                    onError={() => {
+                      console.log("Login Failed");
+                    }}
+                  />
+                </GoogleLoginButton>
               </div>
             </WapperContentLogin>
           )}
