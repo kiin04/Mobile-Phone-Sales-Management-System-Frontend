@@ -10,6 +10,8 @@ import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import OrderSuccess from "../pages/OrderSuccess/OrderSucces";
 import ProfilePage from "../pages/Profile/ProfilePage";
 import OutstandingPhonePage from "../pages/OutstandingPhonePage/OutstandingPhonePage";
+import OrderInfo from "../pages/OderDetail/OrderDetail";
+import MyOrder from "../pages/MyOder/MyOderPage";
 
 export const routes = [
     {
@@ -67,11 +69,22 @@ export const routes = [
         page: ProductDetails,
         isShowHeader: true
     },
-    {
+    {//cần tối ưu
         path: '/outstandingphone',
         page: OutstandingPhonePage,
         isShowHeader: true
     },
+    {
+        path: '/orderdetail',
+        page: OrderInfo,
+        isShowHeader: true
+    },
+    {
+        path: '/myorder',
+        page: MyOrder,
+        isShowHeader: true
+    },
+   
     
 
 ]

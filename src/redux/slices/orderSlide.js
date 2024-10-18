@@ -8,7 +8,8 @@ const initialState = {
     paymentMethod: '',
     itemsPrice: 0,
     shippingPrice: 0,
-    taxPrice: 0,
+    discountCode: 0,
+    discountPercentage: 0,
     totalPrice: 0,
     user : '',
     isPaid: false,
@@ -75,11 +76,20 @@ export const orderSlide = createSlice({
           }
         })
         state.orderItemSelected = orderSelected
-      }
-      
+      },
+      setDiscountPercentage: (state, action) => {
+        state.discountPercentage = action.payload;
+    },
+    setDiscount: (state, action) => {
+      state.discountCode = action.payload; // Cập nhật discount
+    },
+    resetDiscount: (state) => {
+      state.discountCode = ""; // Hoặc giá trị mặc định bạn muốn
+      state.discountPercentage = 0; // Hoặc giá trị mặc định bạn muốn
+    },
     },
 })
 
-export const { addOrderProduct,increaseAmount,decreaseAmount,removeOrderProduct,removeAllOrderProduct,selectedOrder } = orderSlide.actions
+export const { addOrderProduct,increaseAmount,decreaseAmount,removeOrderProduct,removeAllOrderProduct,selectedOrder,setDiscountPercentage,setDiscount,resetDiscount } = orderSlide.actions
 
 export default orderSlide.reducer

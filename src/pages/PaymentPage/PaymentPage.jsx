@@ -18,10 +18,15 @@ import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as OrderService from "../../services/OrderServices";
 import { useNavigate } from "react-router-dom";
-import { removeAllOrderProduct } from "../../redux/slices/orderSlide";
+import {
+  removeAllOrderProduct,
+  resetDiscount,
+} from "../../redux/slices/orderSlide";
+import * as DiscountService from "../../services/DiscountServices";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
+  const [DiscountAffterApply, setDiscountAffterApply] = useState("");
 
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
@@ -51,15 +56,11 @@ const PaymentPage = () => {
       setStateUserDetails({
         city: user?.city,
         name: user?.name,
-        address: user?.addres,
+        address: user?.address,
         phone: user?.phone,
       });
     }
   }, [isOpenModalUpdateInfo]);
-
-  const handleChangeAddress = () => {
-    setIsOpenModalUpdateInfo(true);
-  };
 
   const priceMemo = useMemo(() => {
     const result = order?.orderItemSelected?.reduce((total, cur) => {
@@ -96,34 +97,79 @@ const PaymentPage = () => {
         const amount = cur.amount || 0; // Đảm bảo số lượng là số
         return total + price * amount;
       }, 0) || 0; // Đảm bảo không bị NaN
+    if (order.discountPercentage) {
+      const PriceDiscount = (result / 100) * order.discountPercentage;
+      return result - PriceDiscount + diliveryPriceMemo;
+    } else {
+      return result + diliveryPriceMemo || 0; // Tính tổng giá thành
+    }
+  }, [order?.orderItemSelected, diliveryPriceMemo, order.discountPercentage]); // Thêm order vào mảng phụ thuộc
 
-    return result + diliveryPriceMemo || 0; // Tính tổng giá thành
-  }, [order?.orderItemSelected, diliveryPriceMemo]); // Thêm order vào mảng phụ thuộc
-
+  //số tiền giảm được
+  const PriceDiscounted = useMemo(() => {
+    const result =
+      order?.orderItemSelected?.reduce((total, cur) => {
+        const price = cur.price || 0; // Đảm bảo giá là số
+        const amount = cur.amount || 0; // Đảm bảo số lượng là số
+        return total + price * amount;
+      }, 0) || 0; // Đảm bảo không bị NaN
+    if (order.discountPercentage) {
+      const PriceDiscount = (result / 100) * order.discountPercentage;
+      return PriceDiscount;
+    } else {
+      return 0;
+    }
+  }, [priceMemo, diliveryPriceMemo, DiscountAffterApply]);
   const handleAddOrder = () => {
-    if (
-      user?.access_token &&
-      order?.orderItemSelected &&
-      user?.name &&
-      user?.address &&
-      user?.phone &&
-      user?.city &&
-      priceMemo &&
-      user?.id
-    ) {
-      mutationAddOrder.mutate({
-        token: user?.access_token,
-        orderItems: order?.orderItemSelected,
-        fullName: user?.name,
-        phone: user?.phone,
-        address: user?.address,
-        city: user?.city,
-        paymentMethod: payment,
-        itemsPrice: priceMemo,
-        shippingPrice: diliveryPriceMemo,
-        totalPrice: totalPriceMemo,
-        user: user?.id,
-      });
+    try {
+      if (!order?.orderItemSelected?.length) {
+        message.warning("Bạn chưa chọn sản phẩm");
+        return;
+      }
+      if (order.discountPercentage) {
+        {
+          mutationAddOrder.mutate({
+            token: user?.access_token,
+            orderItems: order?.orderItemSelected,
+            fullName: user?.name,
+            phone: user?.phone,
+            address: user?.address,
+            city: user?.city,
+            paymentMethod: payment,
+            itemsPrice: priceMemo,
+            shippingPrice: diliveryPriceMemo,
+            discountCode: order.discountCode,
+            discountPercentage: order.discountPercentage,
+            totalPrice: totalPriceMemo,
+            user: user?.id,
+          });
+        }
+      } else if (
+        user?.access_token &&
+        order?.orderItemSelected &&
+        user?.name &&
+        user?.address &&
+        user?.phone &&
+        user?.city &&
+        priceMemo &&
+        user?.id
+      ) {
+        mutationAddOrder.mutate({
+          token: user?.access_token,
+          orderItems: order?.orderItemSelected,
+          fullName: user?.name,
+          phone: user?.phone,
+          address: user?.address,
+          city: user?.city,
+          paymentMethod: payment,
+          itemsPrice: priceMemo,
+          shippingPrice: diliveryPriceMemo,
+          totalPrice: totalPriceMemo,
+          user: user?.id,
+        });
+      }
+    } catch (e) {
+      console.log("err handleAddOrder:", e);
     }
   };
 
@@ -138,6 +184,18 @@ const PaymentPage = () => {
     return res;
   });
 
+  const mutationUseDiscount = useMutationHooks((data) => {
+    const { code, token } = data;
+    const res = DiscountService.useDiscount(code, token);
+    return res;
+  });
+  const handleUseDiscount = () => {
+    mutationUseDiscount.mutate({
+      code: order.discountCode,
+      token: user?.access_token,
+    });
+  };
+
   const { isPending, data } = mutationUpdate;
   const {
     data: dataAdd,
@@ -145,7 +203,7 @@ const PaymentPage = () => {
     isSuccess,
     isError,
   } = mutationAddOrder;
-
+console.log("order", order)
   useEffect(() => {
     if (isSuccess && dataAdd?.status === "OK") {
       const arrayOrdered = [];
@@ -153,11 +211,19 @@ const PaymentPage = () => {
         arrayOrdered.push(element.product);
       });
       dispatch(removeAllOrderProduct({ listChecked: arrayOrdered }));
+      if (order.discountCode) {
+        handleUseDiscount();
+        dispatch(resetDiscount());
+      }
       message.success("Đặt hàng thành công");
       navigate("/orderSuccess", {
         state: {
           delivery,
           payment,
+          shippingPrice: diliveryPriceMemo,
+          discountCode: order?.discountCode,
+          PriceDiscounted: PriceDiscounted,
+          discountPercentage: order?.discountPercentage,
           orders: order?.orderItemSelected,
           totalPriceMemo,
         },
@@ -166,39 +232,6 @@ const PaymentPage = () => {
       message.error();
     }
   }, [isSuccess, isError]);
-
-  const handleCancelUpdate = () => {
-    setStateUserDetails({
-      name: "",
-      email: "",
-      phone: "",
-      isAdmin: false,
-    });
-    form.resetFields();
-    setIsOpenModalUpdateInfo(false);
-  };
-
-  const handleUpdateInfoUser = () => {
-    const { name, address, city, phone } = stateUserDetails;
-    if (name && address && city && phone) {
-      mutationUpdate.mutate(
-        { id: user?.id, token: user?.access_token, ...stateUserDetails },
-        {
-          onSuccess: () => {
-            dispatch(updateUser({ name, address, city, phone }));
-            setIsOpenModalUpdateInfo(false);
-          },
-        }
-      );
-    }
-  };
-
-  const handleOnchangeDetails = (e) => {
-    setStateUserDetails({
-      ...stateUserDetails,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   const handleDilivery = (e) => {
     setDelivery(e.target.value);
@@ -253,17 +286,6 @@ const PaymentPage = () => {
                     <span style={{ fontWeight: "bold" }}>
                       {user?.address},{user?.city}
                     </span>
-                    <span
-                      onClick={handleChangeAddress}
-                      style={{
-                        color: "#4588B5",
-                        fontWeight: "500",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {" "}
-                      Thay đổi
-                    </span>
                   </div>
                 </WrapperInfo>
                 <WrapperInfo>
@@ -295,13 +317,13 @@ const PaymentPage = () => {
                     <span>Giảm giá</span>
                     <span
                       style={{
-                        color: "#000",
+                        color: "red",
                         fontSize: "14px",
                         justifyContent: "space-between",
                         fontWeight: "600",
                       }}
                     >
-                      {/* {`${priceDiscountMemo} %`} */}
+                      {order.discountPercentage} %
                     </span>
                   </div>
                   <div
@@ -320,6 +342,30 @@ const PaymentPage = () => {
                       }}
                     >
                       {convertPrice(diliveryPriceMemo)}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: "red",
+                      }}
+                    >
+                      Đã giảm được
+                    </span>
+                    <span
+                      style={{
+                        color: "red",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {convertPrice(PriceDiscounted)}
                     </span>
                   </div>
                 </WrapperInfo>
@@ -345,6 +391,7 @@ const PaymentPage = () => {
                 onClick={() => handleAddOrder()}
                 size={40}
                 type="primary"
+                disabled={!order.orderItems.length}
                 style={{
                   margin: "10px",
                 }}
@@ -363,96 +410,6 @@ const PaymentPage = () => {
             </WrapperRight>
           </div>
         </div>
-        <ModalComponent
-          forceRender
-          title="Cập nhật thông tin giao hàng "
-          open={isOpenModalUpdateInfo}
-          onCancel={handleCancelUpdate}
-          onOk={handleUpdateInfoUser}
-        >
-          <Loading isPending={false}>
-            <Form
-              name="basic"
-              labelCol={{
-                span: 4,
-              }}
-              wrapperCol={{
-                span: 20,
-              }}
-              style={{
-                maxWidth: 600,
-              }}
-              // onFinish={onUpdateUser}
-              autoComplete="off"
-              form={form}
-            >
-              <Form.Item
-                label="Name"
-                name="name"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input name user!",
-                  },
-                ]}
-              >
-                <InputComponent
-                  value={stateUserDetails.name}
-                  onChange={handleOnchangeDetails}
-                  name="name"
-                />
-              </Form.Item>
-              <Form.Item
-                label="City"
-                name="city"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input name city!",
-                  },
-                ]}
-              >
-                <InputComponent
-                  value={stateUserDetails.city}
-                  onChange={handleOnchangeDetails}
-                  name="city"
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Phone"
-                name="phone"
-                rules={[
-                  {
-                    required: false,
-                  },
-                ]}
-              >
-                <InputComponent
-                  value={stateUserDetails.phone}
-                  onChange={handleOnchangeDetails}
-                  name="phone"
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Address"
-                name="address"
-                rules={[
-                  {
-                    required: false,
-                  },
-                ]}
-              >
-                <InputComponent
-                  value={stateUserDetails.address}
-                  onChange={handleOnchangeDetails}
-                  name="address"
-                />
-              </Form.Item>
-            </Form>
-          </Loading>
-        </ModalComponent>
       </div>
     </Loading>
   );

@@ -3,6 +3,7 @@ import {
   ShoppingCartOutlined,
   UserOutlined,
   BarChartOutlined,
+  PercentageOutlined,
 } from "@ant-design/icons";
 import { Menu, Switch } from "antd";
 import React, { useState, useMemo } from "react";
@@ -11,6 +12,8 @@ import AdminProduct from "../../components/AdminProduct/AdminProduct";
 import AdminOrder from "../../components/AdminOrder/AdminOrder";
 import AdminRevenue from "../../components/AdminRevenue/AdminRevenue";
 import { useSelector } from "react-redux";
+import AdminDiscount from "../../components/AdminDiscount/AdminDiscount";
+
 
 export const themeConstant = {
   light: {
@@ -49,6 +52,8 @@ const AdminPage = () => {
         return <AdminOrder />;
       case "revenue":
         return <AdminRevenue />;
+        case "discount":
+          return <AdminDiscount/>;
       default:
         return <></>;
     }
@@ -103,6 +108,13 @@ const AdminPage = () => {
         key: "revenue",
         label: "Doanh thu",
         icon: <BarChartOutlined />,
+      });
+    }
+    if (user?.role === "Phuc") {
+      baseItems.unshift({
+        key: "discount",
+        label: "Mã giảm giá",
+        icon: <PercentageOutlined />,
       });
     }
 

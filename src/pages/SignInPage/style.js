@@ -59,4 +59,13 @@ export const WapperContentLogin = styled.div`
 export const WapperContentRegister = styled.div`
   width: 100%;
 `;
-
+export const GoogleLoginButton = styled.div`
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  padding-left:75px;
+  border-radius:10px;
+`;

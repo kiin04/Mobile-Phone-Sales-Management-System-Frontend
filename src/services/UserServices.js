@@ -8,6 +8,12 @@ export const loginUser = async (data) => {
     })
     return res.data
 }
+export const loginUserWithGoogle = async (data) => { 
+    const res = await axios.post(`${import.meta.env.VITE_SERVER_HOST}/user/google-login`,data,{
+        withCredentials: true
+    })
+    return res.data
+}
 export const registerUser = async (data) => { 
     const res = await axios.post(`${import.meta.env.VITE_SERVER_HOST}/user/sign-up`,data);
     return res.data

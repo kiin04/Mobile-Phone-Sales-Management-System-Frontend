@@ -57,6 +57,14 @@ const OrderSuccess = () => {
                   </div>
                 </div>
               </WrapperInfo>
+              <WrapperInfo>
+                <div>
+                  <Lable>Mã giảm giá đã áp dụng: </Lable>
+                  <div>
+                    <span>"{state?.discountCode}"</span>
+                  </div>
+                </div>
+              </WrapperInfo>
               <WrapperInfo style={{ border: "2px solid #4588B5" }}>
                 <span
                   style={{
@@ -130,6 +138,37 @@ const OrderSuccess = () => {
                   );
                 })}
               </WrapperInfo>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <span
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: 500,
+                  }}
+                >
+                  Giảm giá: {state?.discountPercentage} %
+                </span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <span
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: 500,
+                  }}
+                >
+                  Phí giao hàng: {convertPrice(state?.shippingPrice)}
+                </span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <span
+                  style={{
+                    fontSize: "20px",
+                    color: "red",
+                    fontWeight: 700,
+                  }}
+                >
+                  Đã giảm: {convertPrice(state?.PriceDiscounted)}
+                </span>
+              </div>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <span
                   style={{

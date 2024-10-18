@@ -1,5 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Checkbox, Form, InputNumber, message } from "antd";
+import { Checkbox, Form, InputNumber, message, Modal, Button } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import ButtonComponent from "../../components/ButtonComopnent/ButtonComponent";
 import {
@@ -20,6 +20,8 @@ import {
   removeAllOrderProduct,
   removeOrderProduct,
   selectedOrder,
+  setDiscount,
+  setDiscountPercentage,
 } from "../../redux/slices/orderSlide";
 import { convertPrice } from "../../utils";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
@@ -28,15 +30,34 @@ import * as UserService from "../../services/UserServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import { useNavigate } from "react-router-dom";
+import { TagOutlined } from "@ant-design/icons";
+import * as DiscountService from "../../services/DiscountServices";
+import { useQuery } from "@tanstack/react-query";
 
 const OderPage = () => {
+  const [checkDiscountCode, setCheckDiscountCode] = useState("");
+  const [DiscountAffterApply, setDiscountAffterApply] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [stateUserDetails, setStateUserDetails] = useState({
     name: "",
     phone: "",
     address: "",
     city: "",
   });
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
 
@@ -57,6 +78,39 @@ const OderPage = () => {
 
   const [listChecked, setListChecked] = useState([]);
 
+  const fetchDiscountAll = async () => {
+    const res = await DiscountService.getAllDiscount();
+    const discountFinal = res?.data?.map((discount) => {
+      const remainingDiscount = discount.maxUses - discount.usedCount;
+      return {
+        ...discount,
+        remainingDiscount: remainingDiscount,
+      };
+    });
+    return discountFinal;
+  };
+  const { isLoading: isLoadingDiscount, data: dataDiscount } = useQuery({
+    queryKey: ["discounts"],
+    queryFn: fetchDiscountAll,
+  });
+
+  const handleCheckDiscount = async () => {
+    try {
+      const CheckDiscount = await DiscountService.getDetailDiscount(
+        checkDiscountCode
+      );
+      if (CheckDiscount.status === "OK") {
+        setDiscountAffterApply(CheckDiscount.data.discountPercentage);
+        dispatch(setDiscount(CheckDiscount.data.code)); // Cập nhật discount
+        dispatch(setDiscountPercentage(CheckDiscount.data.discountPercentage)); // Cập nhật discountPercentage
+        message.success("Lấy mã giảm giá thành công");
+      } else {
+        message.error("Mã giảm giá không hợp lệ!");
+      }
+    } catch (error) {
+      message.error("Đã xảy ra lỗi khi áp dụng mã giảm giá! Lỗi: ", error);
+    }
+  };
   const priceMemo = useMemo(() => {
     const result = order?.orderItemSelected?.reduce((total, cur) => {
       return total + cur.price * cur.amount;
@@ -82,25 +136,38 @@ const OderPage = () => {
   }, [priceMemo]);
 
   const totalPriceMemo = useMemo(() => {
+    const discount = DiscountAffterApply;
     const result =
       order?.orderItemSelected?.reduce((total, cur) => {
         const price = cur.price || 0; // Đảm bảo giá là số
         const amount = cur.amount || 0; // Đảm bảo số lượng là số
         return total + price * amount;
       }, 0) || 0; // Đảm bảo không bị NaN
+    if (discount) {
+      const PriceDiscount = (result / 100) * discount;
+      return result - PriceDiscount + diliveryPriceMemo;
+    } else {
+      return result + diliveryPriceMemo || 0; // Tính tổng giá thành
+    }
+  }, [order?.orderItemSelected, diliveryPriceMemo, DiscountAffterApply]); // Thêm order vào mảng phụ thuộc
 
-    return result + diliveryPriceMemo || 0; // Tính tổng giá thành
-  }, [order?.orderItemSelected, diliveryPriceMemo]); // Thêm order vào mảng phụ thuộc
-
-  // const priceDiscountBeforeMemo = useMemo(() => {
-  //   const result = order?.orderItemSelected?.reduce((total, cur) => {
-  //     return (priceMemo + diliveryPriceMemo) / cur.discount;
-  //   }, 0);
-  //   return result || 0; // Đảm bảo trả về 0 nếu không có kết quả
-  // }, [priceMemo, diliveryPriceMemo]);
+  const PriceDiscounted = useMemo(() => {
+    const discount = DiscountAffterApply;
+    const result =
+      order?.orderItemSelected?.reduce((total, cur) => {
+        const price = cur.price || 0; // Đảm bảo giá là số
+        const amount = cur.amount || 0; // Đảm bảo số lượng là số
+        return total + price * amount;
+      }, 0) || 0; // Đảm bảo không bị NaN
+    if (discount) {
+      const PriceDiscount = (result / 100) * 10;
+      return PriceDiscount;
+    } else {
+      return 0;
+    }
+  }, [priceMemo, diliveryPriceMemo, DiscountAffterApply]);
 
   const onChange = (e) => {
-    console.log(`checked = ${e.target.value}`);
     if (listChecked.includes(e.target.value)) {
       const newListChecked = listChecked.filter(
         (item) => item !== e.target.value
@@ -142,8 +209,6 @@ const OderPage = () => {
     }
   }, [isOpenModalUpdateInfo]);
 
-  const dispatch = useDispatch();
-
   const handleChangeAddress = () => {
     setIsOpenModalUpdateInfo(true);
   };
@@ -168,7 +233,7 @@ const OderPage = () => {
     console.log("user", user);
     if (!order?.orderItemSelected?.length) {
       message.warning("Bạn chưa chọn sản phẩm");
-    } else if (!user?.phone || !user?.address || !user?.name) {
+    } else if (!user?.phone || !user?.address || !user?.name || !user?.city) {
       setIsOpenModalUpdateInfo(true);
       message.warning("Vui lòng cập nhật thông tin giao hàng");
     } else {
@@ -186,6 +251,26 @@ const OderPage = () => {
     });
   };
 
+  // const handleUpdateInfoUser = () => {
+  //   const { name, address, city, phone } = stateUserDetails;
+  //   if (name && address && city && phone) {
+  //     mutationUpdate.mutate(
+  //       { id: user?.id, token: user?.access_token, ...stateUserDetails },
+  //       {
+  //         onSuccess: () => {
+  //           // Refresh user details from Redux store
+  //           setStateUserDetails({
+  //             city: user?.city,
+  //             name: user?.name,
+  //             address: user?.address,
+  //             phone: user?.phone,
+  //           });
+  //           setIsOpenModalUpdateInfo(false);
+  //         },
+  //       }
+  //     );
+  //   }
+  // };
   const handleUpdateInfoUser = () => {
     const { name, address, city, phone } = stateUserDetails;
     if (name && address && city && phone) {
@@ -193,17 +278,23 @@ const OderPage = () => {
         { id: user?.id, token: user?.access_token, ...stateUserDetails },
         {
           onSuccess: () => {
-            // Refresh user details from Redux store
-            setStateUserDetails({
+            setStateUserDetails((prevState) => ({
+              ...prevState,
               city: user?.city,
               name: user?.name,
               address: user?.address,
               phone: user?.phone,
-            });
+            }));
             setIsOpenModalUpdateInfo(false);
+            message.success("Cập nhật thông tin thành công!");
+          },
+          onError: (error) => {
+            message.error("Cập nhật thất bại. Vui lòng thử lại!");
           },
         }
       );
+    } else {
+      message.warning("Vui lòng điền đầy đủ thông tin!");
     }
   };
 
@@ -300,9 +391,6 @@ const OderPage = () => {
                         </span>
                       </span>
                       <WrapperCountOrder>
-                        {/* <WrapperPriceDiscount>
-                              {order?.amount}
-                            </WrapperPriceDiscount> */}
                         <InputNumber
                           defaultValue={1}
                           min={1}
@@ -338,7 +426,9 @@ const OderPage = () => {
               <WrapperInfo>
                 <div>
                   <span>Địa chỉ: </span>
-                  <span style={{ fontWeight: "bold" }}>{address}, {city}</span>
+                  <span style={{ fontWeight: "bold" }}>
+                    {address}, {city}
+                  </span>
                   <span
                     onClick={handleChangeAddress}
                     style={{
@@ -381,13 +471,13 @@ const OderPage = () => {
                   <span>Giảm giá</span>
                   <span
                     style={{
-                      color: "#000",
+                      color: "red",
                       fontSize: "14px",
                       justifyContent: "space-between",
                       fontWeight: "600",
                     }}
                   >
-                    {/* {`${priceDiscountMemo} %`} */}
+                    {DiscountAffterApply} %
                   </span>
                 </div>
                 <div
@@ -429,7 +519,7 @@ const OderPage = () => {
                       fontWeight: "600",
                     }}
                   >
-                    {/* {convertPrice(priceDiscountBeforeMemo)} */}
+                    {convertPrice(PriceDiscounted)}
                   </span>
                 </div>
               </WrapperInfo>
@@ -470,6 +560,101 @@ const OderPage = () => {
                 fontWeight: "200",
               }}
             ></ButtonComponent>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <TagOutlined style={{ marginRight: "5px" }} />
+                <span>Mã ưu đãi</span>
+              </div>
+              <a onClick={showModal}>Nhập mã giảm giá</a>
+            </div>
+            <Modal
+              title="Chọn Mã ưu đãi"
+              visible={isModalVisible}
+              onOk={handleOk}
+              onCancel={handleCancel}
+              footer={[
+                <Button key="back" onClick={handleCancel}>
+                  Trở lại
+                </Button>,
+              ]}
+            >
+              <div>
+                <div style={{ marginBottom: "10px" }}>
+                  <input
+                    placeholder="Mã giảm giá"
+                    style={{
+                      width: "95.5%",
+                      padding: "10px",
+                      borderRadius: "10px",
+                    }}
+                    value={checkDiscountCode}
+                    onChange={(e) => setCheckDiscountCode(e.target.value)}
+                  />
+                  <Button
+                    onClick={handleCheckDiscount}
+                    type="primary"
+                    style={{ marginTop: "10px", width: "100%" }}
+                  >
+                    ÁP DỤNG
+                  </Button>
+                </div>
+
+                <div>
+                  <h3>Mã ưu đãi khi mua sản phẩm</h3>
+
+                  {/* Container có thanh cuộn dọc */}
+                  <div
+                    style={{
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      border: "1px solid #ddd",
+                      padding: "10px",
+                    }}
+                  >
+                    {Array.isArray(dataDiscount) &&
+                      dataDiscount?.map((discount) => {
+                        return (
+                          <div
+                            style={{
+                              border: "1px solid #ccc",
+                              padding: "10px",
+                              marginBottom: "10px",
+                            }}
+                            key={discount._id}
+                          >
+                            <p style={{ fontSize: "15px" }}>
+                              Nhập mã
+                              <span
+                                style={{
+                                  fontWeight: "bold",
+                                  color: "red",
+                                  fontSize: "18px",
+                                }}
+                              >
+                                {" "}
+                                {discount.code}
+                              </span>{" "}
+                              để giảm {discount.discountPercentage}% khi thanh
+                              toán.
+                            </p>
+                            <div>
+                              Số lượng giảm giá còn lại:{" "}
+                              {discount.remainingDiscount}
+                            </div>
+                            {/* <div>HSD: 30.12.2024</div> */}
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              </div>
+            </Modal>
           </WrapperRight>
         </div>
       </div>
@@ -479,6 +664,7 @@ const OderPage = () => {
         open={isOpenModalUpdateInfo}
         onCancel={handleCancelUpdate}
         onOk={handleUpdateInfoUser}
+        width={600}
       >
         <Loading isPending={false}>
           <Form
@@ -497,7 +683,7 @@ const OderPage = () => {
             form={form}
           >
             <Form.Item
-              label="Name"
+              label="Tên"
               name="name"
               rules={[
                 {
@@ -513,7 +699,7 @@ const OderPage = () => {
               />
             </Form.Item>
             <Form.Item
-              label="City"
+              label="Thành Phố"
               name="city"
               rules={[
                 {
@@ -530,7 +716,7 @@ const OderPage = () => {
             </Form.Item>
 
             <Form.Item
-              label="Phone"
+              label="Số điện thoại"
               name="phone"
               rules={[
                 {
@@ -546,7 +732,7 @@ const OderPage = () => {
             </Form.Item>
 
             <Form.Item
-              label="Address"
+              label="Địa chỉ"
               name="address"
               rules={[
                 {

@@ -40,6 +40,16 @@ export const convertPrice = (price) => {
         return null
     }
 }
+export const convertPercent = (percent) => {
+    try {
+        if(!percent){
+            return null
+        }
+        return `${percent} %`
+    } catch (error) {
+        return null
+    }
+}
 export const convertPriceDataChart = (price) => {
     try {
         // Kiểm tra nếu giá trị không phải là số, trả về chuỗi rỗng
@@ -113,3 +123,17 @@ export const convertDataChart = (data, type) => {
     }
    
 }
+export const convertDateISO = (dateString) => {
+    const date = new Date(dateString);
+  
+    // Lấy các phần của ngày tháng
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+    // Định dạng lại thành chuỗi đầy đủ
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  };
