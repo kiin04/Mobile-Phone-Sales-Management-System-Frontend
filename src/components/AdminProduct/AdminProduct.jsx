@@ -532,7 +532,7 @@ const AdminProduct = () => {
             form={form}
           >
             <Form.Item
-              label="Name"
+              label="Tên sản"
               name="name"
               rules={[
                 {
@@ -722,7 +722,7 @@ const AdminProduct = () => {
             form={form}
           >
             <Form.Item
-              label="Name"
+              label="Tên sản phẩm:"
               name="name"
               rules={[
                 {
@@ -731,7 +731,8 @@ const AdminProduct = () => {
                 },
               ]}
             >
-              <InputComponent
+              <InputComponent 
+                
                 value={stateProductDetails.name}
                 onChange={handleOnchangeDetails}
                 name="name"
@@ -739,7 +740,7 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label="Type"
+              label="Loại sản phẩm:"
               name="type"
               rules={[
                 {
@@ -755,7 +756,7 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Count in Stock"
+              label="Số lượng còn lại:"
               name="countInStock"
               rules={[
                 {
@@ -771,7 +772,7 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Price"
+              label="Giá:"
               name="price"
               rules={[
                 {
@@ -787,7 +788,7 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Description"
+              label="Chi tiết:"
               name="description"
               rules={[
                 {
@@ -803,7 +804,7 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Rating"
+              label="Đánh giá:"
               name="rating"
               rules={[
                 {
@@ -820,7 +821,7 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label="Image"
+              label="Hình ảnh:"
               name="image"
               rules={[
                 {
