@@ -1,4 +1,5 @@
 import { Form, message, Radio } from "antd";
+import { PayPalButton } from "react-paypal-button-v2";
 import React, { useEffect, useMemo, useState } from "react";
 import ButtonComponent from "../../components/ButtonComopnent/ButtonComponent";
 import {
@@ -23,6 +24,8 @@ import {
   resetDiscount,
 } from "../../redux/slices/orderSlide";
 import * as DiscountService from "../../services/DiscountServices";
+import * as PaymentServices from '../../services/PaymentServices'
+
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -33,7 +36,7 @@ const PaymentPage = () => {
 
   const [delivery, setDelivery] = useState("fast");
   const [payment, setPayment] = useState("later_money");
-
+  const [sdkReady, setSdkReady] = useState(false)
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
 
   const [stateUserDetails, setStateUserDetails] = useState({
@@ -120,6 +123,8 @@ const PaymentPage = () => {
       return 0;
     }
   }, [priceMemo, diliveryPriceMemo, DiscountAffterApply]);
+
+
   const handleAddOrder = () => {
     try {
       if (!order?.orderItemSelected?.length) {
@@ -195,14 +200,33 @@ const PaymentPage = () => {
       token: user?.access_token,
     });
   };
+   const onSuccessPaypal = (details, data) => {
+   mutationAddOrder.mutate({
+   token: user?.access_token,
+    orderItems: order?.orderItemSelected,
+   fullName: user?.name,
+    phone: user?.phone,
+    address: user?.address,
+    city: user?.city,
+   paymentMethod: payment,
+     itemsPrice: priceMemo,
+   shippingPrice: diliveryPriceMemo,
+    discountCode: order.discountCode,
+     discountPercentage: order.discountPercentage,
+   totalPrice: totalPriceMemo,
+  user: user?.id,
+    isPaid: true,
+  paidAt: details.update_time
+   });
 
+   }
   const { isPending, data } = mutationUpdate;
   const {
     data: dataAdd,
     isPending: isLoadingAddOrder,
     isSuccess,
     isError,
-  } = mutationAddOrder;
+  } = mutationAddOrder; 
 console.log("order", order)
   useEffect(() => {
     if (isSuccess && dataAdd?.status === "OK") {
@@ -239,7 +263,26 @@ console.log("order", order)
   const handlePayment = (e) => {
     setPayment(e.target.value);
   };
-
+  const addPaypalScript = async () => {
+    const { data } = await PaymentServices.getConfig()
+    const script = document.createElement('script')
+    script.type='text/javascript'
+    script.src=`https://sandbox.paypal.com/sdk/js?client-id=${data}`
+    script.async=true;
+    script.onload = () =>{
+      setSdkReady(true)
+    }
+    document.body.appendChild(script)
+  }
+  useEffect(()=>{
+    if(!window.paypal)
+    {
+      addPaypalScript()
+    }
+   else {
+    setSdkReady(true)
+   }
+  },[])
   return (
     <Loading isPending={isLoadingAddOrder}>
       <div style={{ background: "#f5f5fa", width: "100%", height: "100vh" }}>
@@ -273,7 +316,10 @@ console.log("order", order)
                     <Radio value="later_money">
                       Thanh toán bằng tiền mặt khi nhận hàng
                     </Radio>
-                    <Radio value="online">Thanh toán bằng MOMO</Radio>
+                    <Radio value="momo">Thanh toán bằng MOMO</Radio>
+                    <Radio value="paypal">
+                      Thanh toán bằng PayPal
+                    </Radio>
                   </WrapperRadio>
                 </div>
               </WrapperInfo>
@@ -387,7 +433,20 @@ console.log("order", order)
                   </span>
                 </WrapperTotal>
               </div>
-              <ButtonComponent
+              {payment == 'paypal'&& sdkReady ? (
+                <div style={{width:'320px'}}>
+                <PayPalButton
+                  amount={totalPriceMemo}
+                  // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+             onSuccess={onSuccessPaypal}
+                onError={() => {
+                  alert('Error ')
+                  }}
+          />
+                </div>
+
+              ):(
+                <ButtonComponent
                 onClick={() => handleAddOrder()}
                 size={40}
                 type="primary"
@@ -407,6 +466,8 @@ console.log("order", order)
                   fontWeight: "200",
                 }}
               ></ButtonComponent>
+              )}
+              
             </WrapperRight>
           </div>
         </div>

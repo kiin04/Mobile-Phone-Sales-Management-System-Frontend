@@ -5,6 +5,7 @@ export const orderContant = {
     },
     payment: {
         later_money: 'COD',
-        online: 'MoMo',
+        momo: 'Thanh toán bằng MoMo',
+        paypal:'Thanh toán bằng paypal'
     }
 }
