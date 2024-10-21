@@ -544,96 +544,100 @@ const AdminDiscount = () => {
         </Loading>
       </ModalComponent>
       <DrawerComponent
-        title="Chi tiết mã giảm giá"
-        isOpen={isOpenDrawer}
-        onClose={() => setIsOpenDrawer(false)}
-        width="50%"
+  title={<span style={{ paddingBottom: '20px' }}>Chi tiết mã giảm giá</span>}  // Thêm padding cho tiêu đề
+  isOpen={isOpenDrawer}
+  onClose={() => setIsOpenDrawer(false)}
+  width="50%"
+>
+  <Loading isPending={isLoadingUpdate || isLoadingUpdated}>
+    <Form
+      name="basic"
+      labelCol={{
+        span: 6, // Điều chỉnh labelCol cho đồng nhất với form trước
+      }}
+      wrapperCol={{
+        span: 18,
+      }}
+      style={{
+        maxWidth: 600,
+        paddingTop: '20px',  // Thêm khoảng cách phía trên form
+      }}
+      onFinish={onUpdateDiscount}
+      autoComplete="off"
+      form={form}
+    >
+      <Form.Item
+        label="Mã"
+        name="code"
+        rules={[
+          {
+            required: true,
+            message: "Please input name code!",
+          },
+        ]}
       >
-        <Loading isPending={isLoadingUpdate || isLoadingUpdated}>
-          <Form
-            name="basic"
-            labelCol={{
-              span: 2,
-            }}
-            wrapperCol={{
-              span: 22,
-            }}
-            style={{
-              maxWidth: 600,
-            }}
-            onFinish={onUpdateDiscount}
-            autoComplete="off"
-            form={form}
-          >
-            <Form.Item
-              label="Mã"
-              name="code"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input name code!",
-                },
-              ]}
-            >
-              <InputComponent
-                value={stateDiscount.code}
-                onChange={handleOnchangeDetails}
-                name="code"
-                disabled
-              />
-            </Form.Item>
+        <InputComponent
+          value={stateDiscount.code}
+          onChange={handleOnchangeDetails}
+          name="code"
+          disabled
+        />
+      </Form.Item>
 
-            <Form.Item
-              label="Phần Trăm"
-              name="discountPercentage"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input discountPercentage!",
-                },
-              ]}
-            >
-              <InputComponent
-                value={stateDiscount.discountPercentage}
-                onChange={handleOnchangeDetails}
-                name="discountPercentage"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Số lần sử dụng"
-              name="maxUses"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input maxUses!",
-                },
-              ]}
-            >
-              <InputComponent
-                value={stateDiscount.maxUses}
-                onChange={handleOnchangeDetails}
-                name="maxUses"
-              />
-            </Form.Item>
-            <Form.Item
-              wrapperCol={{
-                offset: 20,
-                span: 16,
-              }}
-            >
-              <div>
-                {data?.status === "ERR" && (
-                  <span style={{ color: "red" }}>{data?.message}</span>
-                )}
-              </div>
+      <Form.Item
+        label="Phần Trăm"
+        name="discountPercentage"
+        rules={[
+          {
+            required: true,
+            message: "Please input discountPercentage!",
+          },
+        ]}
+      >
+        <InputComponent
+          value={stateDiscount.discountPercentage}
+          onChange={handleOnchangeDetails}
+          name="discountPercentage"
+        />
+      </Form.Item>
 
-              <Button type="primary" htmlType="submit">
-                Xác nhận
-              </Button>
-            </Form.Item>
-          </Form>
-        </Loading>
-      </DrawerComponent>
+      <Form.Item
+        label="Số lần sử dụng"
+        name="maxUses"
+        rules={[
+          {
+            required: true,
+            message: "Please input maxUses!",
+          },
+        ]}
+      >
+        <InputComponent
+          value={stateDiscount.maxUses}
+          onChange={handleOnchangeDetails}
+          name="maxUses"
+        />
+      </Form.Item>
+
+      <Form.Item
+        wrapperCol={{
+          offset: 20,
+          span: 16,
+        }}
+      >
+        <div>
+          {data?.status === "ERR" && (
+            <span style={{ color: "red" }}>{data?.message}</span>
+          )}
+        </div>
+
+        <Button type="primary" htmlType="submit">
+          Xác nhận
+        </Button>
+      </Form.Item>
+    </Form>
+  </Loading>
+</DrawerComponent>
+
 
       <ModalComponent
         forceRender
