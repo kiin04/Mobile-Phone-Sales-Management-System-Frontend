@@ -1,5 +1,5 @@
 import { Form, message, Radio } from "antd";
-import { PayPalButton } from "react-paypal-button-v2";
+// import { PayPalButton } from "react-paypal-button-v2";
 import React, { useEffect, useMemo, useState } from "react";
 import ButtonComponent from "../../components/ButtonComopnent/ButtonComponent";
 import {
@@ -435,14 +435,14 @@ console.log("order", order)
               </div>
               {payment == 'paypal'&& sdkReady ? (
                 <div style={{width:'320px'}}>
-                <PayPalButton
+                {/* <PayPalButton
                   amount={totalPriceMemo}
                   // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
              onSuccess={onSuccessPaypal}
                 onError={() => {
                   alert('Error ')
                   }}
-          />
+          /> */}
                 </div>
 
               ):(

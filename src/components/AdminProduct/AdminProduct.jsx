@@ -161,7 +161,8 @@ const AdminProduct = () => {
       image: stateProduct?.image,
       price: stateProduct?.price,
       countInStock: stateProduct?.countInStock,
-      type:stateProduct?.type === "add_type"
+      type:
+        stateProduct?.type === "add_type"
           ? stateProduct.newType
           : stateProduct.type,
       rating: stateProduct?.rating,
@@ -264,13 +265,13 @@ const AdminProduct = () => {
       const res = await ProductService.getDetailsProduct(rowSelected);
       if (res?.data) {
         setStateProductDetails({
-          name: stateProduct?.name,
-          image: stateProduct?.image,
-          type: stateProduct?.type,
-          price: stateProduct?.price,
-          countInStock: stateProduct?.countInStock,
-          rating: stateProduct?.rating,
-          description: stateProduct?.description,
+          name: res?.data?.name,
+          image: res?.data?.image,
+          type: res?.data?.type,
+          price: res?.data?.price,
+          countInStock: res?.data?.countInStock,
+          rating: res?.data?.rating,
+          description: res?.data?.description,
         });
       }
       setIsLoadingUpdate(false);
@@ -475,7 +476,6 @@ const AdminProduct = () => {
     });
   };
 
-  console.log("typeVlue", stateProduct);
   return (
     <div>
       <WrapperHeader>Quản lý sản phẩm</WrapperHeader>
@@ -708,15 +708,9 @@ const AdminProduct = () => {
         <Loading isPending={isLoadingUpdate || isLoadingUpdated}>
           <Form
             name="basic"
-            labelCol={{
-              span: 2,
-            }}
-            wrapperCol={{
-              span: 22,
-            }}
-            style={{
-              maxWidth: 600,
-            }}
+            labelCol={{ span: 2 }}
+            wrapperCol={{ span: 22 }}
+            style={{ maxWidth: 600 }}
             onFinish={onUpdateProduct}
             autoComplete="off"
             form={form}
@@ -725,14 +719,10 @@ const AdminProduct = () => {
               label="Tên sản phẩm:"
               name="name"
               rules={[
-                {
-                  required: true,
-                  message: "Please input name product!",
-                },
+                { required: true, message: "Please input name product!" },
               ]}
             >
-              <InputComponent 
-                
+              <InputComponent
                 value={stateProductDetails.name}
                 onChange={handleOnchangeDetails}
                 name="name"
@@ -742,12 +732,7 @@ const AdminProduct = () => {
             <Form.Item
               label="Loại sản phẩm:"
               name="type"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input type!",
-                },
-              ]}
+              rules={[{ required: true, message: "Please input type!" }]}
             >
               <InputComponent
                 value={stateProductDetails.type}
@@ -755,14 +740,12 @@ const AdminProduct = () => {
                 name="type"
               />
             </Form.Item>
+
             <Form.Item
               label="Số lượng còn lại:"
               name="countInStock"
               rules={[
-                {
-                  required: true,
-                  message: "Please input count InStock!",
-                },
+                { required: true, message: "Please input count InStock!" },
               ]}
             >
               <InputComponent
@@ -771,15 +754,11 @@ const AdminProduct = () => {
                 name="countInStock"
               />
             </Form.Item>
+
             <Form.Item
               label="Giá:"
               name="price"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input price!",
-                },
-              ]}
+              rules={[{ required: true, message: "Please input price!" }]}
             >
               <InputComponent
                 value={stateProductDetails.price}
@@ -787,15 +766,11 @@ const AdminProduct = () => {
                 name="price"
               />
             </Form.Item>
+
             <Form.Item
               label="Chi tiết:"
               name="description"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input description!",
-                },
-              ]}
+              rules={[{ required: true, message: "Please input description!" }]}
             >
               <InputComponent
                 value={stateProductDetails.description}
@@ -803,15 +778,11 @@ const AdminProduct = () => {
                 name="description"
               />
             </Form.Item>
+
             <Form.Item
               label="Đánh giá:"
               name="rating"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input type!",
-                },
-              ]}
+              rules={[{ required: true, message: "Please input rating!" }]}
             >
               <InputComponent
                 value={stateProductDetails.rating}
@@ -823,12 +794,7 @@ const AdminProduct = () => {
             <Form.Item
               label="Hình ảnh:"
               name="image"
-              rules={[
-                {
-                  required: false,
-                  message: "Please input image!",
-                },
-              ]}
+              rules={[{ required: false, message: "Please input image!" }]}
             >
               <WapperUploadFile
                 onChange={handleOnchangeAvatarDetails}
@@ -836,9 +802,9 @@ const AdminProduct = () => {
               >
                 <Button icon={<UploadOutlined />}>Select File</Button>
               </WapperUploadFile>
-              {stateProductDetails?.image && (
+              {stateProductDetails.image && (
                 <img
-                  src={stateProductDetails?.image}
+                  src={stateProductDetails.image}
                   style={{
                     height: "60px",
                     width: "60px",
