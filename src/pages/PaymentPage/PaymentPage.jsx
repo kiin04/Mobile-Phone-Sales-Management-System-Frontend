@@ -436,7 +436,7 @@ console.log("order", order)
               {payment == 'paypal'&& sdkReady ? (
                 <div style={{width:'320px'}}>
                 <PayPalButton
-                  amount={totalPriceMemo}
+                  amount={totalPriceMemo /25000} // Tỉ giá hối đoái
                   // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
              onSuccess={onSuccessPaypal}
                 onError={() => {
@@ -460,7 +460,7 @@ console.log("order", order)
                   border: "none",
                   borderRadius: "4px",
                 }}
-                textButton={"Mua Hàng"}
+                textButton={payment === 'momo' ? "Thanh Toán MoMo" : "Mua Hàng"}
                 styleTextButton={{
                   fontSize: "15px",
                   fontWeight: "200",

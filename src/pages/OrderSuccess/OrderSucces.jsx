@@ -1,3 +1,4 @@
+// Component React
 import { InputNumber } from "antd";
 import React, { useEffect, useState } from "react";
 import {
@@ -8,9 +9,7 @@ import {
   WrapperItemsOrder,
 } from "./style";
 import { useSelector } from "react-redux";
-
 import Loading from "../../components/LoadingComponent/Loading";
-
 import { convertPrice } from "../../utils";
 import { useLocation } from "react-router-dom";
 import { orderContant } from "../../contant";
@@ -18,8 +17,6 @@ import { orderContant } from "../../contant";
 const OrderSuccess = () => {
   const order = useSelector((state) => state.order);
   const location = useLocation();
-  console.log("location", location);
-
   const { state } = location;
 
   return (
@@ -32,36 +29,38 @@ const OrderSuccess = () => {
               alignItems: "center",
               justifyContent: "center",
               padding: "10px",
+              marginTop: "0px",
+              paddingTop: "20px",
             }}
           >
             ĐƠN HÀNG CỦA BẠN ĐÃ ĐƯỢC ĐẶT THÀNH CÔNG
           </h1>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <WrapperContainer>
-              <WrapperInfo>
+              <WrapperInfo style={{paddingLeft:"50px",borderBottomLeftRadius:"0px",borderBottomRightRadius:"0px"}}>
                 <div>
                   <h3>Phương thức giao hàng</h3>
                   <div>
-                    <span style={{ color: "#ea8500", fontWeight: "bold" }}>
+                    <span style={{ color: "#ea8500", fontWeight: "bold",fontSize:"17px" }}>
                       {orderContant.delivery[state?.delivery]}
                     </span>
-                    <span> Giao hàng tiết kiệm</span>
+                    <span style={{fontSize:"17px"}}> Giao hàng tiết kiệm</span>
                   </div>
                 </div>
               </WrapperInfo>
-              <WrapperInfo>
+              <WrapperInfo style={{paddingLeft:"50px",borderBottomLeftRadius:"0px",borderBottomRightRadius:"0px"}}>
                 <div>
                   <h3>Phương thức thanh toán</h3>
                   <div>
-                    <span>{orderContant.payment[state?.payment]}</span>
+                    <span style={{fontSize:"17px"}}>{orderContant.payment[state?.payment]}</span>
                   </div>
                 </div>
               </WrapperInfo>
-              <WrapperInfo>
+              <WrapperInfo style={{paddingLeft:"50px",borderBottomLeftRadius:"0px",borderBottomRightRadius:"0px"}}>
                 <div>
                   <h3>Mã giảm giá đã áp dụng: </h3>
                   <div>
-                    <span>"{state?.discountCode}"</span>
+                    <span style={{fontSize:"17px"}}>"{state?.discountCode}"</span>
                   </div>
                 </div>
               </WrapperInfo>
@@ -81,7 +80,7 @@ const OrderSuccess = () => {
                 </span>
                 {state.orders?.map((order) => {
                   return (
-                    <WrapperItemsOrder>
+                    <WrapperItemsOrder key={order?.name}>
                       <div
                         style={{
                           width: "390px",
@@ -91,6 +90,7 @@ const OrderSuccess = () => {
                       >
                         <img
                           src={order?.image}
+                          alt={order?.name} /* Thêm alt cho SEO và truy cập */
                           style={{
                             width: "77px",
                             height: "79px",
@@ -137,9 +137,58 @@ const OrderSuccess = () => {
                     </WrapperItemsOrder>
                   );
                 })}
-                
               </WrapperInfo>
-          
+
+              <WrapperInfo style={{}}>
+              <span
+                  style={{
+                    color: "#000",
+                    fontWeight: "500",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignContent: "center",
+                    paddingTop: "20px",
+                    paddingBottom:"20px",
+                    fontSize: "25px",
+                  }}
+                >
+                  Thông tin thanh toán 
+                </span>
+              <div style={{ display: "flex", justifyContent: "flex-end",paddingBottom:"5px" }}>
+                <span style={{ fontSize: "18px", fontWeight: 200, color:"#808080" }}>
+                  Giảm giá: {state?.discountPercentage} %
+                </span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end",paddingBottom:"5px" }}>
+                <span style={{ fontSize: "18px", fontWeight: 200, color:"#808080" }}>
+                  Phí giao hàng: {convertPrice(state?.shippingPrice)}
+                </span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end",paddingBottom:"5px" }}>
+                <span
+                  style={{
+                    fontSize: "18px",
+                    color:"#808080",
+                    fontWeight: 200,
+                  }}
+                >
+                  Đã giảm: {convertPrice(state?.PriceDiscounted)}
+                </span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end",paddingBottom:"5px" }}>
+                <span style={{fontWeight: 200,fontSize: "18px",color:"#808080", marginLeft:"10px", paddingRight:"5px"}}>Tổng tiền:</span>
+                <span
+                  style={{
+                    fontSize: "18px",
+                    color: "red",
+                    fontWeight: 200,
+                  }}
+                >
+                 {convertPrice(state?.totalPriceMemo)}
+                </span>
+              </div>
+              </WrapperInfo>
+              
             </WrapperContainer>
           </div>
         </div>

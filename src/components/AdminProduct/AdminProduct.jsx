@@ -526,13 +526,14 @@ const AdminProduct = () => {
             }}
             style={{
               maxWidth: 600,
+              paddingTop: '20px', 
             }}
             onFinish={onFinish}
             autoComplete="off"
             form={form}
           >
             <Form.Item
-              label="Tên sản"
+              label="Tên sản phẩm"
               name="name"
               rules={[
                 {
@@ -549,7 +550,7 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label="Type"
+              label="Loại sản phẩm:"
               name="type"
               rules={[
                 {
@@ -567,7 +568,7 @@ const AdminProduct = () => {
             </Form.Item>
             {stateProduct.type === "add_type" && (
               <Form.Item
-                label="New Type"
+                label="Hãng mới:"
                 name="newType"
                 rules={[
                   {
@@ -587,7 +588,7 @@ const AdminProduct = () => {
             )}
 
             <Form.Item
-              label="Count in Stock"
+              label="Số lượng tồn kho:"
               name="countInStock"
               rules={[
                 {
@@ -603,7 +604,7 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Price"
+              label="Giá:"
               name="price"
               rules={[
                 {
@@ -619,7 +620,7 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Description"
+              label="Chi tiết"
               name="description"
               rules={[
                 {
@@ -635,7 +636,7 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Rating"
+              label="Đánh giá:"
               name="rating"
               rules={[
                 {
@@ -652,7 +653,7 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label="Image"
+              label="Hình ảnh:"
               name="image"
               rules={[
                 {
@@ -700,177 +701,183 @@ const AdminProduct = () => {
         </Loading>
       </ModalComponent>
       <DrawerComponent
-        title="Chi tiết sản phẩm"
-        isOpen={isOpenDrawer}
-        onClose={() => setIsOpenDrawer(false)}
-        width="50%"
+  title={<span style={{ paddingBottom: '20px' }}>Chi tiết sản phẩm</span>}  // Thêm padding cho tiêu đề
+  isOpen={isOpenDrawer}
+  onClose={() => setIsOpenDrawer(false)}
+  width="50%"
+>
+  <Loading isPending={isLoadingUpdate || isLoadingUpdated}>
+    <Form
+      name="basic"
+      labelCol={{
+        span: 6, // Điều chỉnh labelCol và wrapperCol như ModalComponent
+      }}
+      wrapperCol={{
+        span: 18,
+      }}
+      style={{
+        maxWidth: 600,
+        paddingTop: '20px',  // Thêm khoảng cách phía trên form như Modal
+      }}
+      onFinish={onUpdateProduct}
+      autoComplete="off"
+      form={form}
+    >
+      <Form.Item
+        label="Tên sản phẩm:"
+        name="name"
+        rules={[
+          {
+            required: true,
+            message: "Please input name product!",
+          },
+        ]}
       >
-        <Loading isPending={isLoadingUpdate || isLoadingUpdated}>
-          <Form
-            name="basic"
-            labelCol={{
-              span: 2,
-            }}
-            wrapperCol={{
-              span: 22,
-            }}
+        <InputComponent 
+          value={stateProductDetails.name}
+          onChange={handleOnchangeDetails}
+          name="name"
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Loại sản phẩm:"
+        name="type"
+        rules={[
+          {
+            required: true,
+            message: "Please input type!",
+          },
+        ]}
+      >
+        <InputComponent
+          value={stateProductDetails.type}
+          onChange={handleOnchangeDetails}
+          name="type"
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Số lượng còn lại:"
+        name="countInStock"
+        rules={[
+          {
+            required: true,
+            message: "Please input count InStock!",
+          },
+        ]}
+      >
+        <InputComponent
+          value={stateProductDetails.countInStock}
+          onChange={handleOnchangeDetails}
+          name="countInStock"
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Giá:"
+        name="price"
+        rules={[
+          {
+            required: true,
+            message: "Please input price!",
+          },
+        ]}
+      >
+        <InputComponent
+          value={stateProductDetails.price}
+          onChange={handleOnchangeDetails}
+          name="price"
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Chi tiết:"
+        name="description"
+        rules={[
+          {
+            required: true,
+            message: "Please input description!",
+          },
+        ]}
+      >
+        <InputComponent
+          value={stateProductDetails.description}
+          onChange={handleOnchangeDetails}
+          name="description"
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Đánh giá:"
+        name="rating"
+        rules={[
+          {
+            required: true,
+            message: "Please input rating!",
+          },
+        ]}
+      >
+        <InputComponent
+          value={stateProductDetails.rating}
+          onChange={handleOnchangeDetails}
+          name="rating"
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Hình ảnh:"
+        name="image"
+        rules={[
+          {
+            required: false,
+            message: "Please input image!",
+          },
+        ]}
+      >
+        <WapperUploadFile
+          onChange={handleOnchangeAvatarDetails}
+          maxCount={1}
+        >
+          <Button icon={<UploadOutlined />}>Select File</Button>
+        </WapperUploadFile>
+        {stateProductDetails?.image && (
+          <img
+            src={stateProductDetails?.image}
             style={{
-              maxWidth: 600,
+              height: "60px",
+              width: "60px",
+              borderRadius: "50%",
+              objectFit: "cover",
+              marginLeft: "10px",
+              display: "flex",
             }}
-            onFinish={onUpdateProduct}
-            autoComplete="off"
-            form={form}
-          >
-            <Form.Item
-              label="Tên sản phẩm:"
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input name product!",
-                },
-              ]}
-            >
-              <InputComponent 
-                
-                value={stateProductDetails.name}
-                onChange={handleOnchangeDetails}
-                name="name"
-              />
-            </Form.Item>
+            alt="avatar"
+          />
+        )}
+      </Form.Item>
 
-            <Form.Item
-              label="Loại sản phẩm:"
-              name="type"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input type!",
-                },
-              ]}
-            >
-              <InputComponent
-                value={stateProductDetails.type}
-                onChange={handleOnchangeDetails}
-                name="type"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Số lượng còn lại:"
-              name="countInStock"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input count InStock!",
-                },
-              ]}
-            >
-              <InputComponent
-                value={stateProductDetails.countInStock}
-                onChange={handleOnchangeDetails}
-                name="countInStock"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Giá:"
-              name="price"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input price!",
-                },
-              ]}
-            >
-              <InputComponent
-                value={stateProductDetails.price}
-                onChange={handleOnchangeDetails}
-                name="price"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Chi tiết:"
-              name="description"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input description!",
-                },
-              ]}
-            >
-              <InputComponent
-                value={stateProductDetails.description}
-                onChange={handleOnchangeDetails}
-                name="description"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Đánh giá:"
-              name="rating"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input type!",
-                },
-              ]}
-            >
-              <InputComponent
-                value={stateProductDetails.rating}
-                onChange={handleOnchangeDetails}
-                name="rating"
-              />
-            </Form.Item>
+      <Form.Item
+        wrapperCol={{
+          offset: 20,
+          span: 16,
+        }}
+      >
+        <div>
+          {data?.status === "ERR" && (
+            <span style={{ color: "red" }}>{data?.message}</span>
+          )}
+        </div>
 
-            <Form.Item
-              label="Hình ảnh:"
-              name="image"
-              rules={[
-                {
-                  required: false,
-                  message: "Please input image!",
-                },
-              ]}
-            >
-              <WapperUploadFile
-                onChange={handleOnchangeAvatarDetails}
-                maxCount={1}
-              >
-                <Button icon={<UploadOutlined />}>Select File</Button>
-              </WapperUploadFile>
-              {stateProductDetails?.image && (
-                <img
-                  src={stateProductDetails?.image}
-                  style={{
-                    height: "60px",
-                    width: "60px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    marginLeft: "10px",
-                    display: "flex",
-                  }}
-                  alt="avatar"
-                />
-              )}
-            </Form.Item>
+        <Button type="primary" htmlType="submit">
+          Xác nhận
+        </Button>
+      </Form.Item>
+    </Form>
+  </Loading>
+</DrawerComponent>
 
-            <Form.Item
-              wrapperCol={{
-                offset: 20,
-                span: 16,
-              }}
-            >
-              <div>
-                {data?.status === "ERR" && (
-                  <span style={{ color: "red" }}>{data?.message}</span>
-                )}
-              </div>
 
-              <Button type="primary" htmlType="submit">
-                Xác nhận
-              </Button>
-            </Form.Item>
-          </Form>
-        </Loading>
-      </DrawerComponent>
 
       <ModalComponent
         forceRender
