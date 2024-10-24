@@ -82,35 +82,35 @@ const AdminPage = () => {
         icon: <BookOutlined />,
       });
     }
-    if (user?.role === "Phuc") {
+    if (user?.role === "QuanLy") {
       baseItems.unshift({
         key: "user",
         label: "Người dùng",
         icon: <UserOutlined />,
       });
     }
-    if (user?.role === "Phuc") {
+    if (user?.role === "QuanLy") {
       baseItems.unshift({
         key: "product",
         label: "Sản phẩm",
         icon: <BookOutlined />,
       });
     }
-    if (user?.role === "Phuc") {
+    if (user?.role === "QuanLy") {
       baseItems.unshift({
         key: "order",
         label: "Đơn hàng",
         icon: <ShoppingCartOutlined />,
       });
     }
-    if (user?.role === "Phuc") {
+    if (user?.role === "QuanLy") {
       baseItems.unshift({
         key: "revenue",
         label: "Doanh thu",
         icon: <BarChartOutlined />,
       });
     }
-    if (user?.role === "Phuc") {
+    if (user?.role === "QuanLy") {
       baseItems.unshift({
         key: "discount",
         label: "Mã giảm giá",
