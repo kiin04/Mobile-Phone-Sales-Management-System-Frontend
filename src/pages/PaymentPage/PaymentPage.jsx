@@ -15,7 +15,7 @@ import { convertPrice } from "../../utils";
 import ModalComponent from "../../components/ModalComponent/ModalComponent";
 import InputComponent from "../../components/InputComponent/InputComponent";
 import * as UserService from "../../services/UserServices";
-import axios from 'axios';
+import axios from "axios";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as OrderService from "../../services/OrderServices";
@@ -25,20 +25,19 @@ import {
   resetDiscount,
 } from "../../redux/slices/orderSlide";
 import * as DiscountService from "../../services/DiscountServices";
-import * as PaymentServices from '../../services/PaymentServices'
-import { PayPalButton } from "react-paypal-button-v2";
-
+import * as PaymentServices from "../../services/PaymentServices";
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
   const [DiscountAffterApply, setDiscountAffterApply] = useState("");
-
+  const [clientId, setClientId] = useState("");
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
 
   const [delivery, setDelivery] = useState("fast");
   const [payment, setPayment] = useState("later_money");
-  const [sdkReady, setSdkReady] = useState(false)
+  const [sdkReady, setSdkReady] = useState(false);
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
 
   const [stateUserDetails, setStateUserDetails] = useState({
@@ -126,7 +125,6 @@ const PaymentPage = () => {
     }
   }, [priceMemo, diliveryPriceMemo, DiscountAffterApply]);
 
-
   const handleAddOrder = () => {
     try {
       if (!order?.orderItemSelected?.length) {
@@ -212,50 +210,48 @@ const PaymentPage = () => {
         address: user?.address,
         city: user?.city,
       };
-  
+
       const response = await PaymentServices.payWithMoMo(paymentData);
       console.log("MoMo Payment Response:", response); // Kiểm tra phản hồi từ API
-  
+
       if (response && response.url) {
         window.location.href = response.url; // Chuyển hướng người dùng đến trang thanh toán MoMo
       } else {
-        message.error('Không thể chuyển đến trang thanh toán MoMo');
+        message.error("Không thể chuyển đến trang thanh toán MoMo");
       }
     } catch (error) {
-      console.error('Error during MoMo payment:', error);
-      message.error('Đã xảy ra lỗi trong quá trình thanh toán MoMo');
+      console.error("Error during MoMo payment:", error);
+      message.error("Đã xảy ra lỗi trong quá trình thanh toán MoMo");
     }
   };
-  
-  
-   const onSuccessPaypal = (details, data) => {
-   mutationAddOrder.mutate({
-   token: user?.access_token,
-    orderItems: order?.orderItemSelected,
-   fullName: user?.name,
-    phone: user?.phone,
-    address: user?.address,
-    city: user?.city,
-   paymentMethod: payment,
-     itemsPrice: priceMemo,
-   shippingPrice: diliveryPriceMemo,
-    discountCode: order.discountCode,
-     discountPercentage: order.discountPercentage,
-   totalPrice: totalPriceMemo,
-  user: user?.id,
-    isPaid: true,
-  paidAt: details.update_time
-   });
 
-   }
+  const onSuccessPaypal = (details, data) => {
+    mutationAddOrder.mutate({
+      token: user?.access_token,
+      orderItems: order?.orderItemSelected,
+      fullName: user?.name,
+      phone: user?.phone,
+      address: user?.address,
+      city: user?.city,
+      paymentMethod: payment,
+      itemsPrice: priceMemo,
+      shippingPrice: diliveryPriceMemo,
+      discountCode: order.discountCode,
+      discountPercentage: order.discountPercentage,
+      totalPrice: totalPriceMemo,
+      user: user?.id,
+      isPaid: true,
+      paidAt: details.update_time,
+    });
+  };
   const { isPending, data } = mutationUpdate;
   const {
     data: dataAdd,
     isPending: isLoadingAddOrder,
     isSuccess,
     isError,
-  } = mutationAddOrder; 
-console.log("order", order)
+  } = mutationAddOrder;
+  console.log("order", order);
   useEffect(() => {
     if (isSuccess && dataAdd?.status === "OK") {
       const arrayOrdered = [];
@@ -292,25 +288,18 @@ console.log("order", order)
     setPayment(e.target.value);
   };
   const addPaypalScript = async () => {
-    const { data } = await PaymentServices.getConfig()
-    const script = document.createElement('script')
-    script.type='text/javascript'
-    script.src=`https://sandbox.paypal.com/sdk/js?client-id=${data}`
-    script.async=true;
-    script.onload = () =>{
-      setSdkReady(true)
+    const { data } = await PaymentServices.getConfig();
+    setClientId(data); // Lưu client-id
+    setSdkReady(true); // Đánh dấu SDK đã sẵn sàng
+  };
+
+  useEffect(() => {
+    if (!clientId) {
+      addPaypalScript();
+    } else {
+      setSdkReady(true);
     }
-    document.body.appendChild(script)
-  }
-  useEffect(()=>{
-    if(!window.paypal)
-    {
-      addPaypalScript()
-    }
-   else {
-    setSdkReady(true)
-   }
-  },[])
+  }, [clientId]);
   return (
     <Loading isPending={isLoadingAddOrder}>
       <div style={{ background: "#f5f5fa", width: "100%", height: "100vh" }}>
@@ -345,9 +334,7 @@ console.log("order", order)
                       Thanh toán bằng tiền mặt khi nhận hàng
                     </Radio>
                     <Radio value="momo">Thanh toán bằng MOMO</Radio>
-                    <Radio value="paypal">
-                      Thanh toán bằng PayPal
-                    </Radio>
+                    <Radio value="paypal">Thanh toán bằng PayPal</Radio>
                   </WrapperRadio>
                 </div>
               </WrapperInfo>
@@ -461,65 +448,76 @@ console.log("order", order)
                   </span>
                 </WrapperTotal>
               </div>
-              {payment == 'paypal' && sdkReady ? (
-  <div style={{ width: '320px' }}>
-    <PayPalButton
-      amount={totalPriceMemo / 25000} // Tỉ giá hối đoái
-      onSuccess={onSuccessPaypal}
-      onError={() => {
-        alert('Error ')
-      }}
-    />
-  </div>
-) : (
-  <>
-    {payment === 'momo' ? (
-      <ButtonComponent
-        onSuccess={handleMoMoPayment} // Gọi hàm handleMoMoPayment
-        size={40}
-        type="primary"
-        disabled={!order.orderItems.length}
-        style={{
-          margin: "10px",
-        }}
-        styleButton={{
-          height: "48px",
-          width: "220px",
-          border: "none",
-          borderRadius: "4px",
-        }}
-        textButton="Thanh Toán MoMo"
-        styleTextButton={{
-          fontSize: "15px",
-          fontWeight: "200",
-        }}
-      />
-    ) : (
-      <ButtonComponent
-        onClick={() => handleAddOrder()}
-        size={40}
-        type="primary"
-        disabled={!order.orderItems.length}
-        style={{
-          margin: "10px",
-        }}
-        styleButton={{
-          height: "48px",
-          width: "220px",
-          border: "none",
-          borderRadius: "4px",
-        }}
-        textButton="Mua Hàng"
-        styleTextButton={{
-          fontSize: "15px",
-          fontWeight: "200",
-        }}
-      />
-    )}
-  </>
-)}
-
-              
+              {payment == "paypal" && sdkReady ? (
+                <PayPalScriptProvider options={{ "client-id": clientId }}>
+                <div style={{ width: '320px' }}>
+                  <PayPalButtons
+                    createOrder={(data, actions) => {
+                      return actions.order.create({
+                        purchase_units: [{
+                          amount: {
+                            value: (totalPriceMemo / 25000).toString(), // Tỉ giá hối đoái
+                          },
+                        }],
+                      });
+                    }}
+                    onApprove={async (data, actions) => {
+                      // Xử lý khi thanh toán thành công
+                      await onSuccessPaypal(data);
+                    }}
+                    onError={() => {
+                      alert('Error');
+                    }}
+                  />
+                </div>
+              </PayPalScriptProvider>
+              ) : (
+                <>
+                  {payment === "momo" ? (
+                    <ButtonComponent
+                      onSuccess={handleMoMoPayment} // Gọi hàm handleMoMoPayment
+                      size={40}
+                      type="primary"
+                      disabled={!order.orderItems.length}
+                      style={{
+                        margin: "10px",
+                      }}
+                      styleButton={{
+                        height: "48px",
+                        width: "220px",
+                        border: "none",
+                        borderRadius: "4px",
+                      }}
+                      textButton="Thanh Toán MoMo"
+                      styleTextButton={{
+                        fontSize: "15px",
+                        fontWeight: "200",
+                      }}
+                    />
+                  ) : (
+                    <ButtonComponent
+                      onClick={() => handleAddOrder()}
+                      size={40}
+                      type="primary"
+                      disabled={!order.orderItems.length}
+                      style={{
+                        margin: "10px",
+                      }}
+                      styleButton={{
+                        height: "48px",
+                        width: "220px",
+                        border: "none",
+                        borderRadius: "4px",
+                      }}
+                      textButton="Mua Hàng"
+                      styleTextButton={{
+                        fontSize: "15px",
+                        fontWeight: "200",
+                      }}
+                    />
+                  )}
+                </>
+              )}
             </WrapperRight>
           </div>
         </div>
