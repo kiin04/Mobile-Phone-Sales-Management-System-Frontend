@@ -202,23 +202,22 @@ const PaymentPage = () => {
   };
   const handleMoMoPayment = async () => {
     try {
+      const StringTotalPriceMemo = totalPriceMemo.toString();
+      console.log("StringTotalPriceMemo", StringTotalPriceMemo);
       const paymentData = {
-        amount: totalPriceMemo,
-        orderItems: order?.orderItemSelected,
-        fullName: user?.name,
-        phone: user?.phone,
-        address: user?.address,
-        city: user?.city,
+        amountReq: StringTotalPriceMemo,
+        orderInfoReq: "ThanhToanMOMO",
       };
-
+      console.log("paymentData", paymentData);
       const response = await PaymentServices.payWithMoMo(paymentData);
-      console.log("MoMo Payment Response:", response); // Kiểm tra phản hồi từ API
+      console.log("Response:", response); // Kiểm tra phản hồi từ API
 
-      if (response && response.url) {
-        window.location.href = response.url; // Chuyển hướng người dùng đến trang thanh toán MoMo
+      if ((response.message === "Thành công.")) {
+        window.open(response.shortLink); // Chuyển hướng người dùng đến trang thanh toán MoMo
       } else {
         message.error("Không thể chuyển đến trang thanh toán MoMo");
       }
+
     } catch (error) {
       console.error("Error during MoMo payment:", error);
       message.error("Đã xảy ra lỗi trong quá trình thanh toán MoMo");
@@ -450,32 +449,34 @@ const PaymentPage = () => {
               </div>
               {payment == "paypal" && sdkReady ? (
                 <PayPalScriptProvider options={{ "client-id": clientId }}>
-                <div style={{ width: '320px' }}>
-                  <PayPalButtons
-                    createOrder={(data, actions) => {
-                      return actions.order.create({
-                        purchase_units: [{
-                          amount: {
-                            value: (totalPriceMemo / 25000).toString(), // Tỉ giá hối đoái
-                          },
-                        }],
-                      });
-                    }}
-                    onApprove={async (data, actions) => {
-                      // Xử lý khi thanh toán thành công
-                      await onSuccessPaypal(data);
-                    }}
-                    onError={() => {
-                      alert('Error');
-                    }}
-                  />
-                </div>
-              </PayPalScriptProvider>
+                  <div style={{ width: "320px" }}>
+                    <PayPalButtons
+                      createOrder={(data, actions) => {
+                        return actions.order.create({
+                          purchase_units: [
+                            {
+                              amount: {
+                                value: (totalPriceMemo / 25000).toString(), // Tỉ giá hối đoái
+                              },
+                            },
+                          ],
+                        });
+                      }}
+                      onApprove={async (data, actions) => {
+                        // Xử lý khi thanh toán thành công
+                        await onSuccessPaypal(data);
+                      }}
+                      onError={() => {
+                        alert("Error");
+                      }}
+                    />
+                  </div>
+                </PayPalScriptProvider>
               ) : (
                 <>
                   {payment === "momo" ? (
                     <ButtonComponent
-                      onSuccess={handleMoMoPayment} // Gọi hàm handleMoMoPayment
+                      onClick={handleMoMoPayment} // Gọi hàm handleMoMoPayment
                       size={40}
                       type="primary"
                       disabled={!order.orderItems.length}
