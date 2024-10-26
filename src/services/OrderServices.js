@@ -9,12 +9,8 @@ export const createOrder = async (data,access_token) => {
     });
     return res.data
 }
-export const getDetailOrderbyID = async (id,access_token) => { 
-    const res = await axiosJWT.get(`${import.meta.env.VITE_SERVER_HOST}/order/get-order-details/${id}`,{
-        headers: {
-            token: `Bearer ${access_token}`,
-        },
-    });
+export const getDetailOrderbyID = async (id) => { 
+    const res = await axiosJWT.get(`${import.meta.env.VITE_SERVER_HOST}/order/get-order-details/${id}`);
     return res.data
 }
 export const getOrderOfUser = async (id,access_token) => { 

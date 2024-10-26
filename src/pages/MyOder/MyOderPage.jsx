@@ -61,8 +61,8 @@ const MyOrderPage = () => {
   });
 
   const mutationDetails = useMutationHooks((data) => {
-    const { id, token } = data;
-    return OrderService.getDetailOrderbyID(id, token);
+    const { id } = data;
+    return OrderService.getDetailOrderbyID(id);
   });
 
   const {
@@ -98,7 +98,7 @@ const MyOrderPage = () => {
   };
 
   const handleDetailOrder = (idOrder) => {
-    mutationDetails.mutate({ id: idOrder, token: user?.access_token });
+    mutationDetails.mutate({ id: idOrder});
   };
 
   const openCancelModal = (idOrder) => {
@@ -123,137 +123,136 @@ const MyOrderPage = () => {
     <Loading isPending={isLoadingOrders}>
       <div style={{ padding: "20px" }}>
         <Typography.Title level={2}>Lịch sử mua hàng</Typography.Title>
-        {dataDetails ? (
-          <>
-            {orders?.data.map((order) => (
-              <OrderCard hoverable key={order.id} bordered={false}>
-                <Row gutter={[16, 16]}>
-                  <Col span={16}>
-                    <div>
-                      <span>
-                        Ngày đặt hàng: {convertDateISO(order?.createdAt)}
-                      </span>
-                    </div>
-
-                    <div>
-                      <p
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 10,
-                        }}
-                      >
-                        <span style={{ width: "9rem" }}>
-                          Tình trạng giao hàng:{" "}
+          {orders ? (
+            <>
+              {orders?.data.map((order) => (
+                <OrderCard hoverable key={order.id} bordered={false}>
+                  <Row gutter={[16, 16]}>
+                    <Col span={16}>
+                      <div>
+                        <span>
+                          Ngày đặt hàng: {convertDateISO(order?.createdAt)}
                         </span>
-                        {order?.orderStatus === "Delivered" ? (
-                          <Alert
-                            message="Đã giao hàng thành công"
-                            type="success"
-                            showIcon
-                            style={{ width: "11em" }}
-                          />
-                        ) : order?.orderStatus === "Cancelled" ? (
-                          <Alert
-                            message={convertStatusOrder(order?.orderStatus)}
-                            type="error"
-                            showIcon
-                            style={{ width: "11em" }}
-                          />
-                        ) : (
-                          <Alert
-                            message={convertStatusOrder(order?.orderStatus)}
-                            type="info"
-                            showIcon
-                            style={{ width: "11em" }}
-                          />
-                        )}
-                      </p>
-                      <p
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 10,
-                        }}
-                      >
-                        <span style={{ width: "9rem" }}>
-                          Tình trạng thanh toán:{" "}
-                        </span>
-                        {order?.isPaid ? (
-                          <Alert
-                            message="Đã thanh toán"
-                            type="success"
-                            showIcon
-                            style={{ width: "11em" }}
-                          />
-                        ) : (
-                          <Alert
-                            message="Chưa thanh toán"
-                            type="info"
-                            showIcon
-                            style={{ width: "11em" }}
-                          />
-                        )}
-                      </p>
-                    </div>
-                    {order.orderItems.map((item, idx) => (
-                      <Row
-                        key={idx}
-                        gutter={[8, 8]}
-                        style={{ marginBottom: "10px" }}
-                      >
-                        <Col span={4}>
-                          <img
-                            src={item.image}
-                            style={{ width: "100%", borderRadius: "4px" }}
-                          />
-                        </Col>
-                        <Col span={20}>
-                          <p>{item.name}</p>
-                          <p>{convertPrice(item.price)}</p>
-                          <p>x{item.amount}</p>
-                        </Col>
-                      </Row>
-                    ))}
-                  </Col>
-                  <Col span={8} style={{ textAlign: "right" }}>
-                    <Typography.Text className="order-total">
-                      Thành tiền: {convertPrice(order.totalPrice)}
-                    </Typography.Text>
+                      </div>
 
-                    <div style={{ marginTop: "10px" }}>
-                      <Button
-                        style={{ marginRight: "10px" }}
-                        onClick={() => openCancelModal(order._id)}
-                      >
-                        Hủy đơn hàng
-                      </Button>
-                      <Button
-                        onClick={() => openDetailModal(order._id)}
-                        type="primary"
-                      >
-                        Xem chi tiết
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
-              </OrderCard>
-            ))}
-          </>
-        ) : (
-          <Empty
-            imageStyle={{
-              height: 250,
-            }}
-            description={
-              <span style={{ fontSize: "35px" }}>
-                Bạn chưa có đơn hàng nào.{" "}
-                <a onClick={handleNavigaveProducts}> Mua ngay</a>
-              </span>
-            }
-          >
-          </Empty>
-        )}
+                      <div>
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 10,
+                          }}
+                        >
+                          <span style={{ width: "9rem" }}>
+                            Tình trạng giao hàng:{" "}
+                          </span>
+                          {order?.orderStatus === "Delivered" ? (
+                            <Alert
+                              message="Đã giao hàng thành công"
+                              type="success"
+                              showIcon
+                              style={{ width: "11em" }}
+                            />
+                          ) : order?.orderStatus === "Cancelled" ? (
+                            <Alert
+                              message={convertStatusOrder(order?.orderStatus)}
+                              type="error"
+                              showIcon
+                              style={{ width: "11em" }}
+                            />
+                          ) : (
+                            <Alert
+                              message={convertStatusOrder(order?.orderStatus)}
+                              type="info"
+                              showIcon
+                              style={{ width: "11em" }}
+                            />
+                          )}
+                        </p>
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 10,
+                          }}
+                        >
+                          <span style={{ width: "9rem" }}>
+                            Tình trạng thanh toán:{" "}
+                          </span>
+                          {order?.isPaid ? (
+                            <Alert
+                              message="Đã thanh toán"
+                              type="success"
+                              showIcon
+                              style={{ width: "11em" }}
+                            />
+                          ) : (
+                            <Alert
+                              message="Chưa thanh toán"
+                              type="info"
+                              showIcon
+                              style={{ width: "11em" }}
+                            />
+                          )}
+                        </p>
+                      </div>
+                      {order.orderItems.map((item, idx) => (
+                        <Row
+                          key={idx}
+                          gutter={[8, 8]}
+                          style={{ marginBottom: "10px" }}
+                        >
+                          <Col span={4}>
+                            <img
+                              src={item.image}
+                              style={{ width: "100%", borderRadius: "4px" }}
+                            />
+                          </Col>
+                          <Col span={20}>
+                            <p>{item.name}</p>
+                            <p>{convertPrice(item.price)}</p>
+                            <p>x{item.amount}</p>
+                          </Col>
+                        </Row>
+                      ))}
+                    </Col>
+                    <Col span={8} style={{ textAlign: "right" }}>
+                      <Typography.Text className="order-total">
+                        Thành tiền: {convertPrice(order.totalPrice)}
+                      </Typography.Text>
+
+                      <div style={{ marginTop: "10px" }}>
+                        <Button
+                          style={{ marginRight: "10px" }}
+                          onClick={() => openCancelModal(order._id)}
+                        >
+                          Hủy đơn hàng
+                        </Button>
+                        <Button
+                          onClick={() => openDetailModal(order._id)}
+                          type="primary"
+                        >
+                          Xem chi tiết
+                        </Button>
+                      </div>
+                    </Col>
+                  </Row>
+                </OrderCard>
+              ))}
+            </>
+          ) : (
+            <Empty
+              imageStyle={{
+                height: 250,
+              }}
+              description={
+                <span style={{ fontSize: "35px" }}>
+                  Bạn chưa có đơn hàng nào.{" "}
+                  <a onClick={handleNavigaveProducts}> Mua ngay</a>
+                </span>
+              }
+            ></Empty>
+          )}
       </div>
 
       <ModalComponent
