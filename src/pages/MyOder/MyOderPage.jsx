@@ -25,6 +25,7 @@ import {
 } from "./style";
 import { orderContant } from "../../contant";
 import { useNavigate } from "react-router-dom";
+import * as XLSX from 'xlsx';
 
 const OrderCard = styled(Card)`
   margin-bottom: 20px;
@@ -48,6 +49,52 @@ const MyOrderPage = () => {
     return res;
   };
 
+  const exportToExcel = (data) => {
+    // Format data as an array of headers and values in one row
+    const headers = [
+      "Tên người nhận",
+      "Số điện thoại",
+      "Địa chỉ giao hàng",
+      "Ngày đặt hàng",
+      "Trạng thái giao hàng",
+      "Trạng thái thanh toán",
+      "Tổng tiền hàng",
+      "Giảm giá trên đơn hàng",
+      "Phí vận chuyển",
+      "Thành tiền",
+      "Phương thức thanh toán"
+    ];
+  
+    const values = [
+      data?.shippingAddress?.fullName || "",
+      `0${data?.shippingAddress?.phone || ""}`,
+      `${data?.shippingAddress?.address || ""}, ${data?.shippingAddress?.city || ""}`,
+      convertDateISO(data?.createdAt) || "",
+      convertStatusOrder(data?.orderStatus) || "",
+      data?.isPaid ? "Đã thanh toán" : "Chưa thanh toán",
+      convertPrice(data?.itemsPrice) || "",
+      `${data?.discountPercentage || 0}%`,
+      convertPrice(data?.shippingPrice) || "",
+      convertPrice(data?.totalPrice) || "",
+      orderContant.payment[data?.paymentMethod] || ""
+    ];
+  
+    // Add each product detail horizontally in the same row
+    data?.orderItems.forEach((item, index) => {
+      headers.push(`Sản phẩm ${index + 1}`);
+      values.push(`${item.name} - x${item.amount} - ${convertPrice(item.price)}`);
+    });
+  
+    // Create a worksheet with headers as columns in the first row and values in the second row
+    const worksheetData = [headers, values];
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Order Details");
+  
+    // Generate Excel file and download
+    XLSX.writeFile(workbook, `Hóa đơn.xlsx`);
+  };
+  
   const queryOrder = useQuery({
     queryKey: ["orders"],
     queryFn: getOrderOfUser,
@@ -278,12 +325,12 @@ const MyOrderPage = () => {
         <Loading isPending={isLoadingDetail}>
           {isSuccessDetail && dataDetails?.data ? (
             <div>
-              <div>
-                <span>
+              <div style={{marginBottom:'8px'}}>
+                <span >
                   Tên người nhận: {dataDetails?.data?.shippingAddress?.fullName}
                 </span>
               </div>
-              <div>
+              <div style={{marginBottom:'8px'}}>
                 <span>
                   Số điện thoại: 0{dataDetails?.data?.shippingAddress?.phone}
                 </span>
@@ -320,25 +367,30 @@ const MyOrderPage = () => {
                   borderColor: "#008bd4",
                 }}
               ></Divider>
-              {/* Hiển thị chi tiết từng sản phẩm */}
-              {dataDetails?.data?.orderItems.map((item, idx) => (
-                <div key={idx} style={{ marginBottom: "10px" }}>
-                  <div>
-                    <div>
-                      <img
-                        style={{ width: "60px", height: "60px" }}
-                        src={item.image}
-                      />{" "}
-                    </div>
+{dataDetails?.data?.orderItems.map((item, idx) => (
+  <div key={idx} style={{ marginBottom: "10px" }}>
+    <div style={{ display: 'flex' }}>
+      <div style={{ marginRight: '80px' }}>
+        <img
+          style={{ width: "70px", height: "70px", paddingLeft: '20px' }}
+          src={item.image}
+        />
+      </div>
+      <div style={{ display: 'flex', paddingTop: '25px', fontSize: '13px', width: '100%', justifyContent: 'space-between' }}>
+        <div style={{ flex: 1, minWidth: '150px', maxWidth: '200px', paddingRight: '20px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {item.name}
+        </div>
+        <div style={{ width: '50px', textAlign: 'center' }}>
+          x{item.amount}
+        </div>
+        <div style={{ width: '120px', textAlign: 'right' }}>
+          {convertPrice(item.price)}
+        </div>
+      </div>
+    </div>
+  </div>
+))}
 
-                    <div>{item.name} </div>
-                    <div>x{item.amount} </div>
-                    <div style={{ justifyContent: "flex-end", width: "120px" }}>
-                      {convertPrice(item.price)}
-                    </div>
-                  </div>
-                </div>
-              ))}
 
               <Divider
                 style={{
@@ -346,114 +398,42 @@ const MyOrderPage = () => {
                 }}
               ></Divider>
               <div>
-                <WrappterTextWithBoder>
-                  <WrappterTextWithBoder
-                    style={{
-                      padding: "10px 13px",
-                      borderBottom: "none",
-                      color: "rgba(0,0,0,.54)",
-                    }}
-                  >
-                    Tổng tiền hàng:{" "}
-                  </WrappterTextWithBoder>
-                  <WrappterTextWithBoder
-                    style={{
-                      width: "120px",
-                      padding: "10px 13px",
-                      borderBottom: "none",
-                    }}
-                  >
-                    {convertPrice(dataDetails?.data?.itemsPrice)}
-                  </WrappterTextWithBoder>
+              <WrappterTextWithBoder style={{ display: 'flex', justifyContent: 'space-between', padding: "10px 13px", borderBottom: "none", color: "rgba(0,0,0,.54)" }}>
+              <span>Tổng tiền hàng:</span>
+              <span style={{ width: "120px", textAlign: 'right' }}>
+                {convertPrice(dataDetails?.data?.itemsPrice)}
+              </span>
                 </WrappterTextWithBoder>
                 {dataDetails?.data?.discountPercentage ? (
-                  <WrappterTextWithBoder>
-                    <WrappterTextWithBoder
-                      style={{
-                        padding: "10px 13px",
-                        borderBottom: "none",
-                        color: "rgba(0,0,0,.54)",
-                      }}
-                    >
-                      Giảm giá trên đơn hàng:{" "}
-                    </WrappterTextWithBoder>
-                    <WrappterTextWithBoder
-                      style={{
-                        width: "120px",
-                        padding: "10px 13px",
-                        borderBottom: "none",
-                      }}
-                    >
+                  <WrappterTextWithBoder style={{ display: 'flex', justifyContent: 'space-between', padding: "10px 13px", borderBottom: "none", color: "rgba(0,0,0,.54)" }}>
+                    <span>Giảm giá trên đơn hàng:</span>
+                    <span style={{ width: "120px", textAlign: 'right' }}>
                       - {dataDetails?.data?.discountPercentage} %
-                    </WrappterTextWithBoder>
+                    </span>
                   </WrappterTextWithBoder>
                 ) : null}
-                <WrappterTextWithBoder>
-                  <WrappterTextWithBoder
-                    style={{
-                      padding: "10px 13px",
-                      borderBottom: "none",
-                      color: "rgba(0,0,0,.54)",
-                    }}
-                  >
-                    Phí vận chuyển:{" "}
-                  </WrappterTextWithBoder>
-                  <WrappterTextWithBoder
-                    style={{
-                      width: "120px",
-                      padding: "10px 13px",
-                      borderBottom: "none",
-                    }}
-                  >
+                <WrappterTextWithBoder style={{ display: 'flex', justifyContent: 'space-between', padding: "10px 13px", borderBottom: "none", color: "rgba(0,0,0,.54)" }}>
+                  <span>Phí vận chuyển:</span>
+                  <span style={{ width: "120px", textAlign: 'right' }}>
                     {convertPrice(dataDetails?.data?.shippingPrice)}
-                  </WrappterTextWithBoder>
+                  </span>
                 </WrappterTextWithBoder>
 
-                <WrappterTextWithBoder>
-                  <WrappterTextWithBoder
-                    style={{
-                      width: "120px",
-                      padding: "10px 13px",
-                      borderBottom: "none",
-                      color: "rgba(0,0,0,.54)",
-                    }}
-                  >
-                    Thành tiền:
-                  </WrappterTextWithBoder>
-                  <WrappterTextWithBoder
-                    style={{
-                      width: "120px",
-                      padding: "10px 13px",
-                      borderBottom: "none",
-                      fontWeight: "bold",
-                      color: "#5a97b8",
-                      fontSize: "1.1em",
-                    }}
-                  >
+                <WrappterTextWithBoder style={{ display: 'flex', justifyContent: 'space-between', padding: "10px 13px", borderBottom: "none", fontWeight: "bold", color: "#5a97b8", fontSize: "1.1em" }}>
+                  <span>Thành tiền:</span>
+                  <span style={{ width: "120px", textAlign: 'right' }}>
                     {convertPrice(dataDetails?.data?.totalPrice)}
-                  </WrappterTextWithBoder>
+                  </span>
                 </WrappterTextWithBoder>
-                <WrappterTextWithBoder>
-                  <WrappterTextWithBoder
-                    style={{
-                      width: "160px",
-                      padding: "10px 13px",
-                      borderBottom: "none",
-                      color: "rgba(0,0,0,.54)",
-                    }}
-                  >
-                    Phương thức thanh toán:
-                  </WrappterTextWithBoder>
-                  <WrappterTextWithBoder
-                    style={{
-                      width: "120px",
-                      padding: "10px 13px",
-                      borderBottom: "none",
-                    }}
-                  >
-                    {orderContant.payment[dataDetails?.data?.paymentMethod]}
-                  </WrappterTextWithBoder>
+                <WrappterTextWithBoder style={{ display: 'flex', justifyContent: 'space-between', padding: "10px 13px", borderBottom: "none", color: "rgba(0,0,0,.54)" }}>
+                  <span>Phương thức thanh toán:</span>
+                  <span style={{ width: "200px", textAlign: 'right' }}>
+                  {orderContant.payment[dataDetails?.data?.paymentMethod]}
+                  </span>
                 </WrappterTextWithBoder>
+                <Button type="primary" style={{marginTop:'20px', marginLeft:'522px', background:'#008029',fontWeight:'500'}} onClick={() => exportToExcel(dataDetails?.data)}>
+                Xuất file Excel
+              </Button>
               </div>
             </div>
           ) : (

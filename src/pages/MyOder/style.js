@@ -28,8 +28,15 @@ export const WrappterTextWithBoder = styled.div`
     align-items: center;
     border-bottom: 1px dotted rgba(0, 0, 0, .09);
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     padding: 0 24px;
+    text-align: right;
+`
+export const WrappterTextPTTTWithBoder = styled.div`
+    align-items: center;
+    border-bottom: 1px dotted rgba(0, 0, 0, .09);
+    display: flex;
+    justify-content: flex-start;
     text-align: right;
 `
 
