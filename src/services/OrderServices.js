@@ -9,8 +9,24 @@ export const createOrder = async (data,access_token) => {
     });
     return res.data
 }
-export const getOrderbyUserId = async (id,access_token) => { 
+export const getDetailOrderbyID = async (id,access_token) => { 
     const res = await axiosJWT.get(`${import.meta.env.VITE_SERVER_HOST}/order/get-order-details/${id}`,{
+        headers: {
+            token: `Bearer ${access_token}`,
+        },
+    });
+    return res.data
+}
+export const getOrderOfUser = async (id,access_token) => { 
+    const res = await axiosJWT.get(`${import.meta.env.VITE_SERVER_HOST}/order/user/${id}`,{
+        headers: {
+            token: `Bearer ${access_token}`,
+        },
+    });
+    return res.data
+}
+export const cancelOrder = async (id,access_token) => { 
+    const res = await axiosJWT.put(`${import.meta.env.VITE_SERVER_HOST}/order/cancel/${id}`,{
         headers: {
             token: `Bearer ${access_token}`,
         },

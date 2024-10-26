@@ -404,177 +404,178 @@ const AdminUser = ({ theme, setTheme }) => {
         />
       </div>
       <DrawerComponent
-  title={<span style={{ paddingBottom: '20px' }}>Chi tiết người dùng</span>} // Thêm padding cho tiêu đề
-  isOpen={isOpenDrawer}
-  onClose={() => setIsOpenDrawer(false)}
-  width="50%"
->
-  <Loading isPending={isLoadingUpdate || isLoadingUpdated}>
-    <Form
-      name="basic"
-      labelCol={{
-        span: 6, // Điều chỉnh labelCol và wrapperCol để căn chỉnh form hợp lý
-      }}
-      wrapperCol={{
-        span: 18,
-      }}
-      style={{
-        maxWidth: 600,
-        paddingTop: '20px', // Thêm khoảng cách phía trên form để không bị dính vào tiêu đề
-      }}
-      onFinish={onUpdateUser}
-      autoComplete="off"
-      form={form}
-    >
-      <Form.Item
-        label="Họ và tên"
-        name="name"
-        rules={[
-          {
-            required: true,
-            message: "Please input name user!",
-          },
-        ]}
+        title={
+          <span style={{ paddingBottom: "20px" }}>Chi tiết người dùng</span>
+        } // Thêm padding cho tiêu đề
+        isOpen={isOpenDrawer}
+        onClose={() => setIsOpenDrawer(false)}
+        width="50%"
       >
-        <InputComponent
-          value={stateUserDetails.name}
-          onChange={handleOnchangeDetails}
-          name="name"
-        />
-      </Form.Item>
-
-      <Form.Item
-        label="Email"
-        name="email"
-        rules={[
-          {
-            required: true,
-            message: "Please input Email!",
-          },
-        ]}
-      >
-        <InputComponent
-          value={stateUserDetails.email}
-          onChange={handleOnchangeDetails}
-          name="email"
-        />
-      </Form.Item>
-
-      <Form.Item
-        label="Số điện thoại"
-        name="phone"
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-      >
-        <InputComponent
-          value={stateUserDetails.phone}
-          onChange={handleOnchangeDetails}
-          name="phone"
-        />
-      </Form.Item>
-
-      <Form.Item
-        label="Địa chỉ"
-        name="address"
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-      >
-        <InputComponent
-          value={stateUserDetails.address}
-          onChange={handleOnchangeDetails}
-          name="address"
-        />
-      </Form.Item>
-
-      <Form.Item
-        label="Vai trò"
-        name="role"
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-      >
-        <InputComponent
-          value={stateUserDetails.role}
-          onChange={handleOnchangeDetails}
-          name="role"
-        />
-      </Form.Item>
-
-      <Form.Item
-        label="IsAdmin"
-        name="isAdmin"
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-      >
-        <InputComponent
-          value={stateUserDetails.isAdmin}
-          onChange={handleOnchangeDetails}
-          name="isAdmin"
-        />
-      </Form.Item>
-
-      <Form.Item
-        label="Ảnh đại diện"
-        name="avatar"
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-      >
-        <WapperUploadFile
-          onChange={handleOnchangeAvatarDetails}
-          maxCount={1}
-        >
-          <Button icon={<UploadOutlined />}>Select File</Button>
-        </WapperUploadFile>
-        {stateUserDetails?.avatar && (
-          <img
-            src={stateUserDetails?.avatar}
-            style={{
-              height: "60px",
-              width: "60px",
-              borderRadius: "50%",
-              objectFit: "cover",
-              marginLeft: "10px",
-              display: "flex",
+        <Loading isPending={isLoadingUpdate || isLoadingUpdated}>
+          <Form
+            name="basic"
+            labelCol={{
+              span: 6, // Điều chỉnh labelCol và wrapperCol để căn chỉnh form hợp lý
             }}
-            alt="avatar"
-          />
-        )}
-      </Form.Item>
+            wrapperCol={{
+              span: 18,
+            }}
+            style={{
+              maxWidth: 600,
+              paddingTop: "20px", // Thêm khoảng cách phía trên form để không bị dính vào tiêu đề
+            }}
+            onFinish={onUpdateUser}
+            autoComplete="off"
+            form={form}
+          >
+            <Form.Item
+              label="Họ và tên"
+              name="name"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input name user!",
+                },
+              ]}
+            >
+              <InputComponent
+                value={stateUserDetails.name}
+                onChange={handleOnchangeDetails}
+                name="name"
+              />
+            </Form.Item>
 
-      <Form.Item
-        wrapperCol={{
-          offset: 20,
-          span: 16,
-        }}
-      >
-        <div>
-          {dataUpdated?.status === "ERR" && (
-            <span style={{ color: "red" }}>{dataUpdated?.message}</span>
-          )}
-        </div>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input Email!",
+                },
+              ]}
+            >
+              <InputComponent
+                value={stateUserDetails.email}
+                onChange={handleOnchangeDetails}
+                name="email"
+              />
+            </Form.Item>
 
-        <Button type="primary" htmlType="submit">
-          Xác nhận
-        </Button>
-      </Form.Item>
-    </Form>
-  </Loading>
-</DrawerComponent>
+            <Form.Item
+              label="Số điện thoại"
+              name="phone"
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+            >
+              <InputComponent
+                value={stateUserDetails.phone}
+                onChange={handleOnchangeDetails}
+                name="phone"
+              />
+            </Form.Item>
 
+            <Form.Item
+              label="Địa chỉ"
+              name="address"
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+            >
+              <InputComponent
+                value={stateUserDetails.address}
+                onChange={handleOnchangeDetails}
+                name="address"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Vai trò"
+              name="role"
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+            >
+              <InputComponent
+                value={stateUserDetails.role}
+                onChange={handleOnchangeDetails}
+                name="role"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="IsAdmin"
+              name="isAdmin"
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+            >
+              <InputComponent
+                value={stateUserDetails.isAdmin}
+                onChange={handleOnchangeDetails}
+                name="isAdmin"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Ảnh đại diện"
+              name="avatar"
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+            >
+              <WapperUploadFile
+                onChange={handleOnchangeAvatarDetails}
+                maxCount={1}
+              >
+                <Button icon={<UploadOutlined />}>Select File</Button>
+              </WapperUploadFile>
+              {stateUserDetails?.avatar && (
+                <img
+                  src={stateUserDetails?.avatar}
+                  style={{
+                    height: "60px",
+                    width: "60px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    marginLeft: "10px",
+                    display: "flex",
+                  }}
+                  alt="avatar"
+                />
+              )}
+            </Form.Item>
+
+            <Form.Item
+              wrapperCol={{
+                offset: 20,
+                span: 16,
+              }}
+            >
+              <div>
+                {dataUpdated?.status === "ERR" && (
+                  <span style={{ color: "red" }}>{dataUpdated?.message}</span>
+                )}
+              </div>
+
+              <Button type="primary" htmlType="submit">
+                Xác nhận
+              </Button>
+            </Form.Item>
+          </Form>
+        </Loading>
+      </DrawerComponent>
 
       <ModalComponent
         forceRender

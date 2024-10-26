@@ -24,3 +24,28 @@ export const PriceText = styled(Text)`
   font-size: 16px;
 `;
 
+export const WrappterTextWithBoder = styled.div`
+    align-items: center;
+    border-bottom: 1px dotted rgba(0, 0, 0, .09);
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 24px;
+    text-align: right;
+`
+
+export const WrappterItemDetail = styled.div`
+    align-items: center;
+    display: flex;
+        justify-content: flex-end;
+    padding: 0 5px;
+    text-align: right;
+`
+export const WrappterItemDetailImage = styled.div`
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+    padding: 0 10px;
+    text-align: right;
+    
+`
+

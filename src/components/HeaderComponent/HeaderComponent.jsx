@@ -82,7 +82,9 @@ const HeaderComponent = () => {
   const handleNavigateProfile = () => {
     navigate("/profile-user");
   };
-
+  const handleNavigateMyOrder = () => {
+    navigate("/myorder");
+  };
   const content = (
     <div>
       {user?.isAdmin && (
@@ -92,6 +94,9 @@ const HeaderComponent = () => {
       )}
       <WrapperContentPopup onClick={handleNavigateProfile}>
         Thông tin người dùng
+      </WrapperContentPopup>
+      <WrapperContentPopup onClick={handleNavigateMyOrder}>
+        Lịch sử mua hàng
       </WrapperContentPopup>
       <WrapperContentPopup onClick={handleLogout}>
         Đăng xuất
@@ -138,7 +143,10 @@ const HeaderComponent = () => {
           </WrapperShoppingHeader>
         </Col>
         <Col span={3}>
-          <Popover placement="bottom" content={user?.access_token ? content : null}>
+          <Popover
+            placement="bottom"
+            content={user?.access_token ? content : null}
+          >
             {user?.access_token ? (
               <WrapperAccountHeader onClick={handleNavigateProfile}>
                 {userAvatar ? (
@@ -176,8 +184,17 @@ const HeaderComponent = () => {
           </WrapperShipperHeader>
         </Col>
       </WrapperHeader>
-      
-      <div style={{ width: "92.15%",textAlign:"center", position: "relative", margin:" 0 auto", background:"#008bd4", paddingLeft:"120px"}}>
+
+      <div
+        style={{
+          width: "92.15%",
+          textAlign: "center",
+          position: "relative",
+          margin: " 0 auto",
+          background: "#008bd4",
+          paddingLeft: "120px",
+        }}
+      >
         {typeProducts.map((item) => (
           <ProductTypeItem key={item}>
             <TypeProduct name={item} />
