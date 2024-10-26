@@ -74,7 +74,7 @@ export const routes = [
         page: OutstandingPhonePage,
         isShowHeader: true
     },
-    {
+    {//xóa
         path: '/orderdetail',
         page: OrderInfo,
         isShowHeader: true
