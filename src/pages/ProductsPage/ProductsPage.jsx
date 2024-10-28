@@ -18,7 +18,7 @@ const ProductsPage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
   const [loading, setLoading] = useState(false);
 
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(25);
   const searchDebounce = useDebounce(searchProduct, 1000);
   const [typeProducts, setTypeProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState("none"); // State cho sắp xếp

@@ -25,7 +25,7 @@ import {
 } from "./style";
 import { orderContant } from "../../contant";
 import { useNavigate } from "react-router-dom";
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 
 const OrderCard = styled(Card)`
   margin-bottom: 20px;
@@ -62,13 +62,15 @@ const MyOrderPage = () => {
       "Giảm giá trên đơn hàng",
       "Phí vận chuyển",
       "Thành tiền",
-      "Phương thức thanh toán"
+      "Phương thức thanh toán",
     ];
-  
+
     const values = [
       data?.shippingAddress?.fullName || "",
       `0${data?.shippingAddress?.phone || ""}`,
-      `${data?.shippingAddress?.address || ""}, ${data?.shippingAddress?.city || ""}`,
+      `${data?.shippingAddress?.address || ""}, ${
+        data?.shippingAddress?.city || ""
+      }`,
       convertDateISO(data?.createdAt) || "",
       convertStatusOrder(data?.orderStatus) || "",
       data?.isPaid ? "Đã thanh toán" : "Chưa thanh toán",
@@ -76,25 +78,27 @@ const MyOrderPage = () => {
       `${data?.discountPercentage || 0}%`,
       convertPrice(data?.shippingPrice) || "",
       convertPrice(data?.totalPrice) || "",
-      orderContant.payment[data?.paymentMethod] || ""
+      orderContant.payment[data?.paymentMethod] || "",
     ];
-  
+
     // Add each product detail horizontally in the same row
     data?.orderItems.forEach((item, index) => {
       headers.push(`Sản phẩm ${index + 1}`);
-      values.push(`${item.name} - x${item.amount} - ${convertPrice(item.price)}`);
+      values.push(
+        `${item.name} - x${item.amount} - ${convertPrice(item.price)}`
+      );
     });
-  
+
     // Create a worksheet with headers as columns in the first row and values in the second row
     const worksheetData = [headers, values];
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Order Details");
-  
+
     // Generate Excel file and download
     XLSX.writeFile(workbook, `Hóa đơn.xlsx`);
   };
-  
+
   const queryOrder = useQuery({
     queryKey: ["orders"],
     queryFn: getOrderOfUser,
@@ -145,7 +149,7 @@ const MyOrderPage = () => {
   };
 
   const handleDetailOrder = (idOrder) => {
-    mutationDetails.mutate({ id: idOrder});
+    mutationDetails.mutate({ id: idOrder });
   };
 
   const openCancelModal = (idOrder) => {
@@ -170,136 +174,141 @@ const MyOrderPage = () => {
     <Loading isPending={isLoadingOrders}>
       <div style={{ padding: "20px" }}>
         <Typography.Title level={2}>Lịch sử mua hàng</Typography.Title>
-          {orders ? (
-            <>
-              {orders?.data.map((order) => (
-                <OrderCard hoverable key={order.id} bordered={false}>
-                  <Row gutter={[16, 16]}>
-                    <Col span={16}>
-                      <div>
-                        <span>
-                          Ngày đặt hàng: {convertDateISO(order?.createdAt)}
+        {orders ? (
+          <>
+            {orders?.data.map((order) => (
+              <OrderCard
+                onClick={() => openDetailModal(order._id)}
+                hoverable
+                key={order.id}
+                bordered={false}
+              >
+                <Row gutter={[16, 16]}>
+                  <Col span={16}>
+                    <div>
+                      <span>
+                        Ngày đặt hàng: {convertDateISO(order?.createdAt)}
+                      </span>
+                    </div>
+
+                    <div>
+                      <p
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 10,
+                        }}
+                      >
+                        <span style={{ width: "9rem" }}>
+                          Tình trạng giao hàng:{" "}
                         </span>
-                      </div>
+                        {order?.orderStatus === "Delivered" ? (
+                          <Alert
+                            message="Đã giao hàng thành công"
+                            type="success"
+                            showIcon
+                            style={{ width: "11em" }}
+                          />
+                        ) : order?.orderStatus === "Cancelled" ? (
+                          <Alert
+                            message={convertStatusOrder(order?.orderStatus)}
+                            type="error"
+                            showIcon
+                            style={{ width: "11em" }}
+                          />
+                        ) : (
+                          <Alert
+                            message={convertStatusOrder(order?.orderStatus)}
+                            type="info"
+                            showIcon
+                            style={{ width: "11em" }}
+                          />
+                        )}
+                      </p>
+                      <p
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 10,
+                        }}
+                      >
+                        <span style={{ width: "9rem" }}>
+                          Tình trạng thanh toán:{" "}
+                        </span>
+                        {order?.isPaid ? (
+                          <Alert
+                            message="Đã thanh toán"
+                            type="success"
+                            showIcon
+                            style={{ width: "11em" }}
+                          />
+                        ) : (
+                          <Alert
+                            message="Chưa thanh toán"
+                            type="info"
+                            showIcon
+                            style={{ width: "11em" }}
+                          />
+                        )}
+                      </p>
+                    </div>
+                    {order.orderItems.map((item, idx) => (
+                      <Row
+                        key={idx}
+                        gutter={[8, 8]}
+                        style={{ marginBottom: "10px" }}
+                      >
+                        <Col span={4}>
+                          <img
+                            src={item.image}
+                            style={{ width: "100%", borderRadius: "4px" }}
+                          />
+                        </Col>
+                        <Col span={20}>
+                          <p>{item.name}</p>
+                          <p>{convertPrice(item.price)}</p>
+                          <p>x{item.amount}</p>
+                        </Col>
+                      </Row>
+                    ))}
+                  </Col>
+                  <Col span={8} style={{ textAlign: "right" }}>
+                    <Typography.Text className="order-total">
+                      Thành tiền: {convertPrice(order.totalPrice)}
+                    </Typography.Text>
 
-                      <div>
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 10,
-                          }}
-                        >
-                          <span style={{ width: "9rem" }}>
-                            Tình trạng giao hàng:{" "}
-                          </span>
-                          {order?.orderStatus === "Delivered" ? (
-                            <Alert
-                              message="Đã giao hàng thành công"
-                              type="success"
-                              showIcon
-                              style={{ width: "11em" }}
-                            />
-                          ) : order?.orderStatus === "Cancelled" ? (
-                            <Alert
-                              message={convertStatusOrder(order?.orderStatus)}
-                              type="error"
-                              showIcon
-                              style={{ width: "11em" }}
-                            />
-                          ) : (
-                            <Alert
-                              message={convertStatusOrder(order?.orderStatus)}
-                              type="info"
-                              showIcon
-                              style={{ width: "11em" }}
-                            />
-                          )}
-                        </p>
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 10,
-                          }}
-                        >
-                          <span style={{ width: "9rem" }}>
-                            Tình trạng thanh toán:{" "}
-                          </span>
-                          {order?.isPaid ? (
-                            <Alert
-                              message="Đã thanh toán"
-                              type="success"
-                              showIcon
-                              style={{ width: "11em" }}
-                            />
-                          ) : (
-                            <Alert
-                              message="Chưa thanh toán"
-                              type="info"
-                              showIcon
-                              style={{ width: "11em" }}
-                            />
-                          )}
-                        </p>
-                      </div>
-                      {order.orderItems.map((item, idx) => (
-                        <Row
-                          key={idx}
-                          gutter={[8, 8]}
-                          style={{ marginBottom: "10px" }}
-                        >
-                          <Col span={4}>
-                            <img
-                              src={item.image}
-                              style={{ width: "100%", borderRadius: "4px" }}
-                            />
-                          </Col>
-                          <Col span={20}>
-                            <p>{item.name}</p>
-                            <p>{convertPrice(item.price)}</p>
-                            <p>x{item.amount}</p>
-                          </Col>
-                        </Row>
-                      ))}
-                    </Col>
-                    <Col span={8} style={{ textAlign: "right" }}>
-                      <Typography.Text className="order-total">
-                        Thành tiền: {convertPrice(order.totalPrice)}
-                      </Typography.Text>
-
-                      <div style={{ marginTop: "10px" }}>
-                        <Button
-                          style={{ marginRight: "10px" }}
-                          onClick={() => openCancelModal(order._id)}
-                        >
-                          Hủy đơn hàng
-                        </Button>
-                        <Button
-                          onClick={() => openDetailModal(order._id)}
-                          type="primary"
-                        >
-                          Xem chi tiết
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-                </OrderCard>
-              ))}
-            </>
-          ) : (
-            <Empty
-              imageStyle={{
-                height: 250,
-              }}
-              description={
-                <span style={{ fontSize: "35px" }}>
-                  Bạn chưa có đơn hàng nào.{" "}
-                  <a onClick={handleNavigaveProducts}> Mua ngay</a>
-                </span>
-              }
-            ></Empty>
-          )}
+                    <div style={{ marginTop: "10px" }}>
+                      <Button
+                        style={{ marginRight: "10px" }}
+                        onClick={() => openCancelModal(order._id)}
+                      >
+                        Hủy đơn hàng
+                      </Button>
+                      <Button
+                        onClick={() => openDetailModal(order._id)}
+                        type="primary"
+                      >
+                        Xem chi tiết
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+              </OrderCard>
+            ))}
+          </>
+        ) : (
+          <Empty
+            imageStyle={{
+              height: 250,
+            }}
+            description={
+              <span style={{ fontSize: "35px" }}>
+                Bạn chưa có đơn hàng nào.{" "}
+                <a onClick={handleNavigaveProducts}> Mua ngay</a>
+              </span>
+            }
+          ></Empty>
+        )}
       </div>
 
       <ModalComponent
@@ -325,12 +334,12 @@ const MyOrderPage = () => {
         <Loading isPending={isLoadingDetail}>
           {isSuccessDetail && dataDetails?.data ? (
             <div>
-              <div style={{marginBottom:'8px'}}>
-                <span >
+              <div style={{ marginBottom: "8px" }}>
+                <span>
                   Tên người nhận: {dataDetails?.data?.shippingAddress?.fullName}
                 </span>
               </div>
-              <div style={{marginBottom:'8px'}}>
+              <div style={{ marginBottom: "8px" }}>
                 <span>
                   Số điện thoại: 0{dataDetails?.data?.shippingAddress?.phone}
                 </span>
@@ -367,30 +376,57 @@ const MyOrderPage = () => {
                   borderColor: "#008bd4",
                 }}
               ></Divider>
-{dataDetails?.data?.orderItems.map((item, idx) => (
-  <div key={idx} style={{ marginBottom: "10px" }}>
-    <div style={{ display: 'flex' }}>
-      <div style={{ marginRight: '80px' }}>
-        <img
-          style={{ width: "70px", height: "70px", paddingLeft: '20px' }}
-          src={item.image}
-        />
-      </div>
-      <div style={{ display: 'flex', paddingTop: '25px', fontSize: '13px', width: '100%', justifyContent: 'space-between' }}>
-        <div style={{ flex: 1, minWidth: '150px', maxWidth: '200px', paddingRight: '20px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {item.name}
-        </div>
-        <div style={{ width: '50px', textAlign: 'center' }}>
-          x{item.amount}
-        </div>
-        <div style={{ width: '120px', textAlign: 'right' }}>
-          {convertPrice(item.price)}
-        </div>
-      </div>
-    </div>
-  </div>
-))}
-
+              {dataDetails?.data?.orderItems.map((item, idx) => (
+                <div key={idx} style={{ marginBottom: "10px" }}>
+                  <div style={{ display: "flex" }}>
+                    <div style={{ marginRight: "80px" }}>
+                      <img
+                        style={{
+                          width: "70px",
+                          height: "70px",
+                          paddingLeft: "20px",
+                        }}
+                        src={item.image}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        paddingTop: "25px",
+                        fontSize: "13px",
+                        width: "100%",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div
+                        style={{
+                          flex: 1,
+                          minWidth: "150px",
+                          maxWidth: "200px",
+                          paddingRight: "20px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {item.name}
+                      </div>
+                      <div style={{ width: "50px", textAlign: "center" }}>
+                        x{item.amount}
+                      </div>
+                      <div
+                        style={{
+                          width: "120px",
+                          textAlign: "right",
+                          padding: "0px 13px",
+                        }}
+                      >
+                        {convertPrice(item.price)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
 
               <Divider
                 style={{
@@ -398,42 +434,93 @@ const MyOrderPage = () => {
                 }}
               ></Divider>
               <div>
-              <WrappterTextWithBoder style={{ display: 'flex', justifyContent: 'space-between', padding: "10px 13px", borderBottom: "none", color: "rgba(0,0,0,.54)" }}>
-              <span>Tổng tiền hàng:</span>
-              <span style={{ width: "120px", textAlign: 'right' }}>
-                {convertPrice(dataDetails?.data?.itemsPrice)}
-              </span>
+                <WrappterTextWithBoder
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "10px 13px",
+                    borderBottom: "none",
+                    color: "rgba(0,0,0,.54)",
+                  }}
+                >
+                  <span>Tổng tiền hàng:</span>
+                  <span style={{ width: "120px", textAlign: "right" }}>
+                    {convertPrice(dataDetails?.data?.itemsPrice)}
+                  </span>
                 </WrappterTextWithBoder>
                 {dataDetails?.data?.discountPercentage ? (
-                  <WrappterTextWithBoder style={{ display: 'flex', justifyContent: 'space-between', padding: "10px 13px", borderBottom: "none", color: "rgba(0,0,0,.54)" }}>
+                  <WrappterTextWithBoder
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "10px 13px",
+                      borderBottom: "none",
+                      color: "rgba(0,0,0,.54)",
+                    }}
+                  >
                     <span>Giảm giá trên đơn hàng:</span>
-                    <span style={{ width: "120px", textAlign: 'right' }}>
+                    <span style={{ width: "120px", textAlign: "right" }}>
                       - {dataDetails?.data?.discountPercentage} %
                     </span>
                   </WrappterTextWithBoder>
                 ) : null}
-                <WrappterTextWithBoder style={{ display: 'flex', justifyContent: 'space-between', padding: "10px 13px", borderBottom: "none", color: "rgba(0,0,0,.54)" }}>
+                <WrappterTextWithBoder
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "10px 13px",
+                    borderBottom: "none",
+                    color: "rgba(0,0,0,.54)",
+                  }}
+                >
                   <span>Phí vận chuyển:</span>
-                  <span style={{ width: "120px", textAlign: 'right' }}>
+                  <span style={{ width: "120px", textAlign: "right" }}>
                     {convertPrice(dataDetails?.data?.shippingPrice)}
                   </span>
                 </WrappterTextWithBoder>
 
-                <WrappterTextWithBoder style={{ display: 'flex', justifyContent: 'space-between', padding: "10px 13px", borderBottom: "none", fontWeight: "bold", color: "#5a97b8", fontSize: "1.1em" }}>
+                <WrappterTextWithBoder
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "10px 13px",
+                    borderBottom: "none",
+                    fontWeight: "bold",
+                    color: "#5a97b8",
+                    fontSize: "1.1em",
+                  }}
+                >
                   <span>Thành tiền:</span>
-                  <span style={{ width: "120px", textAlign: 'right' }}>
+                  <span style={{ width: "120px", textAlign: "right" }}>
                     {convertPrice(dataDetails?.data?.totalPrice)}
                   </span>
                 </WrappterTextWithBoder>
-                <WrappterTextWithBoder style={{ display: 'flex', justifyContent: 'space-between', padding: "10px 13px", borderBottom: "none", color: "rgba(0,0,0,.54)" }}>
+                <WrappterTextWithBoder
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "10px 13px",
+                    borderBottom: "none",
+                    color: "rgba(0,0,0,.54)",
+                  }}
+                >
                   <span>Phương thức thanh toán:</span>
-                  <span style={{ width: "200px", textAlign: 'right' }}>
-                  {orderContant.payment[dataDetails?.data?.paymentMethod]}
+                  <span style={{ width: "200px", textAlign: "right" }}>
+                    {orderContant.payment[dataDetails?.data?.paymentMethod]}
                   </span>
                 </WrappterTextWithBoder>
-                <Button type="primary" style={{marginTop:'20px', marginLeft:'522px', background:'#008029',fontWeight:'500'}} onClick={() => exportToExcel(dataDetails?.data)}>
-                Xuất file Excel
-              </Button>
+                <Button
+                  type="primary"
+                  style={{
+                    marginTop: "20px",
+                    marginLeft: "522px",
+                    background: "#008029",
+                    fontWeight: "500",
+                  }}
+                  onClick={() => exportToExcel(dataDetails?.data)}
+                >
+                  Xuất file Excel
+                </Button>
               </div>
             </div>
           ) : (

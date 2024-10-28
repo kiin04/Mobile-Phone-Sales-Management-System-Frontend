@@ -48,12 +48,11 @@ const OutstandingPhonePage = () => {
   return (
     <div>
       <MainContainer>
-        <WapperProduct>
-          <OutstandingTitle>Điện thoại nổi bật</OutstandingTitle>
+        <OutstandingTitle>Điện thoại nổi bật</OutstandingTitle>
+        <WapperProduct style={{ padding: "0px 5px" }}>
           <Loading isPending={isLoading || loading}>
             <WapperProduct style={{ marginBottom: "10px" }}>
               {products?.data?.map((product) => {
-
                 return (
                   <CardComponent
                     key={product._id}
