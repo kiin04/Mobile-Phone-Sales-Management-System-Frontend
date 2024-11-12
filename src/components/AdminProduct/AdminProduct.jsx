@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Form, InputNumber, Select, Space } from "antd";
+import { Button, Form, Image, InputNumber, Select, Space } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -128,32 +128,32 @@ const AdminProduct = () => {
     : [];
 
   useEffect(() => {
-    if (isSuccess && data?.status === "OK") {
-      message.success("Thêm sản phẩm thành công!!");
+    if (data?.status === "OK") {
+      message.success(data?.message);
       setIsModalOpen(false);
       handleCancel();
-    } else if (isError) {
-      message.error("Thêm sản phẩm thất bại!!");
+    } else if (data?.status === "ERR") {
+      message.error(data?.message);
     }
-  }, [isSuccess]);
+  }, [data]);
 
   useEffect(() => {
-    if (isSuccessDeleted && dataDeleted?.status === "OK") {
-      message.success("Xóa sản phẩm thành công!!");
+    if (dataDeleted?.status === "OK") {
+      message.success(dataDeleted?.message);
       handleCancelDelete();
-    } else if (isErrorDeleted) {
-      message.error("Xóa sản phẩm thất bại!!");
+    } else if (dataDeleted?.status === "ERR") {
+      message.error(dataDeleted?.message);
     }
-  }, [isSuccessDeleted]);
+  }, [dataDeleted]);
 
   useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success("Cập nhật sản phẩm thành công!!");
+    if (dataUpdated?.status === "OK") {
+      message.success(dataUpdated?.message);
       handleCancelDrawer();
-    } else if (isErrorUpdated) {
-      message.error("Cập nhật sản phẩm thất bại!!");
+    } else if (dataUpdated?.status === "ERR") {
+      message.error(dataUpdated?.message);
     }
-  }, [isSuccessUpdated]);
+  }, [dataUpdated]);
 
   const onFinish = () => {
     const params = {
@@ -221,6 +221,18 @@ const AdminProduct = () => {
     setStateProduct({
       ...stateProduct,
       [e.target.name]: e.target.value,
+    });
+  };
+  const handleOnChangeInputNumber = (value, name) => {
+    setStateProduct({
+      ...stateProduct,
+      [name]: value,
+    });
+  };
+  const handleOnChangeInputNumberDetails = (value, name) => {
+    setStateProductDetails({
+      ...stateProductDetails,
+      [name]: value,
     });
   };
   const handleOnchangeDetails = (e) => {
@@ -538,7 +550,7 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input name product!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
@@ -555,7 +567,7 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input type!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
@@ -573,7 +585,7 @@ const AdminProduct = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input type!",
+                    message: "Vui lòng không bỏ trống!",
                   },
                 ]}
               >
@@ -593,7 +605,7 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input count InStock!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
@@ -609,7 +621,7 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input price!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
@@ -625,7 +637,7 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input description!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
@@ -641,13 +653,13 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input type!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
               <InputNumber
                 value={stateProduct.rating}
-                onChange={handleOnchange}
+                onChange={(value) => handleOnChangeInputNumber(value, 'rating')}
                 name="rating"
                 defaultValue={1}
                 max={5}
@@ -661,7 +673,7 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: false,
-                  message: "Please input image!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
@@ -674,7 +686,7 @@ const AdminProduct = () => {
                   style={{
                     height: "60px",
                     width: "60px",
-                    borderRadius: "50%",
+                    borderRadius: "10%",
                     objectFit: "cover",
                     marginLeft: "10px",
                     display: "flex",
@@ -686,29 +698,23 @@ const AdminProduct = () => {
 
             <Form.Item
               wrapperCol={{
-                offset: 20,
+                offset: 17,
                 span: 16,
               }}
             >
-              <div>
-                {data?.status === "ERR" && (
-                  <span style={{ color: "red" }}>{data?.message}</span>
-                )}
-              </div>
-
               <Button type="primary" htmlType="submit">
-                Submit
+                Thêm sản phẩm
               </Button>
             </Form.Item>
           </Form>
         </Loading>
       </ModalComponent>
       <DrawerComponent
-  title={<span style={{ paddingBottom: '20px' }}>Chi tiết sản phẩm</span>}  // Thêm padding cho tiêu đề
-  isOpen={isOpenDrawer}
-  onClose={() => setIsOpenDrawer(false)}
-  width="50%"
->
+          title={<span style={{ paddingBottom: '20px' }}>Chi tiết sản phẩm</span>}  // Thêm padding cho tiêu đề
+          isOpen={isOpenDrawer}
+          onClose={() => setIsOpenDrawer(false)}
+          width="50%"
+      >
   <Loading isPending={isLoadingUpdate || isLoadingUpdated}>
     <Form
       name="basic"
@@ -732,7 +738,7 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input name product!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
@@ -749,7 +755,7 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input type!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
@@ -766,7 +772,7 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input count InStock!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
@@ -783,7 +789,7 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input price!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
@@ -800,7 +806,7 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input description!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
@@ -817,13 +823,13 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input rating!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
         <InputNumber
                 value={stateProduct.rating}
-                onChange={handleOnchange}
+                onChange={(value) => handleOnChangeInputNumberDetails(value, 'rating')}
                 name="rating"
                 defaultValue={1}
                 max={5}
@@ -837,7 +843,7 @@ const AdminProduct = () => {
         rules={[
           {
             required: false,
-            message: "Please input image!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
@@ -853,7 +859,7 @@ const AdminProduct = () => {
             style={{
               height: "60px",
               width: "60px",
-              borderRadius: "50%",
+              borderRadius: "10%",
               objectFit: "cover",
               marginLeft: "10px",
               display: "flex",
@@ -869,12 +875,6 @@ const AdminProduct = () => {
           span: 16,
         }}
       >
-        <div>
-          {data?.status === "ERR" && (
-            <span style={{ color: "red" }}>{data?.message}</span>
-          )}
-        </div>
-
         <Button type="primary" htmlType="submit">
           Xác nhận
         </Button>

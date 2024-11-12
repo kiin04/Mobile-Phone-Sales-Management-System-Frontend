@@ -177,12 +177,12 @@ const HeaderComponent = () => {
           </Popover>
         </Col>
 
-        <Col span={4}>
+        {/* <Col span={4}>
           <WrapperShipperHeader>
             <CarOutlined style={{ fontSize: "23px" }} />
             <span>Tra cứu đơn hàng</span>
           </WrapperShipperHeader>
-        </Col>
+        </Col> */}
       </WrapperHeader>
 
       <div

@@ -236,12 +236,12 @@ const AdminOrder = () => {
       </div>
       <div style={{ marginTop: "30px" }}>
       <TableComponent 
-  filename={"Order"}
-  headers={headers}
-  columns={columns}
-  isLoading={isLoadingOrders}
-  data={dataTable}
-  expandable={{
+      filename={"Order"}
+      headers={headers}
+      columns={columns}
+      isLoading={isLoadingOrders}
+      data={dataTable}
+      expandable={{
     expandedRowRender: (record) => (
       <div style={{ margin: 0 }}>
         {record.orderItems.map((item, index) => (
@@ -253,6 +253,7 @@ const AdminOrder = () => {
           </div>
         ))}
       </div>
+      
     ),
   }}
 />
