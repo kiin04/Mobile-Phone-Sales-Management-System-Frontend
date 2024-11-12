@@ -243,29 +243,35 @@ const AdminProduct = () => {
   };
 
   const handleOnchangeAvatar = async ({ fileList }) => {
-    const file = fileList[0];
     try {
-      if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj);
+      const imageUrls = [];
+      for (let file of fileList) {
+        if (!file.url && !file.preview) {
+          file.preview = await getBase64(file.originFileObj);
+        }
+        imageUrls.push(file.preview); // thêm URL của mỗi ảnh vào mảng
       }
       setStateProduct({
         ...stateProduct,
-        image: file.preview,
+        image: imageUrls, // lưu mảng các URLs vào state
       });
     } catch (error) {
       console.error("Error converting file to base64: ", error);
     }
   };
-
+  
   const handleOnchangeAvatarDetails = async ({ fileList }) => {
-    const file = fileList[0];
     try {
-      if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj);
+      const imageUrls = [];
+      for (let file of fileList) {
+        if (!file.url && !file.preview) {
+          file.preview = await getBase64(file.originFileObj);
+        }
+        imageUrls.push(file.preview); // thêm URL của mỗi ảnh vào mảng
       }
       setStateProductDetails({
         ...stateProductDetails,
-        image: file.preview,
+        image: imageUrls, // lưu mảng các URLs vào state
       });
     } catch (error) {
       console.error("Error converting file to base64: ", error);
@@ -668,33 +674,37 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label="Hình ảnh:"
-              name="image"
-              rules={[
-                {
-                  required: false,
-                  message: "Vui lòng không bỏ trống!",
-                },
-              ]}
-            >
-              <WapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
-                <Button icon={<UploadOutlined />}>Select File</Button>
-              </WapperUploadFile>
-              {stateProduct?.image && (
-                <img
-                  src={stateProduct?.image}
-                  style={{
-                    height: "60px",
-                    width: "60px",
-                    borderRadius: "10%",
-                    objectFit: "cover",
-                    marginLeft: "10px",
-                    display: "flex",
-                  }}
-                  alt="avatar"
-                />
-              )}
-            </Form.Item>
+  label="Hình ảnh:"
+  name="image"
+  rules={[
+    {
+      required: false,
+      message: "Vui lòng không bỏ trống!",
+    },
+  ]}
+>
+  <WapperUploadFile onChange={handleOnchangeAvatar} maxCount={5} multiple > {/* Bạn có thể cho phép tối đa 5 ảnh */}
+    <Button icon={<UploadOutlined />}>Select Files</Button>
+  </WapperUploadFile>
+  {stateProduct?.image && stateProduct.image.length > 0 && (
+    <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+      {stateProduct.image.map((image, index) => (
+        <img
+          key={index}
+          src={image}
+          style={{
+            height: "60px",
+            width: "60px",
+            borderRadius: "10%",
+            objectFit: "cover",
+          }}
+          alt={`avatar-${index}`}
+        />
+      ))}
+    </div>
+  )}
+</Form.Item>
+
 
             <Form.Item
               wrapperCol={{
@@ -836,38 +846,37 @@ const AdminProduct = () => {
                 min={1}
               />
       </Form.Item>
-
       <Form.Item
-        label="Hình ảnh:"
-        name="image"
-        rules={[
-          {
-            required: false,
-            message: "Vui lòng không bỏ trống!",
-          },
-        ]}
-      >
-        <WapperUploadFile
-          onChange={handleOnchangeAvatarDetails}
-          maxCount={1}
-        >
-          <Button icon={<UploadOutlined />}>Select File</Button>
-        </WapperUploadFile>
-        {stateProductDetails?.image && (
-          <img
-            src={stateProductDetails?.image}
-            style={{
-              height: "60px",
-              width: "60px",
-              borderRadius: "10%",
-              objectFit: "cover",
-              marginLeft: "10px",
-              display: "flex",
-            }}
-            alt="avatar"
-          />
-        )}
-      </Form.Item>
+  label="Hình ảnh:"
+  name="image"
+  rules={[
+    {
+      required: false,
+      message: "Vui lòng không bỏ trống!",
+    },
+  ]}
+>
+  <WapperUploadFile onChange={handleOnchangeAvatarDetails} maxCount={5}> {/* Bạn có thể cho phép tối đa 5 ảnh */}
+    <Button icon={<UploadOutlined />}>Select Files</Button>
+  </WapperUploadFile>
+  {stateProductDetails?.image && stateProductDetails.image.length > 0 && (
+    <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+      {stateProductDetails.image.map((image, index) => (
+        <img
+          key={index}
+          src={image}
+          style={{
+            height: "60px",
+            width: "60px",
+            borderRadius: "10%",
+            objectFit: "cover",
+          }}
+          alt={`avatar-${index}`}
+        />
+      ))}
+    </div>
+  )}
+</Form.Item>
 
       <Form.Item
         wrapperCol={{

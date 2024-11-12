@@ -37,7 +37,7 @@ const CardComponent = (props) => {
         pointerEvents: countInStock === 0 ? "none" : "auto", // Tắt sự kiện click nếu hết hàng
       }}
       bodyStyle={{ padding: 10 }}
-      cover={<img alt="example" src={image} />}
+      cover={<img alt="example" src={image[0]} />}
       onClick={() => handleDetailsProduct(id)} // Thêm sự kiện click vào Card
     >
       <StyleNameProduct>{name}</StyleNameProduct>

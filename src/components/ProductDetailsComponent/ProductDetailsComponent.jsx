@@ -1,7 +1,5 @@
-import { Radio, Col, Flex, Image, InputNumber, Rate, Row } from "antd";
+import { Radio, Col, Row, Image, InputNumber, Rate } from "antd";
 import React, { useState } from "react";
-import imageProduct from "../../image/iphone-15-pro-max_3.png";
-import imageProductSmall from "../../image/iphone-15-pro-max_3.png";
 import * as ProductService from "../../services/ProductServices";
 import {
   WapperButtonMore,
@@ -76,17 +74,21 @@ const ProductDetailsComponent = ({ idProduct }) => {
     queryFn: fetchGetDetailsProduct,
     enabled: !!idProduct,
   });
+  console.log("productDetails",productDetails?.image[0])
 
   const handleAddOrderProduct = () => {
     if (!user?.id) {
       navigate("/sign-in", { state: location?.pathname });
-    } else {
+    }
+    else {
+      const image = productDetails?.image && productDetails?.image.length > 0 ? productDetails?.image[0] : null;
+  
       dispatch(
         addOrderProduct({
           orderItem: {
             name: productDetails?.name,
             amount: NumProduct,
-            image: productDetails?.image,
+            image: image,  // Lưu ảnh đầu tiên hoặc null nếu không có ảnh
             price: productDetails?.price,
             product: productDetails?._id,
           },
@@ -100,53 +102,21 @@ const ProductDetailsComponent = ({ idProduct }) => {
       <Row style={{ padding: "25px" }}>
         <Col span={10}>
           <WapperStyleImage
-            src={productDetails?.image}
+            src={productDetails?.image[0]} // Main image
             alt="image product"
             preview="true"
           />
           <Row style={{ paddingTop: "10px", marginRight: "20px" }}>
-            <Col span={4}>
-              <WapperStyleImageSmall
-                src={imageProductSmall}
-                alt="image small"
-                preview="true"
-              />
-            </Col>
-            <Col span={4}>
-              <WapperStyleImageSmall
-                src={imageProductSmall}
-                alt="image small"
-                preview="true"
-              />
-            </Col>
-            <Col span={4}>
-              <WapperStyleImageSmall
-                src={imageProductSmall}
-                alt="image small"
-                preview="true"
-              />
-            </Col>
-            <Col span={4}>
-              <WapperStyleImageSmall
-                src={imageProductSmall}
-                alt="image small"
-                preview="true"
-              />
-            </Col>
-            <Col span={4}>
-              <WapperStyleImageSmall
-                src={imageProductSmall}
-                alt="image small"
-                preview="true"
-              />
-            </Col>
-            <Col span={4}>
-              <WapperStyleImageSmall
-                src={imageProductSmall}
-                alt="image small"
-                preview="true"
-              />
-            </Col>
+            {/* Dynamically render small images */}
+            {productDetails?.image?.slice(1).map((image, index) => (
+              <Col span={4} key={index}>
+                <WapperStyleImageSmall
+                  src={image}
+                  alt={`image small ${index + 1}`}
+                  preview="true"
+                />
+              </Col>
+            ))}
           </Row>
         </Col>
         <Col span={14}>
@@ -173,13 +143,12 @@ const ProductDetailsComponent = ({ idProduct }) => {
                   size="large"
                   value={NumProduct}
                   onChange={handleChange}
-                  // onChange={onChange}
                 />
               </div>
             </WapperQualityProduct>
-            <div style={{marginTop: '20px'}}>
-            Tồn kho: {productDetails?.countInStock}
-          </div>
+            <div style={{ marginTop: '20px' }}>
+              Tồn kho: {productDetails?.countInStock}
+            </div>
           </div>
 
           <div
@@ -205,7 +174,6 @@ const ProductDetailsComponent = ({ idProduct }) => {
               }}
               onClick={handleAddOrderProduct}
             />
-            {}
           </div>
         </Col>
         <div>
