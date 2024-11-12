@@ -45,13 +45,14 @@ const ProfilePage = () => {
   }, [user]);
 
   useEffect(() => {
-    if (isSuccess) {
-      message.success("Cập nhật thành công");
+    if (data?.status === 'OK') {
+      message.success(data?.message);
       handleGetDetailsUser(user?.id, user?.access_token);
-    } else if (isError) {
-      message.error("Lỗi");
+    } else if (data?.status === 'ERR') {
+      message.error(data?.message);
     }
-  }, [isSuccess, isError]);
+  }, [data]);
+  console.log("data", data)
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);

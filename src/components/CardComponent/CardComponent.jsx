@@ -44,7 +44,6 @@ const CardComponent = (props) => {
       <div style={{ display: "flex", alignItems: "center" }}>
         <WapperPriceText>
           <span style={{ marginRight: "8px" }}>{convertPrice(price)}</span>
-          <WapperDiscountText> - {5}%</WapperDiscountText>
         </WapperPriceText>
       </div>
       <WapperReportText>

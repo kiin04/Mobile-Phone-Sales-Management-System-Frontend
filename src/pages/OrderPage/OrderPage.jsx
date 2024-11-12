@@ -1,5 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Checkbox, Form, InputNumber, message, Modal, Button } from "antd";
+import { Checkbox, Form, InputNumber, message, Modal, Button, Card, Input } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import ButtonComponent from "../../components/ButtonComopnent/ButtonComponent";
 import {
@@ -103,14 +103,15 @@ const OderPage = () => {
         setDiscountAffterApply(CheckDiscount.data.discountPercentage);
         dispatch(setDiscount(CheckDiscount.data.code)); // Cập nhật discount
         dispatch(setDiscountPercentage(CheckDiscount.data.discountPercentage)); // Cập nhật discountPercentage
-        message.success("Lấy mã giảm giá thành công");
+        message.success(CheckDiscount?.message);
       } else {
-        message.error("Mã giảm giá không hợp lệ!");
+        message.error(CheckDiscount?.message);
       }
     } catch (error) {
       message.error("Đã xảy ra lỗi khi áp dụng mã giảm giá! Lỗi: ", error);
     }
   };
+
   const priceMemo = useMemo(() => {
     const result = order?.orderItemSelected?.reduce((total, cur) => {
       return total + cur.price * cur.amount;
@@ -574,87 +575,82 @@ const OderPage = () => {
               <a onClick={showModal}>Nhập mã giảm giá</a>
             </div>
             <Modal
-              title="Chọn Mã ưu đãi"
-              visible={isModalVisible}
-              onOk={handleOk}
-              onCancel={handleCancel}
-              footer={[
-                <Button key="back" onClick={handleCancel}>
-                  Trở lại
-                </Button>,
-              ]}
-            >
-              <div>
-                <div style={{ marginBottom: "10px" }}>
-                  <input
-                    placeholder="Mã giảm giá"
-                    style={{
-                      width: "95.5%",
-                      padding: "10px",
-                      borderRadius: "10px",
-                    }}
-                    value={checkDiscountCode}
-                    onChange={(e) => setCheckDiscountCode(e.target.value)}
-                  />
-                  <Button
-                    onClick={handleCheckDiscount}
-                    type="primary"
-                    style={{ marginTop: "10px", width: "100%" }}
-                  >
-                    ÁP DỤNG
-                  </Button>
-                </div>
+  title="Chọn Mã ưu đãi"
+  visible={isModalVisible}
+  onOk={handleOk}
+  onCancel={handleCancel}
+  footer={[
+    <Button key="back" onClick={handleCancel}>
+      Trở lại
+    </Button>,
+  ]}
+>
+  <div>
+    <div style={{ marginBottom: "10px" }}>
+      <Input
+        placeholder="Mã giảm giá"
+        style={{
+          width: "100%",
+          padding: "10px",
+          borderRadius: "10px",
+        }}
+        value={checkDiscountCode}
+        onChange={(e) => setCheckDiscountCode(e.target.value)}
+      />
+      <ButtonComponent
+        onClick={handleCheckDiscount}
+        type="primary"
+        style={{ marginTop: "10px", width: "100%" }}
+        textButton={"Áp dụng"}
+      >
+      </ButtonComponent>
+    </div>
 
+    <div>
+      <h3>Mã ưu đãi khi mua sản phẩm</h3>
+
+      {/* Container có thanh cuộn dọc */}
+      <div
+        style={{
+          maxHeight: "200px",
+          overflowY: "auto",
+          border: "1px solid #ddd",
+          padding: "10px",
+        }}
+      >
+        {Array.isArray(dataDiscount) &&
+          dataDiscount?.map((discount) => {
+            return (
+              <Card
+                key={discount._id}
+                style={{ marginBottom: "10px" }}
+                bordered={true}
+                hoverable
+                onClick={() => setCheckDiscountCode(discount.code)}
+              >
+                <p style={{ fontSize: "15px" }}>
+                  Nhập mã{" "}
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      color: "red",
+                      fontSize: "18px",
+                    }}
+                  >
+                    {discount.code}
+                  </span>{" "}
+                  để giảm {discount.discountPercentage}% khi thanh toán.
+                </p>
                 <div>
-                  <h3>Mã ưu đãi khi mua sản phẩm</h3>
-
-                  {/* Container có thanh cuộn dọc */}
-                  <div
-                    style={{
-                      maxHeight: "200px",
-                      overflowY: "auto",
-                      border: "1px solid #ddd",
-                      padding: "10px",
-                    }}
-                  >
-                    {Array.isArray(dataDiscount) &&
-                      dataDiscount?.map((discount) => {
-                        return (
-                          <div
-                            style={{
-                              border: "1px solid #ccc",
-                              padding: "10px",
-                              marginBottom: "10px",
-                            }}
-                            key={discount._id}
-                          >
-                            <p style={{ fontSize: "15px" }}>
-                              Nhập mã
-                              <span
-                                style={{
-                                  fontWeight: "bold",
-                                  color: "red",
-                                  fontSize: "18px",
-                                }}
-                              >
-                                {" "}
-                                {discount.code}
-                              </span>{" "}
-                              để giảm {discount.discountPercentage}% khi thanh
-                              toán.
-                            </p>
-                            <div>
-                              Số lượng giảm giá còn lại:{" "}
-                              {discount.remainingDiscount}
-                            </div>
-                            {/* <div>HSD: 30.12.2024</div> */}
-                          </div>
-                        );
-                      })}
-                  </div>
+                  Số lượng giảm giá còn lại: {discount.remainingDiscount}
                 </div>
-              </div>
-            </Modal>
+              </Card>
+            );
+          })}
+      </div>
+    </div>
+  </div>
+</Modal>
           </WrapperRight>
         </div>
       </div>

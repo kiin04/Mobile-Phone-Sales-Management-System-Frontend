@@ -177,6 +177,9 @@ const ProductDetailsComponent = ({ idProduct }) => {
                 />
               </div>
             </WapperQualityProduct>
+            <div style={{marginTop: '20px'}}>
+            Tồn kho: {productDetails?.countInStock}
+          </div>
           </div>
 
           <div
