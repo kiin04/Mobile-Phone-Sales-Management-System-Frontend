@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Form, Select, Space } from "antd";
+import { Button, Form, InputNumber, Select, Space } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -645,10 +645,13 @@ const AdminProduct = () => {
                 },
               ]}
             >
-              <InputComponent
+              <InputNumber
                 value={stateProduct.rating}
                 onChange={handleOnchange}
                 name="rating"
+                defaultValue={1}
+                max={5}
+                min={1}
               />
             </Form.Item>
 
@@ -818,11 +821,14 @@ const AdminProduct = () => {
           },
         ]}
       >
-        <InputComponent
-          value={stateProductDetails.rating}
-          onChange={handleOnchangeDetails}
-          name="rating"
-        />
+        <InputNumber
+                value={stateProduct.rating}
+                onChange={handleOnchange}
+                name="rating"
+                defaultValue={1}
+                max={5}
+                min={1}
+              />
       </Form.Item>
 
       <Form.Item

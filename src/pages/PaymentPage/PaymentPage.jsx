@@ -250,7 +250,6 @@ const PaymentPage = () => {
     isSuccess,
     isError,
   } = mutationAddOrder;
-  console.log("order", order);
   useEffect(() => {
     if (isSuccess && dataAdd?.status === "OK") {
       const arrayOrdered = [];
@@ -276,7 +275,9 @@ const PaymentPage = () => {
         },
       });
     } else if (isError) {
-      message.error();
+      message.error("Lỗi không thể đặt hạng");
+    } else if(dataAdd?.status === "ERR"){
+      message.error(dataAdd?.message);
     }
   }, [isSuccess, isError]);
 
