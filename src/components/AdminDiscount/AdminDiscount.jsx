@@ -106,29 +106,29 @@ const AdminDiscount = () => {
     : [];
   useEffect(() => {
     if (isSuccess && data?.status === "OK") {
-      message.success("Thêm mã giảm giá thành công!!");
+      message.success(data?.message);
       setIsModalOpen(false);
       handleCancel();
-    } else if (isError) {
-      message.error("Thêm mã giảm giá thất bại!!");
+    } else if (data?.status === "ERR") {
+      message.error(data?.message);
     }
   }, [isSuccess]);
 
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === "OK") {
-      message.success("Xóa mã giảm giá thành công!!");
+      message.success(dataDeleted?.message);
       handleCancelDelete();
-    } else if (isErrorDeleted) {
-      message.error("Xóa mã giảm giá thất bại!!");
+    } else if (dataDeleted?.status === "ERR") {
+      message.error(dataDeleted?.message);
     }
   }, [isSuccessDeleted]);
 
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success("Cập nhật mã giảm giá thành công!!");
+      message.success(dataUpdated?.message);
       handleCancelDrawer();
-    } else if (isErrorUpdated) {
-      message.error("Cập nhật mã giảm giá thất bại!!");
+    } else if (dataUpdated?.status === "ERR") {
+      message.error(dataUpdated?.message);
     }
   }, [isSuccessUpdated]);
 
@@ -530,12 +530,6 @@ const AdminDiscount = () => {
                 span: 16,
               }}
             >
-              <div>
-                {data?.status === "ERR" && (
-                  <span style={{ color: "red" }}>{data?.message}</span>
-                )}
-              </div>
-
               <Button type="primary" htmlType="submit">
                 Submit
               </Button>
@@ -624,12 +618,6 @@ const AdminDiscount = () => {
           span: 16,
         }}
       >
-        <div>
-          {data?.status === "ERR" && (
-            <span style={{ color: "red" }}>{data?.message}</span>
-          )}
-        </div>
-
         <Button type="primary" htmlType="submit">
           Xác nhận
         </Button>

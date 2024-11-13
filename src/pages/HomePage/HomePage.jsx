@@ -21,20 +21,6 @@ const HomePage = () => {
     fetchAllTypeProduct();
   }, []); // Thêm mảng phụ thuộc trống để chỉ gọi hàm fetchAllTypeProduct một lần khi component mount
 
-  // const arr = [
-  //   "Điện thoại",
-  //   "Laptop",
-  //   "Phụ kiện",
-  //   "Âm thanh",
-  //   "Smartwatch",
-  //   "Đồng hồ",
-  //   "Tablet",
-  //   "PC, Máy in",
-  //   "Sim, Thẻ cào",
-  //   " Tiện ích",
-  //   "Khuyến mãi",
-  // ];
-
   return (
     <>
       <div

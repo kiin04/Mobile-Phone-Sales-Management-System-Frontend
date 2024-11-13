@@ -23,9 +23,10 @@ const OutstandingPhonePage = () => {
   const fetchProductAll = async (context) => {
     const limit = context?.queryKey && context?.queryKey[1];
     const search = context?.queryKey && context?.queryKey[2];
-    const sort = sortOrder === "none" ? null : sortOrder; // Chuyển đổi giá trị sắp xếp
+    const sort = 'desc'; // Chuyển đổi giá trị sắp xếp
+    const selled = true
 
-    const res = await ProductService.getAllProduct(search, limit, sort);
+    const res = await ProductService.getAllProduct(search, limit, sort,selled);
     return res;
   };
   const {

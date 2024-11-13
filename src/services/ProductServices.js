@@ -1,7 +1,7 @@
 import axios from "axios"
 import { axiosJWT } from "./UserServices"
 
-export const getAllProduct = async (search,limit,sort) => { 
+export const getAllProduct = async (search,limit,sort, selled) => { 
     let res = {}
     if(search?.length > 0){
         res = await axios.get(`${import.meta.env.VITE_SERVER_HOST}/product/get-all?filter=name&filter=${search}&limit=${limit}`)
@@ -9,6 +9,8 @@ export const getAllProduct = async (search,limit,sort) => {
         res = await axios.get(`${import.meta.env.VITE_SERVER_HOST}/product/get-all?limit=${limit}`)
     }if(sort){
         res = await axios.get(`${import.meta.env.VITE_SERVER_HOST}/product/get-all?limit=${limit}&sort=price,${sort}`)
+    }if(selled){
+        res = await axios.get(`${import.meta.env.VITE_SERVER_HOST}/product/get-all?limit=${limit}&sort=selled,${sort}`)
     }
     return res.data
 }

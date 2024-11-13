@@ -3,7 +3,7 @@ import { Card } from 'antd';
 
 // Main Container
 export const MainContainer = styled.div`
-    padding: 10px 70px;
+    padding: 10px 50px;
     background-color: #f5f5f5;
     height: 1200px;
     width: 1500px;
@@ -143,6 +143,6 @@ export const WrapperDiscountText = styled.span`
 export const WapperProduct = styled.div`
     margin-top: 30px;
     display: flex;
-    gap: 17px;
+    gap: 35px;
     flex-wrap: wrap
 `

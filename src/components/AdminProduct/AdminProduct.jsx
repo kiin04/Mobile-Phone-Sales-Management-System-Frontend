@@ -812,7 +812,7 @@ const AdminProduct = () => {
       </Form.Item>
 
       <Form.Item
-        label="Chi tiết:"
+        label="Mô tả:"
         name="description"
         rules={[
           {
@@ -821,7 +821,7 @@ const AdminProduct = () => {
           },
         ]}
       >
-        <InputComponent
+        <TextArea
           value={stateProductDetails.description}
           onChange={handleOnchangeDetails}
           name="description"

@@ -8,6 +8,7 @@ import {
   convertStatusOrder,
   convertPaidOrder,
   convertPercent,
+  convertDateISO,
 } from "../../utils";
 import * as OrderService from "../../services/OrderServices";
 import { orderContant } from "../../contant";
@@ -41,6 +42,9 @@ const AdminOrder = () => {
     { label: "Thanh toán", key: "isPaid" },
     { label: "Mã giảm giá áp dụng", key: "discountCode" },
     { label: "Phần trăm giảm giá", key: "discountPercentage" },
+    { label: "Ngày đặt", key: "createdAt" },
+    { label: "Ngày cập nhật", key: "updatedAt" },
+
   ];
 
   const columns = [
@@ -157,6 +161,15 @@ const AdminOrder = () => {
       dataIndex: "city",
       sorter: (a, b) => a.city - b.city,
     },
+    {
+      title: "Ngày đặt",
+      dataIndex: "createdAt",
+      sorter: (a, b) => a.createdAt - b.createdAt,
+    },    {
+      title: "Ngày cập nhật",
+      dataIndex: "updatedAt",
+      sorter: (a, b) => a.updatedAt - b.updatedAt,
+    },
   ];
   useEffect(() => {
     console.log("Orders data: ", orders);
@@ -165,7 +178,7 @@ const AdminOrder = () => {
         ...order,
         key: order._id,
         userName: order?.shippingAddress?.fullName,
-        phone: order?.shippingAddress?.phone,
+        phone: `0${order?.shippingAddress?.phone}`,
         address: order?.shippingAddress?.address,
         city: order?.shippingAddress?.city,
         paymentMethod: orderContant.payment[order?.paymentMethod],
@@ -174,6 +187,8 @@ const AdminOrder = () => {
         orderStatus: convertStatusOrder(order?.orderStatus),
         isPaid: order?.isPaid,
         discountPercentage: convertPercent(order?.discountPercentage),
+        createdAt: convertDateISO(order?.createdAt) ,
+        updatedAt: convertDateISO(order?.updatedAt) ,
       }));
       setDataTable(updatedDataTable); // Cập nhật trạng thái dataTable
     }

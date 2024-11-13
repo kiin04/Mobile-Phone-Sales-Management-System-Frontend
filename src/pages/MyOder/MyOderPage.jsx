@@ -168,7 +168,7 @@ const MyOrderPage = () => {
   const handleCancelModal = () => {
     setIsCancelModalOpen(false);
   };
-  const handleDetailModal = () => {
+  const handleCancelDetailModal = () => {
     setIsDetailModalOpen(false);
   };
   const handleNavigaveProducts = () => {
@@ -331,7 +331,7 @@ const MyOrderPage = () => {
         forceRender
         title="Chi tiết đơn hàng"
         open={isDetailModalOpen}
-        onCancel={handleCancelModal}
+        onCancel={handleCancelDetailModal}
         footer={null}
         width={700}
       >

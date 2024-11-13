@@ -1,4 +1,4 @@
-import { Radio, Col, Row, Image, InputNumber, Rate } from "antd";
+import { Radio, Col, Row, Image, InputNumber, Rate, message } from "antd";
 import React, { useState } from "react";
 import * as ProductService from "../../services/ProductServices";
 import {
@@ -77,7 +77,8 @@ const ProductDetailsComponent = ({ idProduct }) => {
   console.log("productDetails",productDetails?.image[0])
 
   const handleAddOrderProduct = () => {
-    if (!user?.id) {
+    try{
+      if (!user?.id) {
       navigate("/sign-in", { state: location?.pathname });
     }
     else {
@@ -94,7 +95,11 @@ const ProductDetailsComponent = ({ idProduct }) => {
           },
         })
       );
+      message.success('Thêm sản phẩm vào giỏ hàng thành công!')
     }
+  }catch(e){
+    message.success('Không thể thêm sản phẩm!')
+  }
   };
 
   return (
@@ -154,26 +159,50 @@ const ProductDetailsComponent = ({ idProduct }) => {
           <div
             style={{ marginTop: "50px", display: "flex", alignItems: "center" }}
           >
-            <WapperButtonMore
-              icon={
-                <ShoppingCartOutlined
-                  style={{
-                    fontSize: "30px",
-                    color: "#ffff",
-                    marginRight: "5px",
-                  }}
-                />
-              }
-              textButton="Thêm vào giỏ hàng"
-              type="primary"
+            {NumProduct <= productDetails?.countInStock ? (
+        <WapperButtonMore
+          icon={
+            <ShoppingCartOutlined
               style={{
-                width: "250px",
-                height: "60px",
-                marginTop: "20px",
-                background: "#0066CC",
+                fontSize: "30px",
+                color: "#ffff",
+                marginRight: "5px",
               }}
-              onClick={handleAddOrderProduct}
             />
+          }
+          textButton="Thêm vào giỏ hàng"
+          type="primary"
+          style={{
+            width: "250px",
+            height: "60px",
+            marginTop: "20px",
+            background: "#0066CC",
+          }}
+          onClick={handleAddOrderProduct}
+        />
+      ) : (
+        <WapperButtonMore
+        textButton="Không đủ sản phẩm"
+          type="primary"
+          icon={
+            <ShoppingCartOutlined
+              style={{
+                fontSize: "30px",
+                color: "#ffff",
+                marginRight: "5px",
+              }}
+            />
+          }
+          style={{
+            width: "250px",
+            height: "60px",
+            marginTop: "20px",
+            background: "#ccc", // Màu sắc khác khi nút bị tắt
+          }}
+          disabled
+        >
+        </WapperButtonMore>
+      )}
           </div>
         </Col>
         <div>
