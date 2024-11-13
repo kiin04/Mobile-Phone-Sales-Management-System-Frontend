@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Form, Image, InputNumber, Select, Space } from "antd";
+import { Button, Form, Image, Input, InputNumber, Select, Space } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -25,6 +25,7 @@ const AdminProduct = () => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
+  const {TextArea} = Input
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -638,7 +639,7 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Chi tiết"
+              label="Mô tả:"
               name="description"
               rules={[
                 {
@@ -647,7 +648,7 @@ const AdminProduct = () => {
                 },
               ]}
             >
-              <InputComponent
+              <TextArea
                 value={stateProduct.description}
                 onChange={handleOnchange}
                 name="description"
