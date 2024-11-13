@@ -208,14 +208,16 @@ const ProductDetailsComponent = ({ idProduct }) => {
         <div>
           <Col
             style={{
-              width: "510px",
+              width: "500px",
               border: "1px solid #e0e0e0",
               borderRadius: "8px",
               marginTop: "50px",
+               paddingRight:"5px", paddingLeft:"5px", 
+               paddingBottom:"10px"
             }}
           >
             <WrapperInfoProduct>Đặc Điểm Nổi Bật</WrapperInfoProduct>
-            <span style={{ padding: 10 }}>{productDetails?.description}</span>
+            <span >{productDetails?.description}</span>
           </Col>
         </div>
       </Row>

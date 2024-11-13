@@ -49,7 +49,7 @@ const OutstandingPhonePage = () => {
   return (
     <div>
       <MainContainer>
-        <OutstandingTitle>Điện thoại nổi bật</OutstandingTitle>
+        <OutstandingTitle style={{ textAlign: "center" }}>Điện thoại nổi bật</OutstandingTitle>
         <WapperProduct style={{ padding: "0px 5px" }}>
           <Loading isPending={isLoading || loading}>
             <WapperProduct style={{ marginBottom: "10px" }}>

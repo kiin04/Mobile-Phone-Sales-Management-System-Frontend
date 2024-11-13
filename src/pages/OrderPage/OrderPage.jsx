@@ -312,9 +312,9 @@ const OderPage = () => {
   };
 
   return (
-    <div style={{ background: "#f5f5fa", width: "100%", height: "100vh" }}>
-      <div style={{ height: "100%", width: "1270px", margin: "0 auto" }}>
-        <h3>Giỏ hàng</h3>
+    <div style={{ background: "#f5f5fa", width: "100%", height: "150vh", marginTop: "-20px"}}>
+      <div style={{ height: "100%", width: "1270px", margin: "0 auto", paddingTop:"20px" }}>
+        <h3 style={{fontSize:'20px', paddingLeft:"13px"}}>Giỏ hàng</h3>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <WrapperLeft>
             <WrapperStyleHeader>

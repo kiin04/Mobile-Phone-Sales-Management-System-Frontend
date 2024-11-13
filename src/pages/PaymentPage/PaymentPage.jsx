@@ -302,9 +302,9 @@ const PaymentPage = () => {
   }, [clientId]);
   return (
     <Loading isPending={isLoadingAddOrder}>
-      <div style={{ background: "#f5f5fa", width: "100%", height: "100vh" }}>
-        <div style={{ height: "100%", width: "1270px", margin: "0 auto" }}>
-          <h3>THANH TOÁN</h3>
+      <div style={{ background: "#f5f5fa", width: "100%", height: "100vh", marginTop: "-20px"  }}>
+        <div style={{ height: "100%", width: "1270px", margin: "0 auto", paddingTop:"10px" }}>
+          <h3 style={{paddingLeft:"10px"}}>THANH TOÁN</h3>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <WrapperLeft>
               <WrapperInfo>
@@ -333,7 +333,6 @@ const PaymentPage = () => {
                     <Radio value="later_money">
                       Thanh toán bằng tiền mặt khi nhận hàng
                     </Radio>
-                    <Radio value="momo">Thanh toán bằng MOMO</Radio>
                     <Radio value="paypal">Thanh toán bằng PayPal</Radio>
                   </WrapperRadio>
                 </div>
