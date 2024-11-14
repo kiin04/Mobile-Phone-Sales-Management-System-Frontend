@@ -278,12 +278,12 @@ const MyOrderPage = () => {
                     </Typography.Text>
 
                     <div style={{ marginTop: "10px" }}>
-                      <Button
-                        style={{ marginRight: "10px" }}
-                        onClick={() => openCancelModal(order._id)}
-                      >
-                        Hủy đơn hàng
-                      </Button>
+                    <Button
+  style={{ marginRight: "10px" }}
+  onClick={() => openCancelModal(order._id)}
+>
+  Hủy đơn hàng
+</Button>
                       <Button
                         onClick={() => openDetailModal(order._id)}
                         type="primary"
