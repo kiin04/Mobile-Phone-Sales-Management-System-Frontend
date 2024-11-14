@@ -79,7 +79,7 @@ export const WrapperTotal = styled.div`
     border: 1px solid rgb(194,255,255);
     width: 500px;
     border-radius: 4px;
-    height: 150px;
+    height: 100px;
     padding: 16px;
     font-weight: normal;
     display: flex;

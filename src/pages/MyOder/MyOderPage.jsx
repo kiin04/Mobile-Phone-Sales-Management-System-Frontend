@@ -40,7 +40,8 @@ const OrderCard = styled(Card)`
 
 const MyOrderPage = () => {
   const user = useSelector((state) => state?.user);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const navigate = useNavigate();
 
@@ -126,7 +127,6 @@ const MyOrderPage = () => {
     isPending: isLoadingDetail,
     isSuccess: isSuccessDetail,
   } = mutationDetails;
-  console.log("dataDetails", dataDetails);
 
   useEffect(() => {
     if (isSuccessCancel && dataCancel?.status === "OK") {
@@ -154,17 +154,22 @@ const MyOrderPage = () => {
 
   const openCancelModal = (idOrder) => {
     setSelectedOrderId(idOrder);
-    setIsModalOpen(true);
+    setIsCancelModalOpen(true);
+    setIsDetailModalOpen(false); // Đảm bảo modal chi tiết đóng
   };
 
   const openDetailModal = (idOrder) => {
     setSelectedOrderId(idOrder);
     handleDetailOrder(idOrder);
-    setIsModalOpen(true);
+    setIsDetailModalOpen(true);
+    setIsCancelModalOpen(false); // Đảm bảo modal hủy đóng
   };
 
   const handleCancelModal = () => {
-    setIsModalOpen(false);
+    setIsCancelModalOpen(false);
+  };
+  const handleCancelDetailModal = () => {
+    setIsDetailModalOpen(false);
   };
   const handleNavigaveProducts = () => {
     navigate("/products");
@@ -174,11 +179,10 @@ const MyOrderPage = () => {
     <Loading isPending={isLoadingOrders}>
       <div style={{ padding: "20px" }}>
         <Typography.Title level={2}>Lịch sử mua hàng</Typography.Title>
-        {orders ? (
+        {orders && orders.data && orders.data.length > 0 ? (
           <>
             {orders?.data.map((order) => (
               <OrderCard
-                onClick={() => openDetailModal(order._id)}
                 hoverable
                 key={order.id}
                 bordered={false}
@@ -314,7 +318,7 @@ const MyOrderPage = () => {
       <ModalComponent
         forceRender
         title="Hủy đơn hàng"
-        open={isModalOpen && selectedOrderId !== null}
+        open={isCancelModalOpen}
         onCancel={handleCancelModal}
         onOk={() => handleCancelOrder(selectedOrderId)}
       >
@@ -326,8 +330,8 @@ const MyOrderPage = () => {
       <ModalComponent
         forceRender
         title="Chi tiết đơn hàng"
-        open={isModalOpen && selectedOrderId !== null}
-        onCancel={handleCancelModal}
+        open={isDetailModalOpen}
+        onCancel={handleCancelDetailModal}
         footer={null}
         width={700}
       >

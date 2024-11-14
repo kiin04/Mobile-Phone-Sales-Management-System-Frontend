@@ -38,16 +38,23 @@ const AdminOrder = () => {
   const { isPending: isLoadingMonthly, data: dataMonthly } =
     queryMonthlyRevenue;
 
-  const chartData =
-    dataMonthly && dataMonthly.length > 0
-      ? dataMonthly.map((item) => ({
-          name: `Tháng ${item._id.month}`, // Tên tháng
-          doanhthu: item.monthlyRevenue, // Doanh thu hàng tháng
-          pv: 0, // Giá trị mặc định
-          amt: 0, // Giá trị mặc định
-        }))
-      : [];
-
+    const chartData = Array.from({ length: 12 }, (_, index) => {
+      const month = index + 1;
+    
+      // Kiểm tra nếu dataMonthly tồn tại và có dữ liệu
+      const item = dataMonthly && dataMonthly.length > 0
+        ? dataMonthly.find((item) => item._id.month === month)
+        : null;
+    
+      return {
+        name: `Tháng ${month}`,                    // Tên tháng
+        doanhthu: item ? item.monthlyRevenue : 0,   // Doanh thu hoặc 0 nếu không có
+        pv: 0,                                      // Giá trị mặc định
+        amt: 0,                                     // Giá trị mặc định
+      };
+    });
+    
+    
   return (
     <div>
       <WrapperHeader> Quản lý doanh thu </WrapperHeader>

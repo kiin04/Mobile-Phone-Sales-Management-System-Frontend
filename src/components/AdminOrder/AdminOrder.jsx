@@ -8,12 +8,13 @@ import {
   convertStatusOrder,
   convertPaidOrder,
   convertPercent,
+  convertDateISO,
 } from "../../utils";
 import * as OrderService from "../../services/OrderServices";
 import { orderContant } from "../../contant";
 import PieChartComponent from "./PieChart";
 import { useMutationHooks } from "../../hooks/useMutationHook";
-import { Dropdown, Menu } from "antd";
+import { Button, Dropdown, Image, Menu, Table } from "antd";
 
 const AdminOrder = () => {
   const [rowSelected, setRowSelected] = useState("");
@@ -41,6 +42,9 @@ const AdminOrder = () => {
     { label: "Thanh toán", key: "isPaid" },
     { label: "Mã giảm giá áp dụng", key: "discountCode" },
     { label: "Phần trăm giảm giá", key: "discountPercentage" },
+    { label: "Ngày đặt", key: "createdAt" },
+    { label: "Ngày cập nhật", key: "updatedAt" },
+
   ];
 
   const columns = [
@@ -54,6 +58,7 @@ const AdminOrder = () => {
       dataIndex: "phone",
       sorter: (a, b) => a.phone.length - b.phone.length,
     },
+    Table.EXPAND_COLUMN,
     {
       title: "Tình trạng đơn hàng",
       dataIndex: "orderStatus",
@@ -77,9 +82,9 @@ const AdminOrder = () => {
         return (
           <Dropdown onSettled overlay={menu} trigger={["click"]}>
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <a onClick={(e) => e.preventDefault()}>
-                {text} <span>▼</span>
-              </a>
+              <Button onClick={(e) => e.preventDefault()}>
+                {text}
+              </Button>
             </div>
           </Dropdown>
         );
@@ -109,7 +114,7 @@ const AdminOrder = () => {
         return (
           <Dropdown overlay={menu} trigger={["click"]}>
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <a onClick={(e) => e.preventDefault()}>{paidText}</a>
+              <Button onClick={(e) => e.preventDefault()}>{paidText}</Button>
             </div>
           </Dropdown>
         );
@@ -156,6 +161,15 @@ const AdminOrder = () => {
       dataIndex: "city",
       sorter: (a, b) => a.city - b.city,
     },
+    {
+      title: "Ngày đặt",
+      dataIndex: "createdAt",
+      sorter: (a, b) => a.createdAt - b.createdAt,
+    },    {
+      title: "Ngày cập nhật",
+      dataIndex: "updatedAt",
+      sorter: (a, b) => a.updatedAt - b.updatedAt,
+    },
   ];
   useEffect(() => {
     console.log("Orders data: ", orders);
@@ -164,7 +178,7 @@ const AdminOrder = () => {
         ...order,
         key: order._id,
         userName: order?.shippingAddress?.fullName,
-        phone: order?.shippingAddress?.phone,
+        phone: `0${order?.shippingAddress?.phone}`,
         address: order?.shippingAddress?.address,
         city: order?.shippingAddress?.city,
         paymentMethod: orderContant.payment[order?.paymentMethod],
@@ -173,6 +187,8 @@ const AdminOrder = () => {
         orderStatus: convertStatusOrder(order?.orderStatus),
         isPaid: order?.isPaid,
         discountPercentage: convertPercent(order?.discountPercentage),
+        createdAt: convertDateISO(order?.createdAt) ,
+        updatedAt: convertDateISO(order?.updatedAt) ,
       }));
       setDataTable(updatedDataTable); // Cập nhật trạng thái dataTable
     }
@@ -234,13 +250,29 @@ const AdminOrder = () => {
         <PieChartComponent data={orders?.data} />
       </div>
       <div style={{ marginTop: "30px" }}>
-        <TableComponent
-          filename={"Order"}
-          headers={headers}
-          columns={columns}
-          isLoading={isLoadingOrders}
-          data={dataTable}
-        />
+      <TableComponent 
+      filename={"Order"}
+      headers={headers}
+      columns={columns}
+      isLoading={isLoadingOrders}
+      data={dataTable}
+      expandable={{
+    expandedRowRender: (record) => (
+      <div style={{ margin: 0 }}>
+        {record.orderItems.map((item, index) => (
+          <div key={index} style={{ marginBottom: '8px', padding: '4px', borderBottom: '1px solid #ddd',display: 'flex', gap: '10px' }}>
+            <Image src={item.image} alt={item.name} style={{ width: '50px', height: '50px', marginLeft: '8px', borderRadius: '3px' }} />
+            <p> {item.name} </p>
+            <p><strong>x{item.amount} </strong> </p>
+            <p>Giá: {item.price.toLocaleString()} VND</p>
+          </div>
+        ))}
+      </div>
+      
+    ),
+  }}
+/>
+
       </div>
     </div>
   );

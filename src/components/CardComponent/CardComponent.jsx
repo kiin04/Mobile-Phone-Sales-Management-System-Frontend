@@ -26,6 +26,7 @@ const CardComponent = (props) => {
   const handleDetailsProduct = (id) => {
     navigate(`/product-details/${id}`);
   };
+  const imageSrc = Array.isArray(image) && image.length > 0 ? image[0] : image; // Đặt ảnh mặc định nếu không có ảnh
   return (
     <Card
       hoverable
@@ -37,14 +38,13 @@ const CardComponent = (props) => {
         pointerEvents: countInStock === 0 ? "none" : "auto", // Tắt sự kiện click nếu hết hàng
       }}
       bodyStyle={{ padding: 10 }}
-      cover={<img alt="example" src={image} />}
+      cover={<img alt="example" src={imageSrc} />}
       onClick={() => handleDetailsProduct(id)} // Thêm sự kiện click vào Card
     >
       <StyleNameProduct>{name}</StyleNameProduct>
       <div style={{ display: "flex", alignItems: "center" }}>
         <WapperPriceText>
           <span style={{ marginRight: "8px" }}>{convertPrice(price)}</span>
-          <WapperDiscountText> - {5}%</WapperDiscountText>
         </WapperPriceText>
       </div>
       <WapperReportText>

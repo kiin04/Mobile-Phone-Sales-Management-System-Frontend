@@ -74,12 +74,10 @@ const SignInPage = () => {
 
   useEffect(() => {
     if (loginData?.status === "ERR") {
-      message.error(
-        "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập."
-      );
+      message.error(loginData?.message);
       return;
-    } else if (isLoginSuccess) {
-      message.success("Đăng nhập thành công!");
+    } else if (loginData?.status === "OK") {
+      message.success(loginData?.message);
       if (location?.state) {
         navigate(location?.state);
       } else {
@@ -105,8 +103,10 @@ const SignInPage = () => {
 
   useEffect(() => {
     if (registerData?.status == "OK") {
-      message.success("Đăng ký thành công");
+      message.success(registerData?.message);
       setPosition("login");
+    }if (registerData?.status == "ERR") {
+      message.error(registerData?.message);
     }
   }, [isRegisterSuccess, isRegisterError]);
 
@@ -212,6 +212,9 @@ const SignInPage = () => {
                             handleGetDetailsUser(decoded.id, accessToken); // Gọi để lấy chi tiết người dùng
                             navigate("/");
                           }
+                        }
+                        if (response?.status === "ERR") {
+                          message.success(response?.message);
                         }
                       } catch (error) {
                         console.error("Error logging in with Google: ", error);

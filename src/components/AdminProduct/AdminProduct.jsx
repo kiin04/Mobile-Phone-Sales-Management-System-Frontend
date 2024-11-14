@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { WrapperHeader } from "./style";
-import { Button, Form, Select, Space } from "antd";
+import { Button, Form, Image, Input, InputNumber, Select, Space } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -25,6 +25,7 @@ const AdminProduct = () => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
+  const {TextArea} = Input
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -128,32 +129,32 @@ const AdminProduct = () => {
     : [];
 
   useEffect(() => {
-    if (isSuccess && data?.status === "OK") {
-      message.success("Thêm sản phẩm thành công!!");
+    if (data?.status === "OK") {
+      message.success(data?.message);
       setIsModalOpen(false);
       handleCancel();
-    } else if (isError) {
-      message.error("Thêm sản phẩm thất bại!!");
+    } else if (data?.status === "ERR") {
+      message.error(data?.message);
     }
-  }, [isSuccess]);
+  }, [data]);
 
   useEffect(() => {
-    if (isSuccessDeleted && dataDeleted?.status === "OK") {
-      message.success("Xóa sản phẩm thành công!!");
+    if (dataDeleted?.status === "OK") {
+      message.success(dataDeleted?.message);
       handleCancelDelete();
-    } else if (isErrorDeleted) {
-      message.error("Xóa sản phẩm thất bại!!");
+    } else if (dataDeleted?.status === "ERR") {
+      message.error(dataDeleted?.message);
     }
-  }, [isSuccessDeleted]);
+  }, [dataDeleted]);
 
   useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success("Cập nhật sản phẩm thành công!!");
+    if (dataUpdated?.status === "OK") {
+      message.success(dataUpdated?.message);
       handleCancelDrawer();
-    } else if (isErrorUpdated) {
-      message.error("Cập nhật sản phẩm thất bại!!");
+    } else if (dataUpdated?.status === "ERR") {
+      message.error(dataUpdated?.message);
     }
-  }, [isSuccessUpdated]);
+  }, [dataUpdated]);
 
   const onFinish = () => {
     const params = {
@@ -223,6 +224,18 @@ const AdminProduct = () => {
       [e.target.name]: e.target.value,
     });
   };
+  const handleOnChangeInputNumber = (value, name) => {
+    setStateProduct({
+      ...stateProduct,
+      [name]: value,
+    });
+  };
+  const handleOnChangeInputNumberDetails = (value, name) => {
+    setStateProductDetails({
+      ...stateProductDetails,
+      [name]: value,
+    });
+  };
   const handleOnchangeDetails = (e) => {
     setStateProductDetails({
       ...stateProductDetails,
@@ -231,29 +244,35 @@ const AdminProduct = () => {
   };
 
   const handleOnchangeAvatar = async ({ fileList }) => {
-    const file = fileList[0];
     try {
-      if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj);
+      const imageUrls = [];
+      for (let file of fileList) {
+        if (!file.url && !file.preview) {
+          file.preview = await getBase64(file.originFileObj);
+        }
+        imageUrls.push(file.preview); // thêm URL của mỗi ảnh vào mảng
       }
       setStateProduct({
         ...stateProduct,
-        image: file.preview,
+        image: imageUrls, // lưu mảng các URLs vào state
       });
     } catch (error) {
       console.error("Error converting file to base64: ", error);
     }
   };
-
+  
   const handleOnchangeAvatarDetails = async ({ fileList }) => {
-    const file = fileList[0];
     try {
-      if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj);
+      const imageUrls = [];
+      for (let file of fileList) {
+        if (!file.url && !file.preview) {
+          file.preview = await getBase64(file.originFileObj);
+        }
+        imageUrls.push(file.preview); // thêm URL của mỗi ảnh vào mảng
       }
       setStateProductDetails({
         ...stateProductDetails,
-        image: file.preview,
+        image: imageUrls, // lưu mảng các URLs vào state
       });
     } catch (error) {
       console.error("Error converting file to base64: ", error);
@@ -538,7 +557,7 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input name product!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
@@ -555,7 +574,7 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input type!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
@@ -573,7 +592,7 @@ const AdminProduct = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input type!",
+                    message: "Vui lòng không bỏ trống!",
                   },
                 ]}
               >
@@ -593,7 +612,7 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input count InStock!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
@@ -609,7 +628,7 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input price!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
@@ -620,16 +639,16 @@ const AdminProduct = () => {
               />
             </Form.Item>
             <Form.Item
-              label="Chi tiết"
+              label="Mô tả:"
               name="description"
               rules={[
                 {
                   required: true,
-                  message: "Please input description!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
-              <InputComponent
+              <TextArea
                 value={stateProduct.description}
                 onChange={handleOnchange}
                 name="description"
@@ -641,71 +660,72 @@ const AdminProduct = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input type!",
+                  message: "Vui lòng không bỏ trống!",
                 },
               ]}
             >
-              <InputComponent
+              <InputNumber
                 value={stateProduct.rating}
-                onChange={handleOnchange}
+                onChange={(value) => handleOnChangeInputNumber(value, 'rating')}
                 name="rating"
+                defaultValue={1}
+                max={5}
+                min={1}
               />
             </Form.Item>
 
             <Form.Item
-              label="Hình ảnh:"
-              name="image"
-              rules={[
-                {
-                  required: false,
-                  message: "Please input image!",
-                },
-              ]}
-            >
-              <WapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
-                <Button icon={<UploadOutlined />}>Select File</Button>
-              </WapperUploadFile>
-              {stateProduct?.image && (
-                <img
-                  src={stateProduct?.image}
-                  style={{
-                    height: "60px",
-                    width: "60px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    marginLeft: "10px",
-                    display: "flex",
-                  }}
-                  alt="avatar"
-                />
-              )}
-            </Form.Item>
+  label="Hình ảnh:"
+  name="image"
+  rules={[
+    {
+      required: false,
+      message: "Vui lòng không bỏ trống!",
+    },
+  ]}
+>
+  <WapperUploadFile onChange={handleOnchangeAvatar} maxCount={5} multiple > {/* Bạn có thể cho phép tối đa 5 ảnh */}
+    <Button icon={<UploadOutlined />}>Select Files</Button>
+  </WapperUploadFile>
+  {stateProduct?.image && stateProduct.image.length > 0 && (
+    <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+      {stateProduct.image.map((image, index) => (
+        <img
+          key={index}
+          src={image}
+          style={{
+            height: "60px",
+            width: "60px",
+            borderRadius: "10%",
+            objectFit: "cover",
+          }}
+          alt={`avatar-${index}`}
+        />
+      ))}
+    </div>
+  )}
+</Form.Item>
+
 
             <Form.Item
               wrapperCol={{
-                offset: 20,
+                offset: 17,
                 span: 16,
               }}
             >
-              <div>
-                {data?.status === "ERR" && (
-                  <span style={{ color: "red" }}>{data?.message}</span>
-                )}
-              </div>
-
               <Button type="primary" htmlType="submit">
-                Submit
+                Thêm sản phẩm
               </Button>
             </Form.Item>
           </Form>
         </Loading>
       </ModalComponent>
       <DrawerComponent
-  title={<span style={{ paddingBottom: '20px' }}>Chi tiết sản phẩm</span>}  // Thêm padding cho tiêu đề
-  isOpen={isOpenDrawer}
-  onClose={() => setIsOpenDrawer(false)}
-  width="50%"
->
+          title={<span style={{ paddingBottom: '20px' }}>Chi tiết sản phẩm</span>}  // Thêm padding cho tiêu đề
+          isOpen={isOpenDrawer}
+          onClose={() => setIsOpenDrawer(false)}
+          width="50%"
+      >
   <Loading isPending={isLoadingUpdate || isLoadingUpdated}>
     <Form
       name="basic"
@@ -729,7 +749,7 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input name product!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
@@ -746,7 +766,7 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input type!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
@@ -763,7 +783,7 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input count InStock!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
@@ -780,7 +800,7 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input price!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
@@ -792,16 +812,16 @@ const AdminProduct = () => {
       </Form.Item>
 
       <Form.Item
-        label="Chi tiết:"
+        label="Mô tả:"
         name="description"
         rules={[
           {
             required: true,
-            message: "Please input description!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
-        <InputComponent
+        <TextArea
           value={stateProductDetails.description}
           onChange={handleOnchangeDetails}
           name="description"
@@ -814,48 +834,50 @@ const AdminProduct = () => {
         rules={[
           {
             required: true,
-            message: "Please input rating!",
+            message: "Vui lòng không bỏ trống!",
           },
         ]}
       >
-        <InputComponent
-          value={stateProductDetails.rating}
-          onChange={handleOnchangeDetails}
-          name="rating"
-        />
+        <InputNumber
+                value={stateProduct.rating}
+                onChange={(value) => handleOnChangeInputNumberDetails(value, 'rating')}
+                name="rating"
+                defaultValue={1}
+                max={5}
+                min={1}
+              />
       </Form.Item>
-
       <Form.Item
-        label="Hình ảnh:"
-        name="image"
-        rules={[
-          {
-            required: false,
-            message: "Please input image!",
-          },
-        ]}
-      >
-        <WapperUploadFile
-          onChange={handleOnchangeAvatarDetails}
-          maxCount={1}
-        >
-          <Button icon={<UploadOutlined />}>Select File</Button>
-        </WapperUploadFile>
-        {stateProductDetails?.image && (
-          <img
-            src={stateProductDetails?.image}
-            style={{
-              height: "60px",
-              width: "60px",
-              borderRadius: "50%",
-              objectFit: "cover",
-              marginLeft: "10px",
-              display: "flex",
-            }}
-            alt="avatar"
-          />
-        )}
-      </Form.Item>
+  label="Hình ảnh:"
+  name="image"
+  rules={[
+    {
+      required: false,
+      message: "Vui lòng không bỏ trống!",
+    },
+  ]}
+>
+  <WapperUploadFile onChange={handleOnchangeAvatarDetails} maxCount={5}> {/* Bạn có thể cho phép tối đa 5 ảnh */}
+    <Button icon={<UploadOutlined />}>Select Files</Button>
+  </WapperUploadFile>
+  {stateProductDetails?.image && stateProductDetails.image.length > 0 && (
+    <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+      {stateProductDetails.image.map((image, index) => (
+        <img
+          key={index}
+          src={image}
+          style={{
+            height: "60px",
+            width: "60px",
+            borderRadius: "10%",
+            objectFit: "cover",
+          }}
+          alt={`avatar-${index}`}
+        />
+      ))}
+    </div>
+  )}
+</Form.Item>
 
       <Form.Item
         wrapperCol={{
@@ -863,12 +885,6 @@ const AdminProduct = () => {
           span: 16,
         }}
       >
-        <div>
-          {data?.status === "ERR" && (
-            <span style={{ color: "red" }}>{data?.message}</span>
-          )}
-        </div>
-
         <Button type="primary" htmlType="submit">
           Xác nhận
         </Button>

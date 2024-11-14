@@ -51,10 +51,9 @@ const TypeProductPage = () => {
           background: "#f0f0f0",
           flexWrap: "nowrap",
           paddingTop: "15px",
-          height: "600px",
+          height: "1000px",
         }}
       >
-        <WapperNavBar>{/* <NavBarComponent /> */}</WapperNavBar>
         <Col
           span={20}
           style={{
@@ -81,11 +80,11 @@ const TypeProductPage = () => {
               );
             })}
           </WapperProduct>
-          <Pagination
+          {/* <Pagination
             defaultCurrent={1}
             total={50}
             style={{ textAlign: "center", marginTop: "10px" }}
-          />
+          /> */}
         </Col>
       </Row>
     </Loading>

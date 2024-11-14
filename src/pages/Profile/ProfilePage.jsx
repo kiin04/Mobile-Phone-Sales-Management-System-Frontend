@@ -28,11 +28,17 @@ const ProfilePage = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [avatar, setAvatar] = useState("");
-
-  const mutation = useMutationHooks((data) => {
-    const { id, access_token, ...rests } = data;
-    UserService.updateUser(id, rests, access_token);
-  });
+// Đảm bảo trả về dữ liệu trong mutation
+const mutation = useMutationHooks(async (data) => {
+  const { id, access_token, ...rests } = data;
+  try {
+    const result = await UserService.updateUser(id, rests, access_token);
+    return result; // Trả về dữ liệu kết quả từ API
+  } catch (error) {
+    console.error("Error in mutation:", error);
+    throw error;
+  }
+});
 
   const { data, isPending, isSuccess, isError } = mutation;
 
@@ -45,13 +51,14 @@ const ProfilePage = () => {
   }, [user]);
 
   useEffect(() => {
-    if (isSuccess) {
-      message.success("Cập nhật thành công");
+    if (data?.status === 'OK') {
+      message.success(data?.message);
       handleGetDetailsUser(user?.id, user?.access_token);
-    } else if (isError) {
-      message.error("Lỗi");
+    } else if (data?.status === 'ERR') {
+      message.error(data?.message);
     }
-  }, [isSuccess, isError]);
+  }, [data]);
+  console.log("data", data)
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailsUser(id, token);
@@ -115,7 +122,7 @@ const ProfilePage = () => {
               value={email}
               onChange={handleOnchangeEmail}
               id="email"
-            />
+              disabled />
           </WrapperInput>
           <WrapperInput>
             <div style={{ width: "50px", height: "fit-content" }}>
@@ -124,7 +131,7 @@ const ProfilePage = () => {
             <InputForm
               style={{ width: "300px" }}
               placeholder="Số điện thoại"
-              value={phone}
+              value={`0${phone}`}
               onChange={handleOnchangePhone}
               id="phone"
             />

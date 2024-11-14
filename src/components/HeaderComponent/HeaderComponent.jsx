@@ -24,6 +24,7 @@ import { searchProduct } from "../../redux/slices/productSlide";
 import { resetUser } from "../../redux/slices/userSlide";
 import TypeProduct from "../TypeProduct/TypeProduct";
 import * as ProductService from "../../services/ProductServices";
+import logo from "../../../src/assets/images/logo.png"
 
 const HeaderComponent = () => {
   const user = useSelector((state) => state.user);
@@ -114,7 +115,7 @@ const HeaderComponent = () => {
       <WrapperHeader>
         <Col span={4}>
           <WrapperTextHeader onClick={handleNavigateLogo}>
-            DIENTHOAIHU
+            <img src={logo} style={{height: '70px',paddingTop: '5px'}}/>
           </WrapperTextHeader>
         </Col>
 
@@ -177,12 +178,12 @@ const HeaderComponent = () => {
           </Popover>
         </Col>
 
-        <Col span={4}>
+        {/* <Col span={4}>
           <WrapperShipperHeader>
             <CarOutlined style={{ fontSize: "23px" }} />
             <span>Tra cứu đơn hàng</span>
           </WrapperShipperHeader>
-        </Col>
+        </Col> */}
       </WrapperHeader>
 
       <div
