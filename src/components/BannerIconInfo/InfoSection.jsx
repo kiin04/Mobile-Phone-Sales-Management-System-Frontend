@@ -13,25 +13,30 @@ const InfoSection = () => {
       padding: "20px 0px",
       marginTop: "40px",
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", padding:"10px", border:" 1px solid #cccccc",borderRadius: "10px", width:"300px"}}>
         <img src={chinhHangIcon} alt="Sản phẩm chính hãng" style={{ height: "60px" }} />
         <div style={{ textAlign: "left" }}>
-          <p style={{ margin: 0 }}>Sản phẩm</p>
-          <p style={{ margin: 0 }}><strong>CHÍNH HÃNG</strong></p>
+          <p style={{ margin:"5px" }}>Sản phẩm <strong>CHÍNH HÃNG</strong></p>
+
+          <p style={{ margin: "5px" }}> Bảo đảm chất lượng</p>
+          
         </div>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", padding:"10px", border:" 1px solid #cccccc",borderRadius: "10px", width:"300px" }}>
         <img src={vanChuyenIcon} alt="Miễn phí vận chuyển" style={{ height: "60px" }} />
         <div style={{ textAlign: "left" }}>
           <p style={{ margin: 0 }}>Miễn phí vận chuyển</p>
-          <p style={{ margin: 0 }}><strong>TOÀN QUỐC</strong></p>
+          <p style={{ margin: 0 }}><strong>TOÀN QUỐC</strong>
+          <p style={{ margin: 0 }}>Thanh toán khi nhận hàng</p>
+          </p>
         </div>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", padding:"10px", border:" 1px solid #cccccc",borderRadius: "10px",width:"300px" }}>
         <img src={doiTraIcon} alt="Thủ tục đổi trả dễ dàng" style={{ height: "60px" }} />
         <div style={{ textAlign: "left" }}>
-          <p style={{ margin: 0 }}>Thủ tục đổi trả</p>
-          <p style={{ margin: 0 }}><strong>DỄ DÀNG</strong></p>
+          <p style={{ margin: "5px" }}>Thủ tục đổi trả <strong>DỄ DÀNG</strong></p>
+          
+          <p style={{ margin: "5px" }}>Khi sản phẩm bị lỗi</p>
         </div>
       </div>
     </div>
