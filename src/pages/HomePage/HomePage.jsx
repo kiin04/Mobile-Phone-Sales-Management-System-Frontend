@@ -4,6 +4,8 @@ import slider1 from "../../assets/images/slider1.webp";
 import slider3 from "../../assets/images/slider3.webp";
 import * as ProductService from "../../services/ProductServices";
 import OutstandingPhonePage from "../OutstandingPhonePage/OutstandingPhonePage";
+import InfoSection from "../../components/BannerIconInfo/InfoSection";
+import Footer from "../../components/Footer/Footer";
 
 //import CardComponent from "../../components/";
 
@@ -28,7 +30,7 @@ const HomePage = () => {
           padding: " 0 120px",
           backgroundColor: "#f2f4f7",
           height: "2000px",
-         paddingTop:"20px"
+          paddingTop: "20px"
         }}
       >
         {/* <WrapperTypeProduct>
@@ -44,15 +46,28 @@ const HomePage = () => {
         <SliderComponent arrImages={[slider1, slider3]} />
         <div
           style={{
+            marginTop: "0px",
+            display: "flex",
+            alignItems: "center",
+            gap: "20px",
+          }}
+        ></div>
+        <InfoSection />
+        <div
+          style={{
             marginTop: "20px",
             display: "flex",
             alignItems: "center",
             gap: "20px",
-          
+
           }}
         ></div>
-        <OutstandingPhonePage />
+        <div style={{ alignItems: "center" }}>
+          <OutstandingPhonePage />
+        </div>
+       
       </div>
+      <Footer />
     </>
   );
 };
