@@ -94,19 +94,19 @@ const AdminUser = ({ theme, setTheme }) => {
 
   useEffect(() => {
     if (isSuccessDeleted && dataDeleted?.status === "OK") {
-      message.success("Xóa người dùng thành công!!");
+      message.success(dataDeleted?.message);
       handleCancelDelete();
-    } else if (isErrorDeleted) {
-      message.error("Xóa người dùng thất bại!!");
+    } else if (dataDeleted?.status === "ERR") {
+      message.error(dataDeleted?.message);
     }
   }, [isSuccessDeleted]);
 
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === "OK") {
-      message.success("Cập nhật người dùng thành công!!");
+      message.success(dataUpdated?.message);
       handleCancelDrawer();
-    } else if (isErrorUpdated) {
-      message.error("Cập nhật người dùng thất bại!!");
+    } else if (dataUpdated?.status === "ERR") {
+      message.error(dataUpdated?.message);
     }
   }, [isSuccessUpdated]);
 

@@ -121,6 +121,7 @@ const MyOrderPage = () => {
     data: dataCancel,
     isPending: isLoadingCancel,
     isSuccess: isSuccessCancel,
+    isError: isErrorCancel
   } = mutationCancel;
   const {
     data: dataDetails,
@@ -129,12 +130,12 @@ const MyOrderPage = () => {
   } = mutationDetails;
 
   useEffect(() => {
-    if (isSuccessCancel && dataCancel?.status === "OK") {
+    if ( dataCancel?.status === "OK") {
       message.success(dataCancel?.message);
     } else if (dataCancel?.status === "ERR") {
       message.error(dataCancel?.message);
     }
-  }, [isSuccessCancel, dataCancel]);
+  }, [dataCancel]);
 
   const handleCancelOrder = (idOrder) => {
     mutationCancel.mutate(
@@ -142,7 +143,7 @@ const MyOrderPage = () => {
       {
         onSettled: () => {
           queryOrder.refetch();
-          setIsModalOpen(false);
+          setIsCancelModalOpen(false);
         },
       }
     );
