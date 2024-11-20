@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-
-
-
-=======
 # Mobile-Phone-Sales-Management-System
 
 ### My projects run on skills
